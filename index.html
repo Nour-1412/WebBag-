@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebBag - محول PDF</title>
+
+  <link rel="stylesheet" href="style.css">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <div class="top-bar">
+      <h1>📄 WebBag PDF Tools</h1>
+      <button id="themeToggle">🌙</button>
+    </div>
+
+    <textarea id="textInput" placeholder="اكتب النص هنا..."></textarea>
+
+    <div class="drop-zone" id="dropZone">
+      اسحب الصور أو ملفات PDF هنا أو اضغط للاختيار
+    </div>
+
+    <input
+      type="file"
+      id="fileInput"
+      multiple
+      accept="image/*,.pdf"
+      hidden
+    >
+
+    <h3>الملفات المضافة</h3>
+
+    <div id="previewList"></div>
+
+    <button id="generateBtn">
+      إنشاء ملف PDF
+    </button>
+
+  </div>
+
+  <script src="app.js"></script>
+
+</body>
+  </html>
