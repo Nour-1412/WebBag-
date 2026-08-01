@@ -110,3 +110,10 @@ function renderBackgroundRemover() {
         .onclick = renderHome;
 
 }
+document
+    .getElementById("removeButton")
+    .onclick = () => {
+
+        alert("⏳ جاري تشغيل WebBag AI...");
+
+    };
