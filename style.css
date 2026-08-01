@@ -1,68 +1,213 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap');
+
+:root{
+
+--bg:#071226;
+
+--bg2:#0B1736;
+
+--primary:#2563EB;
+
+--secondary:#7C3AED;
+
+--cyan:#00E5FF;
+
+--pink:#EC4899;
+
+--gold:#FBBF24;
+
+--glass:rgba(255,255,255,.08);
+
+--glassBorder:rgba(255,255,255,.15);
+
+--text:#F8FAFC;
+
+--muted:#CBD5E1;
+
+}
+
 *{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Tahoma,sans-serif;
+
+margin:0;
+
+padding:0;
+
+box-sizing:border-box;
+
+font-family:'Cairo',sans-serif;
+
 }
 
 body{
 
-    background:linear-gradient(
-        135deg,
-        #1E3A8A,
-        #4F46E5,
-        #7C3AED,
-        #2563EB
-    );
+min-height:100vh;
 
-    min-height:100vh;
+background:
+radial-gradient(circle at top left,#2563EB55,transparent 40%),
+radial-gradient(circle at bottom right,#7C3AED55,transparent 40%),
+linear-gradient(
+135deg,
+#071226,
+#0B1736,
+#111C44,
+#071226);
 
-    color:white;
+background-size:300% 300%;
+
+animation:bgMove 18s ease infinite;
+
+color:var(--text);
+
+overflow-x:hidden;
+
+}
+
+@keyframes bgMove{
+
+0%{
+
+background-position:0% 50%;
+
+}
+
+50%{
+
+background-position:100% 50%;
+
+}
+
+100%{
+
+background-position:0% 50%;
+
+}
+
 }
 
 .container{
 
-    width:90%;
+width:min(1200px,92%);
 
-    max-width:1200px;
+margin:auto;
 
-    margin:auto;
+padding:50px 0;
 
-    padding:40px 20px;
+    }
+/* ===========================
+   Aurora Hero
+=========================== */
+
+.hero{
+
+text-align:center;
+
+padding:60px 20px;
+
 }
 
-header{
+.logo{
 
-    text-align:center;
+font-size:72px;
 
-    margin-bottom:50px;
+font-weight:800;
+
+background:linear-gradient(
+90deg,
+#3B82F6,
+#7C3AED,
+#00E5FF);
+
+-webkit-background-clip:text;
+
+-webkit-text-fill-color:transparent;
+
+margin-bottom:20px;
+
+letter-spacing:2px;
+
 }
 
-header h1{
+.subtitle{
 
-    font-size:48px;
+font-size:22px;
 
-    margin-bottom:15px;
+color:var(--muted);
+
+margin-bottom:15px;
+
 }
 
-header p{
+.description{
 
-    font-size:20px;
+max-width:800px;
 
-    opacity:.9;
+margin:auto;
+
+font-size:18px;
+
+line-height:2;
+
+color:#E2E8F0;
+
+margin-bottom:40px;
+
 }
 
-#app{
+.stats{
 
-    background:white;
+display:flex;
 
-    color:#222;
+justify-content:center;
 
-    border-radius:25px;
+gap:25px;
 
-    min-height:500px;
+flex-wrap:wrap;
 
-    padding:30px;
+margin-top:30px;
 
-    box-shadow:0 20px 60px rgba(0,0,0,.25);
 }
+
+.stat{
+
+background:var(--glass);
+
+backdrop-filter:blur(18px);
+
+border:1px solid var(--glassBorder);
+
+border-radius:20px;
+
+padding:20px 30px;
+
+min-width:180px;
+
+transition:.35s;
+
+}
+
+.stat:hover{
+
+transform:translateY(-8px);
+
+box-shadow:
+0 0 25px rgba(0,229,255,.35);
+
+}
+
+.stat h3{
+
+font-size:34px;
+
+color:white;
+
+margin-bottom:8px;
+
+}
+
+.stat span{
+
+color:var(--muted);
+
+font-size:15px;
+
+    }
