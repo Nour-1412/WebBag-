@@ -109,7 +109,7 @@ function renderBackgroundRemover() {
         .getElementById("backHome")
         .onclick = renderHome;
 
-}
+
 document
     .getElementById("removeButton")
     .onclick = () => {
@@ -117,3 +117,4 @@ document
         alert("⏳ جاري تشغيل WebBag AI...");
 
     };
+}
