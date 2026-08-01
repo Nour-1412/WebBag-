@@ -112,9 +112,33 @@ function renderBackgroundRemover() {
 
 document
     .getElementById("removeButton")
-    .onclick = () => {
+    .onclick = async () => {
 
-        alert("⏳ جاري تشغيل WebBag AI...");
+        const input = document.getElementById("imageInput");
+
+        if (!input.files.length) {
+
+            alert("اختر صورة أولاً.");
+
+            return;
+
+        }
+
+        const file = input.files[0];
+
+        alert("⏳ جاري إزالة الخلفية...");
+
+        const result = await runGateway(file);
+
+        if (!result.success) {
+
+            alert(result.error);
+
+            return;
+
+        }
+
+        alert("🎉 تمت إزالة الخلفية بنجاح!");
 
     };
 }
