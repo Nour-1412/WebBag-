@@ -1,3 +1,4 @@
+import { runGateway } from "./ai/gateway.js";
 const { jsPDF } = window.jspdf;
 
 const textInput = document.getElementById("textInput");
