@@ -43,12 +43,12 @@ function renderHome() {
     `;
 
     document
-        .getElementById("removeBg")
-        .onclick = () => {
+    .getElementById("removeBg")
+    .onclick = () => {
 
-            alert("قريبًا 🚀");
+        renderBackgroundRemover();
 
-        };
+    };
 
     document
         .getElementById("pdfTool")
@@ -69,3 +69,44 @@ function renderHome() {
 }
 
 renderHome();
+function renderBackgroundRemover() {
+
+    app.innerHTML = `
+
+        <h2>🖼️ إزالة الخلفية</h2>
+
+        <p>
+
+            اختر صورة لإزالة الخلفية باستخدام الذكاء الاصطناعي.
+
+        </p>
+
+        <input
+            type="file"
+            id="imageInput"
+            accept="image/*"
+        >
+
+        <br><br>
+
+        <button id="removeButton">
+
+            إزالة الخلفية
+
+        </button>
+
+        <br><br>
+
+        <button id="backHome">
+
+            ← الرجوع للرئيسية
+
+        </button>
+
+    `;
+
+    document
+        .getElementById("backHome")
+        .onclick = renderHome;
+
+}
