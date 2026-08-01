@@ -1,5 +1,3 @@
-// Imgly Provider
-
 export async function runImgly(file) {
 
     try {
@@ -9,8 +7,6 @@ export async function runImgly(file) {
         return {
 
             success: true,
-
-            provider: "imgly",
 
             image: blob
 
@@ -22,11 +18,9 @@ export async function runImgly(file) {
 
         return {
 
-            success:false,
+            success: false,
 
-            provider:"imgly",
-
-            error:error.message
+            error: error.message
 
         };
 
