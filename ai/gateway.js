@@ -1,34 +1,9 @@
-import { AI_CONFIG } from "./config.js";
+import { runImgly } from "./providers/imgly.js";
 
 export async function runGateway(file) {
 
-    const defaultProvider = AI_CONFIG.defaultProvider;
+    const result = await runImgly(file);
 
-    if (defaultProvider === "imgly") {
-
-        return {
-
-            provider: "imgly",
-
-            success: true
-
-        };
-
-    }
-
-    if (defaultProvider === "segmind") {
-
-        return {
-
-            provider: "segmind",
-
-            success: true
-
-        };
-
-    }
-
-    throw new Error("لا يوجد مزود AI صالح.");
+    return result;
 
 }
-
