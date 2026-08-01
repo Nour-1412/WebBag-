@@ -1,9 +1,20 @@
-
 export async function runImgly(file) {
+
+    if (!window.removeBackground) {
+
+        return {
+
+            success: false,
+
+            error: "مكتبة Imgly غير محملة."
+
+        };
+
+    }
 
     try {
 
-        const blob = await removeBackground(file);
+        const blob = await window.removeBackground(file);
 
         return {
 
@@ -15,7 +26,7 @@ export async function runImgly(file) {
 
     }
 
-    catch(error){
+    catch (error) {
 
         return {
 
