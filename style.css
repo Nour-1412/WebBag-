@@ -1,21 +1,28 @@
-/* =====================================
-   WebBag Aurora UI v2
-   ===================================== */
+/* ==================================================
+               WebBag Aurora UI v1.0
+================================================== */
 
 :root{
 
 --blue:#5EC8FF;
---cyan:#7AE8FF;
---purple:#8A6BFF;
+
+--cyan:#88E8FF;
+
+--purple:#8B72FF;
+
 --pink:#E7B7FF;
---gold:#FFB648;
+
+--gold:#FFB54A;
 
 --text:#24344F;
---muted:#6E7C98;
+
+--muted:#74829D;
 
 --glass:rgba(255,255,255,.45);
 
---shadow:0 20px 50px rgba(102,135,255,.18);
+--border:rgba(255,255,255,.55);
+
+--shadow:0 20px 60px rgba(89,135,255,.18);
 
 }
 
@@ -37,12 +44,9 @@ scroll-behavior:smooth;
 
 body{
 
-font-family:
-"Cairo",
-"Tajawal",
-sans-serif;
+font-family:"Cairo",sans-serif;
 
-background:#F6F9FF;
+background:#F5F8FF;
 
 overflow-x:hidden;
 
@@ -50,83 +54,202 @@ color:var(--text);
 
 }
 
-/* ===========================
-   Aurora Background
-=========================== */
+/* ==========================
+        Aurora Background
+========================== */
 
-#background{
+.aurora{
 
 position:fixed;
 
 inset:0;
 
-z-index:-10;
+z-index:-3;
+
+overflow:hidden;
 
 background:
 
-radial-gradient(circle at 15% 20%,rgba(94,200,255,.28),transparent 35%),
+linear-gradient(
 
-radial-gradient(circle at 85% 15%,rgba(138,107,255,.22),transparent 30%),
+180deg,
 
-radial-gradient(circle at 50% 75%,rgba(231,183,255,.22),transparent 35%),
+#FBFDFF,
 
-radial-gradient(circle at 20% 90%,rgba(255,182,72,.12),transparent 25%),
+#EEF5FF
 
-linear-gradient(180deg,#F9FBFF,#EEF5FF);
+);
 
 }
 
-/* ===========================
-   Layout
-=========================== */
+.blob{
 
-.page{
+position:absolute;
+
+border-radius:50%;
+
+filter:blur(120px);
+
+opacity:.75;
+
+animation:float 14s ease-in-out infinite;
+
+}
+
+.blob1{
+
+width:500px;
+
+height:500px;
+
+background:#7ED7FF;
+
+top:-120px;
+
+left:-120px;
+
+}
+
+.blob2{
+
+width:550px;
+
+height:550px;
+
+background:#9B87FF;
+
+right:-180px;
+
+top:120px;
+
+animation-delay:2s;
+
+}
+
+.blob3{
+
+width:450px;
+
+height:450px;
+
+background:#FFD18B;
+
+bottom:-120px;
+
+left:30%;
+
+animation-delay:5s;
+
+}
+
+@keyframes float{
+
+0%{
+
+transform:translateY(0) translateX(0);
+
+}
+
+50%{
+
+transform:translateY(-40px) translateX(30px);
+
+}
+
+100%{
+
+transform:translateY(0) translateX(0);
+
+}
+
+}
+
+/* طبقة نعومة */
+
+.noise{
+
+position:fixed;
+
+inset:0;
+
+z-index:-2;
+
+background:
+
+radial-gradient(
+
+rgba(255,255,255,.18),
+
+transparent 70%
+
+);
+
+pointer-events:none;
+
+}
+
+/* ==========================
+        Main Layout
+========================== */
+
+.wrapper{
 
 width:min(1320px,92%);
 
 margin:auto;
 
-padding:30px 0 80px;
+padding:35px 0 70px;
 
-}
-
-/* ===========================
-   Navbar
-=========================== */
+   }
+/* ==================================================
+                    NAVBAR
+================================================== */
 
 #navbar{
 
 display:flex;
 
-justify-content:space-between;
-
 align-items:center;
 
-padding:10px 0;
+justify-content:space-between;
 
-margin-bottom:60px;
+margin-bottom:70px;
 
-flex-wrap:wrap;
+padding:18px 30px;
 
-gap:20px;
+background:rgba(255,255,255,.38);
+
+backdrop-filter:blur(18px);
+
+-webkit-backdrop-filter:blur(18px);
+
+border:1px solid rgba(255,255,255,.55);
+
+border-radius:24px;
+
+box-shadow:var(--shadow);
 
 }
 
-.brand{
+.logo{
 
-font-size:42px;
+font-size:34px;
 
 font-weight:900;
 
 letter-spacing:.5px;
 
-background:
+background:linear-gradient(
 
-linear-gradient(
 90deg,
+
 var(--blue),
+
 var(--purple),
-var(--gold));
+
+var(--gold)
+
+);
 
 -webkit-background-clip:text;
 
@@ -134,7 +257,7 @@ var(--gold));
 
 }
 
-.nav-menu{
+#navbar nav{
 
 display:flex;
 
@@ -142,54 +265,99 @@ align-items:center;
 
 gap:28px;
 
-flex-wrap:wrap;
-
 }
 
-.nav-menu a{
+#navbar nav a{
 
 text-decoration:none;
 
-color:var(--muted);
-
-font-size:18px;
+font-size:17px;
 
 font-weight:700;
 
-transition:.35s;
+color:var(--muted);
+
+transition:.30s;
+
+position:relative;
 
 }
 
-.nav-menu a:hover{
+#navbar nav a:hover{
 
 color:var(--purple);
 
 }
 
-.pro-btn{
+#navbar nav a::after{
 
-padding:14px 28px;
+content:"";
+
+position:absolute;
+
+bottom:-8px;
+
+left:50%;
+
+transform:translateX(-50%);
+
+width:0;
+
+height:3px;
+
+border-radius:50px;
+
+background:linear-gradient(
+
+90deg,
+
+var(--blue),
+
+var(--purple)
+
+);
+
+transition:.30s;
+
+}
+
+#navbar nav a:hover::after{
+
+width:70%;
+
+}
+
+.pro-btn{
 
 border:none;
 
-border-radius:999px;
-
-background:
-
-linear-gradient(
-90deg,
-var(--blue),
-var(--purple));
-
-color:white;
-
-font-size:16px;
-
-font-weight:700;
+outline:none;
 
 cursor:pointer;
 
-box-shadow:var(--shadow);
+padding:14px 28px;
+
+border-radius:999px;
+
+font-size:15px;
+
+font-weight:800;
+
+color:white;
+
+background:linear-gradient(
+
+90deg,
+
+#5EC8FF,
+
+#8A72FF
+
+);
+
+box-shadow:
+
+0 15px 35px rgba(94,200,255,.35);
 
 transition:.35s;
 
@@ -199,6 +367,168 @@ transition:.35s;
 
 transform:translateY(-3px);
 
+box-shadow:
+
+0 20px 45px rgba(94,200,255,.45);
+
+   }
+/* ==================================================
+                    HERO
+================================================== */
+
+#hero{
+
+display:flex;
+
+flex-direction:column;
+
+align-items:center;
+
+justify-content:center;
+
+text-align:center;
+
+padding:90px 20px;
+
+margin-top:30px;
+
 }
 
-/* Hero و البطاقات سنبنيهما في المرحلة التالية */
+#hero h1{
+
+font-size:82px;
+
+font-weight:900;
+
+line-height:1.1;
+
+background:linear-gradient(
+
+90deg,
+
+#5EC8FF,
+
+#7F8DFF,
+
+#B37CFF,
+
+#FFB648
+
+);
+
+-webkit-background-clip:text;
+
+-webkit-text-fill-color:transparent;
+
+margin-bottom:25px;
+
+}
+
+#hero h2{
+
+font-size:40px;
+
+font-weight:800;
+
+color:#24344F;
+
+margin-bottom:20px;
+
+}
+
+#hero p{
+
+font-size:22px;
+
+color:#6E7C98;
+
+line-height:1.9;
+
+max-width:760px;
+
+margin-bottom:45px;
+
+}
+
+.hero-buttons{
+
+display:flex;
+
+gap:22px;
+
+flex-wrap:wrap;
+
+justify-content:center;
+
+}
+
+.start{
+
+border:none;
+
+padding:18px 42px;
+
+border-radius:60px;
+
+font-size:18px;
+
+font-weight:800;
+
+cursor:pointer;
+
+color:white;
+
+background:linear-gradient(
+
+90deg,
+
+#5EC8FF,
+
+#8A72FF
+
+);
+
+box-shadow:
+
+0 20px 45px rgba(94,200,255,.35);
+
+transition:.35s;
+
+}
+
+.start:hover{
+
+transform:translateY(-4px);
+
+}
+
+.explore{
+
+padding:18px 42px;
+
+border-radius:60px;
+
+font-size:18px;
+
+font-weight:800;
+
+cursor:pointer;
+
+background:white;
+
+border:2px solid rgba(94,200,255,.25);
+
+color:#24344F;
+
+transition:.35s;
+
+}
+
+.explore:hover{
+
+background:#F6F9FF;
+
+transform:translateY(-4px);
+
+   }
+
