@@ -231,7 +231,7 @@ box-shadow:var(--shadow);
 
 }
 
-.logo{
+.nav-logo{
 
 font-size:34px;
 
@@ -599,7 +599,7 @@ body{
 
 /* اللوجو */
 
-.logo{
+.hero-logo{
     width:100%;
     font-size:clamp(55px,12vw,95px);
 }
