@@ -128,3 +128,38 @@ card.style.background="rgba(255,255,255,.42)";
 });
 
 });
+/* ==========================================
+        Search System
+========================================== */
+
+const searchInput = document.getElementById("search");
+
+if(searchInput){
+
+searchInput.addEventListener("input",()=>{
+
+const value = searchInput.value.toLowerCase();
+
+const cards = document.querySelectorAll(".tool-card");
+
+cards.forEach(card=>{
+
+const title = card.querySelector(".tool-title").textContent.toLowerCase();
+
+const desc = card.querySelector(".tool-desc").textContent.toLowerCase();
+
+if(title.includes(value) || desc.includes(value)){
+
+card.style.display="block";
+
+}else{
+
+card.style.display="none";
+
+}
+
+});
+
+});
+
+            }
