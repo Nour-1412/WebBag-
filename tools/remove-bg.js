@@ -24,8 +24,7 @@ input.addEventListener("change", function () {
     reader.readAsDataURL(file);
 
 });
-
-removeBtn.addEventListener("click", async function () {
+removeBtn.addEventListener("click", async () => {
 
     if (!selectedFile) {
 
@@ -42,7 +41,28 @@ removeBtn.addEventListener("click", async function () {
     }
 
     removeBtn.disabled = true;
-
     removeBtn.textContent = "⏳ جاري إزالة الخلفية...";
+
+    try{
+
+        const blob = await removeBackground(selectedFile);
+
+        const url = URL.createObjectURL(blob);
+
+        preview.src = url;
+
+        removeBtn.textContent = "✅ تم إزالة الخلفية";
+
+    }
+
+    catch(error){
+
+        console.error(error);
+
+        removeBtn.textContent = "حدث خطأ";
+
+    }
+
+    removeBtn.disabled = false;
 
 });
