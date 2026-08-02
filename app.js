@@ -208,4 +208,21 @@ color:#24344F;
 color:#8A97B0;
 
 }
+/* ==========================================
+        Open Tool
+========================================== */
+
+document.querySelectorAll(".tool-card").forEach(card=>{
+
+card.addEventListener("click",()=>{
+
+const toolName = card.querySelector(".tool-title").textContent;
+
+alert("سيتم فتح أداة: " + toolName);
+
+});
+
+});
+
+
 
