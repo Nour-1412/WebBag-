@@ -756,5 +756,49 @@ user-select:none;
 transform:scale(.98);
 
    }
+/* ==========================================
+            Search Box
+========================================== */
 
+.search-box{
+
+margin-top:45px;
+
+display:flex;
+
+justify-content:center;
+
+}
+
+.search-box input{
+
+width:min(700px,90vw);
+
+padding:18px 25px;
+
+border:none;
+
+outline:none;
+
+border-radius:60px;
+
+font-size:18px;
+
+font-family:"Cairo",sans-serif;
+
+background:rgba(255,255,255,.55);
+
+backdrop-filter:blur(20px);
+
+box-shadow:0 15px 35px rgba(0,0,0,.08);
+
+color:#24344F;
+
+}
+
+.search-box input::placeholder{
+
+color:#8A97B0;
+
+   }
 
