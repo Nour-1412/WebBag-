@@ -103,7 +103,15 @@ padding:30px;
 
 #navbar{
 
-height:90px;
+display:flex;
+
+align-items:center;
+
+justify-content:space-between;
+
+flex-wrap:wrap;
+
+width:100%;
 
 }
 
@@ -180,9 +188,11 @@ letter-spacing:.5px;
 
 display:flex;
 
-gap:28px;
+flex-wrap:wrap;
 
-align-items:center;
+justify-content:center;
+
+gap:20px;
 
 }
 
@@ -236,5 +246,13 @@ transition:.35s;
 .pro-btn:hover{
 
 transform:translateY(-3px);
+
+}
+html,
+body{
+
+width:100%;
+
+overflow-x:hidden;
 
 }
