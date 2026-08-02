@@ -25,16 +25,24 @@ input.addEventListener("change", function () {
 
 });
 
-removeBtn.addEventListener("click", function () {
+removeBtn.addEventListener("click", async function () {
 
     if (!selectedFile) {
 
-        alert("اختر صورة أولاً");
+        removeBtn.textContent = "اختر صورة أولاً";
+
+        setTimeout(() => {
+
+            removeBtn.textContent = "إزالة الخلفية";
+
+        },1500);
 
         return;
 
     }
 
-    alert("في الخطوة القادمة سيتم إزالة الخلفية بالذكاء الاصطناعي.");
+    removeBtn.disabled = true;
+
+    removeBtn.textContent = "⏳ جاري إزالة الخلفية...";
 
 });
