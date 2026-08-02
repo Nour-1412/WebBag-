@@ -705,4 +705,39 @@ color:var(--muted);
 }
 
                 }
+/* ==========================================
+        Tool Card Animation
+========================================== */
+
+.tool-card{
+
+transition:
+transform .35s,
+box-shadow .35s,
+background .35s;
+
+}
+
+.tool-card:hover{
+
+transform:
+translateY(-12px)
+scale(1.02);
+
+}
+
+.tool-icon{
+
+transition:.35s;
+
+}
+
+.tool-card:hover .tool-icon{
+
+transform:
+scale(1.15)
+rotate(-8deg);
+
+   }
+
 
