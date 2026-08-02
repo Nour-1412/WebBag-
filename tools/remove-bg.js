@@ -1,3 +1,4 @@
+import WebBagAI from "../webbag-engine.js";
 const input = document.getElementById("imageInput");
 const preview = document.getElementById("preview");
 const removeBtn = document.getElementById("removeBtn");
@@ -24,6 +25,7 @@ input.addEventListener("change", function () {
     reader.readAsDataURL(file);
 
 });
+
 removeBtn.addEventListener("click", async () => {
 
     if (!selectedFile) {
@@ -31,13 +33,10 @@ removeBtn.addEventListener("click", async () => {
         removeBtn.textContent = "اختر صورة أولاً";
 
         setTimeout(() => {
-
             removeBtn.textContent = "إزالة الخلفية";
-
         },1500);
 
         return;
-
     }
 
     removeBtn.disabled = true;
@@ -45,11 +44,7 @@ removeBtn.addEventListener("click", async () => {
 
     try{
 
-        const blob = await removeBackground(selectedFile);
-
-        const url = URL.createObjectURL(blob);
-
-        preview.src = url;
+        await WebBagAI.removeBackground(selectedFile);
 
         removeBtn.textContent = "✅ تم إزالة الخلفية";
 
@@ -57,14 +52,15 @@ removeBtn.addEventListener("click", async () => {
 
     catch(error){
 
-    console.error(error);
+        console.error(error);
 
-    alert(error.message);
+        alert(error.message);
 
-    removeBtn.textContent = "حدث خطأ";
+        removeBtn.textContent = "محرك إزالة الخلفية غير متصل";
 
     }
 
     removeBtn.disabled = false;
 
 });
+
