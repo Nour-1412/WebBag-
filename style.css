@@ -2,270 +2,106 @@
 
 :root{
 
---bg:#071226;
+--bg:#F4F8FF;
+--bg2:#EAF2FF;
 
---bg2:#0B1736;
+--blue:#5AA9FF;
+--purple:#8B7CFF;
+--pink:#F6A6C9;
 
---primary:#2563EB;
+--glass:rgba(255,255,255,.55);
 
---secondary:#7C3AED;
+--border:rgba(255,255,255,.65);
 
---cyan:#00E5FF;
+--text:#23324D;
 
---pink:#EC4899;
-
---gold:#FBBF24;
-
---glass:rgba(255,255,255,.08);
-
---glassBorder:rgba(255,255,255,.15);
-
---text:#F8FAFC;
-
---muted:#CBD5E1;
+--muted:#6B7A99;
 
 }
 
 *{
 
 margin:0;
-
 padding:0;
-
 box-sizing:border-box;
-
-font-family:'Cairo',sans-serif;
+font-family:"Cairo",sans-serif;
 
 }
 
 body{
 
-min-height:100vh;
-
-background:
-radial-gradient(circle at top left,#2563EB55,transparent 40%),
-radial-gradient(circle at bottom right,#7C3AED55,transparent 40%),
-linear-gradient(
-135deg,
-#071226,
-#0B1736,
-#111C44,
-#071226);
-
-background-size:300% 300%;
-
-animation:bgMove 18s ease infinite;
+background:var(--bg);
 
 color:var(--text);
 
-overflow-x:hidden;
+min-height:100vh;
 
-}
-
-@keyframes bgMove{
-
-0%{
-
-background-position:0% 50%;
-
-}
-
-50%{
-
-background-position:100% 50%;
-
-}
-
-100%{
-
-background-position:0% 50%;
-
-}
+overflow:hidden;
 
 }
 
 .container{
 
-width:min(1200px,92%);
-
-margin:auto;
-
-padding:50px 0;
-
-    }
-/* ===========================
-   Aurora Hero
-=========================== */
-
-.hero{
-
-text-align:center;
-
-padding-top:90px;
-
-padding-bottom:70px;
-
-}
-
-text-align:center;
-
-padding:60px 20px;
-
-}
-
-.logo{
-
-display:inline-block;
-
-font-size:86px;
-
-font-weight:900;
-
-letter-spacing:2px;
-line-height:1.2;
-padding:10px 25px;
-
-margin-bottom:20px;
-
-color:#ffffff;
-position:relative;
-text-shadow:
-
-0 0 10px rgba(59,130,246,.6),
-
-0 0 25px rgba(124,58,237,.35);
-
-}
-
-.subtitle{
-
-font-size:22px;
-
-color:var(--muted);
-
-margin-bottom:15px;
-
-}
-
-.description{
-
-max-width:800px;
-
-margin:auto;
-
-font-size:18px;
-
-line-height:2;
-
-color:#E2E8F0;
-
-margin-bottom:40px;
-
-}
-
-.stats{
-
 display:flex;
 
-justify-content:center;
-
-gap:25px;
-
-flex-wrap:wrap;
-
-margin-top:30px;
+height:100vh;
 
 }
 
-.stat{
+/* الخلفية */
 
-background:var(--glass);
+.background-blur{
 
-backdrop-filter:blur(18px);
+position:fixed;
 
-border:1px solid var(--glassBorder);
+border-radius:50%;
 
-border-radius:20px;
+filter:blur(120px);
 
-padding:20px 30px;
+opacity:.55;
 
-min-width:180px;
-
-transition:.35s;
+z-index:-1;
 
 }
 
-.stat:hover{
+.blur1{
 
-transform:translateY(-8px);
+width:420px;
+height:420px;
 
-box-shadow:
-0 0 25px rgba(0,229,255,.35);
+background:#8B7CFF;
 
-}
+top:-120px;
 
-.stat h3{
-
-font-size:34px;
-
-color:white;
-
-margin-bottom:8px;
+left:-120px;
 
 }
 
-.stat span{
+.blur2{
 
-color:var(--muted);
+width:380px;
+height:380px;
 
-font-size:15px;
+background:#5AA9FF;
 
-    }
-.logo::after{
+bottom:-120px;
 
-content:"";
-
-position:absolute;
-
-left:-20%;
-
-top:0;
-
-width:20%;
-
-height:100%;
-
-background:linear-gradient(
-
-90deg,
-
-transparent,
-
-rgba(255,255,255,.65),
-
-transparent
-
-);
-
-transform:skewX(-25deg);
-
-animation:shine 5s infinite;
+right:-80px;
 
 }
 
-@keyframes shine{
+.blur3{
 
-0%{
+width:320px;
+height:320px;
 
-left:-30%;
+background:#F6A6C9;
 
-}
+top:35%;
 
-100%{
+left:45%;
 
-left:130%;
-
-}
+transform:translate(-50%,-50%);
 
 }
 
