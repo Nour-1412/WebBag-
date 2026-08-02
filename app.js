@@ -1,78 +1,60 @@
 /* ==========================================
             WebBag Aurora V2
 ========================================== */
-
 const tools = [
 
 {
-
 icon:"🖼️",
-
 title:"إزالة الخلفية",
-
-description:"احذف خلفية أي صورة بالذكاء الاصطناعي."
-
+description:"احذف خلفية أي صورة بالذكاء الاصطناعي.",
+page:"tools/remove-bg.html"
 },
 
 {
-
 icon:"📄",
-
 title:"تحويل PDF",
-
-description:"تحويل ملفات PDF إلى Word والعكس."
-
+description:"تحويل ملفات PDF إلى Word والعكس.",
+page:"tools/pdf.html"
 },
 
 {
-
 icon:"🎙️",
-
-title:"تحويل الصوت إلى نص",
-
-description:"استخراج النصوص من الملفات الصوتية."
-
+title:"الصوت إلى نص",
+description:"تحويل الملفات الصوتية إلى نص.",
+page:"tools/speech.html"
 },
 
 {
-
 icon:"🤖",
-
 title:"Chat AI",
-
-description:"محادثة ذكية تعتمد على الذكاء الاصطناعي."
-
+description:"محادثة ذكية تعتمد على الذكاء الاصطناعي.",
+page:"tools/chat.html"
 },
 
 {
-
 icon:"🎨",
-
 title:"توليد الصور",
-
-description:"إنشاء صور احترافية من وصف نصي."
-
+description:"إنشاء صور بالذكاء الاصطناعي.",
+page:"tools/image.html"
 },
 
 {
-
-icon:"🌐",
-
-title:"ترجمة احترافية",
-
-description:"ترجمة النصوص بأكثر من 100 لغة."
-
+icon:"🌍",
+title:"الترجمة",
+description:"ترجمة احترافية بأكثر من 100 لغة.",
+page:"tools/translate.html"
 }
 
 ];
 
-const toolsSection = document.getElementById("tools");
 
+const toolsSection = document.getElementById("tools");
 tools.forEach(tool=>{
 
 toolsSection.innerHTML += `
 
-<div class="tool-card">
+<div class="tool-card"
+data-page="${tool.page}">
 
 <div class="tool-icon">
 
@@ -97,6 +79,7 @@ ${tool.description}
 `;
 
 });
+
 /* ==========================================
         Hover Animation
 ========================================== */
@@ -216,9 +199,9 @@ document.querySelectorAll(".tool-card").forEach(card=>{
 
 card.addEventListener("click",()=>{
 
-const toolName = card.querySelector(".tool-title").textContent;
+const page = card.dataset.page;
 
-alert("سيتم فتح أداة: " + toolName);
+window.location.href = page;
 
 });
 
