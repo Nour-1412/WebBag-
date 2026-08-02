@@ -1,65 +1,99 @@
-// ===============================
-// Navbar
-// ===============================
+/* ==========================================
+            WebBag Aurora V2
+========================================== */
 
-const navbar = document.getElementById("navbar");
+const tools = [
 
-navbar.innerHTML = `
-<div class="nav-container">
+{
 
-    <div class="nav-logo">
-        WebBag
-    </div>
+icon:"🖼️",
 
-    <nav class="nav-links">
-        <a href="#">الرئيسية</a>
-        <a href="#">الأدوات</a>
-        <a href="#">المميزات</a>
-        <a href="#">تواصل معنا</a>
-    </nav>
+title:"إزالة الخلفية",
 
-    <button class="pro-btn">
-        WebBag Pro
-    </button>
+description:"احذف خلفية أي صورة بالذكاء الاصطناعي."
+
+},
+
+{
+
+icon:"📄",
+
+title:"تحويل PDF",
+
+description:"تحويل ملفات PDF إلى Word والعكس."
+
+},
+
+{
+
+icon:"🎙️",
+
+title:"تحويل الصوت إلى نص",
+
+description:"استخراج النصوص من الملفات الصوتية."
+
+},
+
+{
+
+icon:"🤖",
+
+title:"Chat AI",
+
+description:"محادثة ذكية تعتمد على الذكاء الاصطناعي."
+
+},
+
+{
+
+icon:"🎨",
+
+title:"توليد الصور",
+
+description:"إنشاء صور احترافية من وصف نصي."
+
+},
+
+{
+
+icon:"🌐",
+
+title:"ترجمة احترافية",
+
+description:"ترجمة النصوص بأكثر من 100 لغة."
+
+}
+
+];
+
+const toolsSection = document.getElementById("tools");
+
+tools.forEach(tool=>{
+
+toolsSection.innerHTML += `
+
+<div class="tool-card">
+
+<div class="tool-icon">
+
+${tool.icon}
 
 </div>
-`;
 
+<div class="tool-title">
 
-// ===============================
-// Hero
-// ===============================
-
-const hero = document.getElementById("hero");
-
-hero.innerHTML = `
-<div class="hero-container">
-
-    <h1 class="hero-logo">
-        WebBag
-    </h1>
-
-    <h2 class="hero-title">
-        منصة أدوات الذكاء الاصطناعي
-    </h2>
-
-    <p class="hero-text">
-        جميع أدوات الذكاء الاصطناعي التي تحتاجها
-        في مكان واحد...
-        بسرعة، وأناقة، وذكاء.
-    </p>
-
-    <div class="hero-buttons">
-
-        <button class="start">
-            ابدأ الآن
-        </button>
-
-        <button class="explore">
-            استكشف الأدوات
-        </button>
-
-    </div>
+${tool.title}
 
 </div>
+
+<div class="tool-desc">
+
+${tool.description}
+
+</div>
+
+</div>
+
 `;
+
+});
