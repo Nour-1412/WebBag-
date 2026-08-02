@@ -1,298 +1,140 @@
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap');
+/* =============================
+
+      WebBag Aurora Edition
+
+============================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap');
 
 :root{
 
---bg:#F4F8FF;
---bg2:#EAF2FF;
+--bg:#F7F9FC;
 
---blue:#5AA9FF;
---purple:#8B7CFF;
---pink:#F6A6C9;
+--bg2:#EEF4FF;
 
---glass:rgba(255,255,255,.55);
+--blue:#67C7FF;
 
---border:rgba(255,255,255,.65);
+--purple:#8A7DFF;
 
---text:#23324D;
+--pink:#FFD7E8;
 
---muted:#6B7A99;
+--gold:#FFC857;
+
+--text:#26344D;
+
+--muted:#6F7E98;
+
+--glass:rgba(255,255,255,.58);
+
+--border:rgba(255,255,255,.72);
+
+--shadow:0 20px 60px rgba(91,124,255,.12);
+
+--radius:28px;
 
 }
 
 *{
 
 margin:0;
+
 padding:0;
+
 box-sizing:border-box;
+
 font-family:"Cairo",sans-serif;
+
+}
+
+html{
+
+scroll-behavior:smooth;
 
 }
 
 body{
 
-background:var(--bg);
+background:linear-gradient(
+180deg,
+var(--bg),
+var(--bg2));
 
 color:var(--text);
 
 min-height:100vh;
 
-overflow:hidden;
-
-}
-
-.container{
-
-display:flex;
-
-height:100vh;
+overflow-x:hidden;
 
 }
 
 /* الخلفية */
 
-.background-blur{
+#background{
 
 position:fixed;
 
-border-radius:50%;
+inset:0;
 
-filter:blur(120px);
+z-index:-2;
 
-opacity:.55;
+background:
 
-z-index:-1;
+radial-gradient(circle at 15% 20%, rgba(103,199,255,.35), transparent 35%),
 
-}
+radial-gradient(circle at 85% 25%, rgba(138,125,255,.28), transparent 30%),
 
-.blur1{
-
-width:420px;
-height:420px;
-
-background:#8B7CFF;
-
-top:-120px;
-
-left:-120px;
+radial-gradient(circle at 50% 75%, rgba(255,215,232,.30), transparent 35%);
 
 }
 
-.blur2{
+/* الصفحة */
 
-width:380px;
-height:380px;
+.page{
 
-background:#5AA9FF;
+width:min(1300px,92%);
 
-bottom:-120px;
+margin:auto;
 
-right:-80px;
-
-}
-
-.blur3{
-
-width:320px;
-height:320px;
-
-background:#F6A6C9;
-
-top:35%;
-
-left:45%;
-
-transform:translate(-50%,-50%);
-
-}
-/* ================= NAVBAR ================= */
-
-.navbar{
-
-width:100%;
-
-display:flex;
-
-justify-content:space-between;
-
-align-items:center;
-
-padding:25px 50px;
+padding:30px;
 
 }
 
-.logo-text{
+/* سنكمل بقية الأقسام لاحقًا */
 
-font-size:42px;
+#navbar{
 
-font-weight:900;
-
-background:linear-gradient(
-90deg,
-#5AC8FF,
-#5E8CFF,
-#8A63FF,
-#FFB357);
-
--webkit-background-clip:text;
-
--webkit-text-fill-color:transparent;
+height:90px;
 
 }
 
-.nav-links{
+#hero{
 
-display:flex;
-
-gap:35px;
-
-}
-
-.nav-links a{
-
-text-decoration:none;
-
-color:#50627E;
-
-font-size:18px;
-
-font-weight:700;
-
-transition:.3s;
-
-}
-
-.nav-links a:hover{
-
-color:#5E8CFF;
-
-}
-
-/* ---------------- HERO ---------------- */
-
-.content{
-
-flex:1;
+min-height:420px;
 
 display:flex;
 
 flex-direction:column;
 
+justify-content:center;
+
 align-items:center;
 
-padding:40px;
-
-overflow:auto;
+text-align:center;
 
 }
 
-.hero{
+#tools{
 
-text-align:center;
+display:grid;
+
+gap:25px;
 
 margin-top:40px;
 
 }
 
-.logo{
+#footer{
 
-font-size:90px;
-
-font-weight:900;
-
-background:linear-gradient(
-90deg,
-#45C4FF,
-#5B8CFF,
-#8A63FF,
-#FFA44D);
-
--webkit-background-clip:text;
-
--webkit-text-fill-color:transparent;
-
-margin-bottom:15px;
+height:120px;
 
 }
-
-.hero-title{
-
-font-size:38px;
-
-font-weight:700;
-
-color:#23324D;
-
-margin-bottom:20px;
-
-}
-
-.hero-text{
-
-font-size:22px;
-
-color:#60708F;
-
-line-height:1.8;
-
-max-width:700px;
-
-margin:auto;
-
-}
-
-.hero-buttons{
-
-margin-top:35px;
-
-display:flex;
-
-gap:20px;
-
-justify-content:center;
-
-flex-wrap:wrap;
-
-}
-
-.primary-btn{
-
-background:linear-gradient(
-90deg,
-#5AA9FF,
-#8B7CFF);
-
-border:none;
-
-color:white;
-
-padding:18px 40px;
-
-font-size:18px;
-
-border-radius:40px;
-
-cursor:pointer;
-
-box-shadow:0 10px 30px rgba(90,169,255,.35);
-
-}
-
-.secondary-btn{
-
-background:white;
-
-border:2px solid #DCE6FF;
-
-padding:18px 40px;
-
-font-size:18px;
-
-border-radius:40px;
-
-cursor:pointer;
-
-color:#23324D;
-
-}
-
-
