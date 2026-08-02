@@ -1,33 +1,72 @@
-/* ==============================
-      WebBag Aurora UI v2
-============================== */
+const navbar=document.getElementById("navbar");
 
-const navbar = document.getElementById("navbar");
+navbar.innerHTML=`
 
-navbar.innerHTML = `
+<div class="logo">
 
-<div class="brand">
-
-    WebBag
+WebBag
 
 </div>
 
-<div class="nav-menu">
+<nav>
 
-    <a href="#">الرئيسية</a>
+<a href="#">الرئيسية</a>
 
-    <a href="#">الأدوات</a>
+<a href="#">الأدوات</a>
 
-    <a href="#">المميزات</a>
+<a href="#">المميزات</a>
 
-    <a href="#">الأسعار</a>
+<a href="#">تواصل معنا</a>
 
-    <button class="pro-btn">
+</nav>
 
-        WebBag Pro
+<button class="pro-btn">
 
-    </button>
+WebBag Pro
+
+</button>
+
+`;
+
+const hero=document.getElementById("hero");
+
+hero.innerHTML=`
+
+<h1>
+
+WebBag
+
+</h1>
+
+<h2>
+
+منصة أدوات الذكاء الاصطناعي
+
+</h2>
+
+<p>
+
+جميع أدوات الذكاء الاصطناعي التي تحتاجها
+في مكان واحد...
+بسرعة، وأناقة، وذكاء.
+
+</p>
+
+<div class="hero-buttons">
+
+<button class="start">
+
+ابدأ الآن
+
+</button>
+
+<button class="explore">
+
+استكشف الأدوات
+
+</button>
 
 </div>
 
 `;
+
