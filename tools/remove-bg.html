@@ -5,8 +5,7 @@
 
 <meta charset="UTF-8">
 
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>إزالة الخلفية | WebBag</title>
 
@@ -78,18 +77,24 @@ WebBag Pro
 
 <p class="hero-text">
 
-ارفع أي صورة وسيتم حذف الخلفية باستخدام الذكاء الاصطناعي.
+ارفع صورة وسيقوم الذكاء الاصطناعي بإزالة الخلفية.
 
 </p>
+
+<div class="upload-box">
 
 <input
 type="file"
 id="imageInput"
 accept="image/*">
 
-<br><br>
+<img id="preview">
 
-<button class="primary-btn">
+</div>
+
+<button
+id="removeBtn"
+class="primary-btn">
 
 إزالة الخلفية
 
@@ -99,6 +104,8 @@ accept="image/*">
 
 </div>
 
+<script src="remove-bg.js"></script>
+
 </body>
 
-  </html>
+</html>
