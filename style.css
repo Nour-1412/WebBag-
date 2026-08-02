@@ -1,28 +1,32 @@
-/* ==================================================
-               WebBag Aurora UI v1.0
-================================================== */
+/* ===================================================
+   WebBag Aurora V2
+   Version : 2.0
+   Author  : ChatGPT
+=================================================== */
 
 :root{
 
---blue:#5EC8FF;
+--bg:#EEF5FF;
 
---cyan:#88E8FF;
-
---purple:#8B72FF;
-
---pink:#E7B7FF;
-
---gold:#FFB54A;
-
---text:#24344F;
-
---muted:#74829D;
-
---glass:rgba(255,255,255,.45);
+--surface:rgba(255,255,255,.42);
 
 --border:rgba(255,255,255,.55);
 
---shadow:0 20px 60px rgba(89,135,255,.18);
+--text:#24344F;
+
+--muted:#73829D;
+
+--blue:#56C9FF;
+
+--cyan:#8BE8FF;
+
+--purple:#8B73FF;
+
+--gold:#FFB84D;
+
+--shadow:0 20px 60px rgba(70,120,255,.15);
+
+--radius:28px;
 
 }
 
@@ -46,17 +50,17 @@ body{
 
 font-family:"Cairo",sans-serif;
 
-background:#F5F8FF;
-
-overflow-x:hidden;
+background:var(--bg);
 
 color:var(--text);
 
+overflow-x:hidden;
+
+min-height:100vh;
+
 }
 
-/* ==========================
-        Aurora Background
-========================== */
+/* ================= Aurora ================= */
 
 .aurora{
 
@@ -64,9 +68,9 @@ position:fixed;
 
 inset:0;
 
-z-index:-3;
-
 overflow:hidden;
+
+z-index:-3;
 
 background:
 
@@ -74,7 +78,7 @@ linear-gradient(
 
 180deg,
 
-#FBFDFF,
+#FCFDFF,
 
 #EEF5FF
 
@@ -92,37 +96,37 @@ filter:blur(120px);
 
 opacity:.75;
 
-animation:float 14s ease-in-out infinite;
+animation:auroraFloat 18s ease-in-out infinite;
 
 }
 
 .blob1{
 
-width:500px;
+width:480px;
 
-height:500px;
+height:480px;
 
-background:#7ED7FF;
-
-top:-120px;
+background:#7DD8FF;
 
 left:-120px;
+
+top:-100px;
 
 }
 
 .blob2{
 
-width:550px;
+width:560px;
 
-height:550px;
+height:560px;
 
-background:#9B87FF;
+background:#A58CFF;
 
 right:-180px;
 
 top:120px;
 
-animation-delay:2s;
+animation-delay:3s;
 
 }
 
@@ -132,39 +136,37 @@ width:450px;
 
 height:450px;
 
-background:#FFD18B;
+background:#FFD089;
 
-bottom:-120px;
+left:35%;
 
-left:30%;
+bottom:-140px;
 
-animation-delay:5s;
+animation-delay:6s;
 
 }
 
-@keyframes float{
+@keyframes auroraFloat{
 
 0%{
 
-transform:translateY(0) translateX(0);
+transform:translate(0,0);
 
 }
 
 50%{
 
-transform:translateY(-40px) translateX(30px);
+transform:translate(40px,-35px);
 
 }
 
 100%{
 
-transform:translateY(0) translateX(0);
+transform:translate(0,0);
 
 }
 
 }
-
-/* طبقة نعومة */
 
 .noise{
 
@@ -172,40 +174,38 @@ position:fixed;
 
 inset:0;
 
+pointer-events:none;
+
 z-index:-2;
 
 background:
 
 radial-gradient(
 
-rgba(255,255,255,.18),
+rgba(255,255,255,.20),
 
 transparent 70%
 
 );
 
-pointer-events:none;
-
 }
 
-/* ==========================
-        Main Layout
-========================== */
+/* ================= Layout ================= */
 
-.wrapper{
+.page{
 
 width:min(1320px,92%);
 
 margin:auto;
 
-padding:35px 0 70px;
+padding:35px 0 80px;
 
-   }
-/* ==================================================
+}
+/* ===================================================
                     NAVBAR
-================================================== */
+=================================================== */
 
-#navbar{
+.navbar{
 
 display:flex;
 
@@ -213,25 +213,27 @@ align-items:center;
 
 justify-content:space-between;
 
-margin-bottom:70px;
+gap:20px;
 
 padding:18px 30px;
 
-background:rgba(255,255,255,.38);
+margin-bottom:70px;
+
+background:var(--surface);
+
+border:1px solid var(--border);
+
+border-radius:var(--radius);
 
 backdrop-filter:blur(18px);
 
 -webkit-backdrop-filter:blur(18px);
 
-border:1px solid rgba(255,255,255,.55);
-
-border-radius:24px;
-
 box-shadow:var(--shadow);
 
 }
 
-.nav-logo{
+.brand{
 
 font-size:34px;
 
@@ -257,7 +259,7 @@ var(--gold)
 
 }
 
-#navbar nav{
+.menu{
 
 display:flex;
 
@@ -267,7 +269,7 @@ gap:28px;
 
 }
 
-#navbar nav a{
+.menu a{
 
 text-decoration:none;
 
@@ -283,13 +285,13 @@ position:relative;
 
 }
 
-#navbar nav a:hover{
+.menu a:hover{
 
 color:var(--purple);
 
 }
 
-#navbar nav a::after{
+.menu a::after{
 
 content:"";
 
@@ -321,7 +323,7 @@ transition:.30s;
 
 }
 
-#navbar nav a:hover::after{
+.menu a:hover::after{
 
 width:70%;
 
@@ -349,7 +351,7 @@ background:linear-gradient(
 
 90deg,
 
-#5EC8FF,
+#58C9FF,
 
 #8A72FF
 
@@ -357,7 +359,7 @@ background:linear-gradient(
 
 box-shadow:
 
-0 15px 35px rgba(94,200,255,.35);
+0 15px 35px rgba(88,201,255,.35);
 
 transition:.35s;
 
@@ -369,14 +371,14 @@ transform:translateY(-3px);
 
 box-shadow:
 
-0 20px 45px rgba(94,200,255,.45);
+0 20px 45px rgba(88,201,255,.45);
 
-   }
-/* ==================================================
+}
+/* ===================================================
                     HERO
-================================================== */
+=================================================== */
 
-#hero{
+.hero{
 
 display:flex;
 
@@ -388,63 +390,55 @@ justify-content:center;
 
 text-align:center;
 
-padding:90px 20px;
-
-margin-top:30px;
+padding:90px 20px 70px;
 
 }
 
-#hero h1{
+.hero-logo{
 
-font-size:82px;
+font-size:clamp(68px,10vw,110px);
 
 font-weight:900;
 
-line-height:1.1;
+line-height:1;
+
+margin-bottom:20px;
 
 background:linear-gradient(
-
 90deg,
-
-#5EC8FF,
-
+#58C9FF,
 #7F8DFF,
-
-#B37CFF,
-
-#FFB648
-
+#A875FF,
+#FFB84D
 );
 
 -webkit-background-clip:text;
 
 -webkit-text-fill-color:transparent;
 
-margin-bottom:25px;
-
 }
 
-#hero h2{
+.hero-title{
 
-font-size:40px;
+font-size:clamp(28px,4vw,42px);
 
 font-weight:800;
 
-color:#24344F;
-
 margin-bottom:20px;
+
+color:var(--text);
 
 }
 
-#hero p{
-
-font-size:22px;
-
-color:#6E7C98;
-
-line-height:1.9;
+.hero-text{
 
 max-width:760px;
+
+font-size:clamp(18px,2vw,22px);
+
+line-height:2;
+
+color:var(--muted);
 
 margin-bottom:45px;
 
@@ -454,176 +448,189 @@ margin-bottom:45px;
 
 display:flex;
 
-gap:22px;
+justify-content:center;
+
+align-items:center;
+
+gap:20px;
 
 flex-wrap:wrap;
 
-justify-content:center;
-
 }
 
-.start{
+.primary-btn{
 
 border:none;
 
+cursor:pointer;
+
 padding:18px 42px;
 
-border-radius:60px;
+border-radius:999px;
 
 font-size:18px;
 
 font-weight:800;
 
+color:white;
+
+background:linear-gradient(
+90deg,
+#58C9FF,
+#8A72FF
+);
+
+box-shadow:0 20px 45px rgba(88,201,255,.35);
+
+transition:.35s;
+
+}
+
+.primary-btn:hover{
+
+transform:translateY(-4px);
+
+box-shadow:0 25px 55px rgba(88,201,255,.45);
+
+}
+
+.secondary-btn{
+
+border:2px solid rgba(88,201,255,.20);
+
+background:white;
+
+color:var(--text);
+
 cursor:pointer;
 
-color:white;
+padding:18px 42px;
+
+border-radius:999px;
+
+font-size:18px;
+
+font-weight:800;
+
+transition:.35s;
+
+}
+
+.secondary-btn:hover{
+
+background:#F8FBFF;
+
+transform:translateY(-4px);
+
+box-shadow:0 15px 35px rgba(0,0,0,.08);
+
+  }
+/* ===================================================
+                    TOOLS
+=================================================== */
+
+.tools{
+
+display:grid;
+
+grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+
+gap:28px;
+
+margin-top:70px;
+
+padding-bottom:60px;
+
+}
+
+.tool-card{
+
+background:rgba(255,255,255,.42);
+
+backdrop-filter:blur(18px);
+
+-webkit-backdrop-filter:blur(18px);
+
+border:1px solid rgba(255,255,255,.55);
+
+border-radius:28px;
+
+padding:28px;
+
+box-shadow:0 20px 50px rgba(90,130,255,.12);
+
+transition:.35s;
+
+cursor:pointer;
+
+position:relative;
+
+overflow:hidden;
+
+}
+
+.tool-card::before{
+
+content:"";
+
+position:absolute;
+
+top:0;
+
+left:0;
+
+width:100%;
+
+height:5px;
 
 background:linear-gradient(
 
 90deg,
 
-#5EC8FF,
+#58C9FF,
 
-#8A72FF
+#8A72FF,
+
+#FFB84D
 
 );
 
-box-shadow:
+}
 
-0 20px 45px rgba(94,200,255,.35);
+.tool-card:hover{
 
-transition:.35s;
+transform:translateY(-10px);
+
+box-shadow:0 30px 70px rgba(90,130,255,.18);
 
 }
 
-.start:hover{
+.tool-icon{
 
-transform:translateY(-4px);
+font-size:44px;
+
+margin-bottom:18px;
 
 }
 
-.explore{
+.tool-title{
 
-padding:18px 42px;
-
-border-radius:60px;
-
-font-size:18px;
+font-size:24px;
 
 font-weight:800;
 
-cursor:pointer;
+margin-bottom:12px;
 
-background:white;
-
-border:2px solid rgba(94,200,255,.25);
-
-color:#24344F;
-
-transition:.35s;
+color:var(--text);
 
 }
 
-.explore:hover{
+.tool-desc{
 
-background:#F6F9FF;
+font-size:17px;
 
-transform:translateY(-4px);
+line-height:1.8;
 
-   }
-/* ===========================
-   إصلاح عرض الصفحة على الهاتف
-=========================== */
+color:var(--muted);
 
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
-
-html,
-body{
-    width:100%;
-    overflow-x:hidden;
-}
-
-body{
-    min-height:100vh;
-}
-
-/* الحاوية الرئيسية */
-
-.container{
-    width:100%;
-    max-width:100%;
-    overflow:hidden;
-}
-
-/* شريط التنقل */
-
-.navbar{
-    width:100%;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    flex-wrap:wrap;
-    gap:15px;
-    padding:20px;
-}
-
-/* روابط القائمة */
-
-.nav-links{
-    display:flex;
-    flex-wrap:wrap;
-    justify-content:center;
-    gap:18px;
-}
-
-/* محتوى الصفحة */
-
-.content{
-    width:100%;
-    max-width:100%;
-    padding:20px;
-}
-
-/* قسم البداية */
-
-.hero{
-    width:100%;
-    max-width:900px;
-    margin:auto;
-    text-align:center;
-}
-
-/* اللوجو */
-
-.hero-logo{
-    width:100%;
-    font-size:clamp(55px,12vw,95px);
-}
-
-/* العنوان */
-
-.hero-title{
-    font-size:clamp(28px,6vw,42px);
-}
-
-/* الوصف */
-
-.hero-text{
-    width:100%;
-    font-size:clamp(18px,4vw,22px);
-}
-
-/* الأزرار */
-
-.hero-buttons{
-    display:flex;
-    flex-wrap:wrap;
-    justify-content:center;
-    gap:15px;
-}
-
-
+  }
