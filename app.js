@@ -97,3 +97,34 @@ ${tool.description}
 `;
 
 });
+/* ==========================================
+        Hover Animation
+========================================== */
+
+const cards = document.querySelectorAll(".tool-card");
+
+cards.forEach(card=>{
+
+card.addEventListener("mousemove",(e)=>{
+
+const rect=card.getBoundingClientRect();
+
+const x=e.clientX-rect.left;
+
+const y=e.clientY-rect.top;
+
+card.style.background=
+
+`radial-gradient(circle at ${x}px ${y}px,
+rgba(255,255,255,.95),
+rgba(255,255,255,.42))`;
+
+});
+
+card.addEventListener("mouseleave",()=>{
+
+card.style.background="rgba(255,255,255,.42)";
+
+});
+
+});
