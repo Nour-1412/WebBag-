@@ -739,5 +739,22 @@ scale(1.15)
 rotate(-8deg);
 
    }
+/* ==========================================
+        Card Click Effect
+========================================== */
+
+.tool-card{
+
+cursor:pointer;
+
+user-select:none;
+
+}
+
+.tool-card:active{
+
+transform:scale(.98);
+
+   }
 
 
