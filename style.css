@@ -531,4 +531,99 @@ background:#F6F9FF;
 transform:translateY(-4px);
 
    }
+/* ===========================
+   إصلاح عرض الصفحة على الهاتف
+=========================== */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html,
+body{
+    width:100%;
+    overflow-x:hidden;
+}
+
+body{
+    min-height:100vh;
+}
+
+/* الحاوية الرئيسية */
+
+.container{
+    width:100%;
+    max-width:100%;
+    overflow:hidden;
+}
+
+/* شريط التنقل */
+
+.navbar{
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:15px;
+    padding:20px;
+}
+
+/* روابط القائمة */
+
+.nav-links{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:18px;
+}
+
+/* محتوى الصفحة */
+
+.content{
+    width:100%;
+    max-width:100%;
+    padding:20px;
+}
+
+/* قسم البداية */
+
+.hero{
+    width:100%;
+    max-width:900px;
+    margin:auto;
+    text-align:center;
+}
+
+/* اللوجو */
+
+.logo{
+    width:100%;
+    font-size:clamp(55px,12vw,95px);
+}
+
+/* العنوان */
+
+.hero-title{
+    font-size:clamp(28px,6vw,42px);
+}
+
+/* الوصف */
+
+.hero-text{
+    width:100%;
+    font-size:clamp(18px,4vw,22px);
+}
+
+/* الأزرار */
+
+.hero-buttons{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:15px;
+}
+
 
