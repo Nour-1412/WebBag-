@@ -1,144 +1,30 @@
-import { runGateway } from "./ai/gateway.js";
+const navbar = document.getElementById("navbar");
 
-const app = document.getElementById("app");
+navbar.innerHTML = `
 
-function renderHome() {
+<div class="brand">
 
-    app.innerHTML = `
+WebBag
 
-        <div class="home">
+</div>
 
-            <h2>مرحبًا بك في WebBag AI</h2>
+<div class="nav-menu">
 
-            <p>
+<a href="#">الرئيسية</a>
 
-                اختر الخدمة التي تريد استخدامها.
+<a href="#">الأدوات</a>
 
-            </p>
+<a href="#">المميزات</a>
 
-            <div class="services">
+<a href="#">الأسعار</a>
 
-                <button id="removeBg">
+<button class="pro-btn">
 
-                    إزالة الخلفية
+WebBag Pro
 
-                </button>
+</button>
 
-                <button id="pdfTool">
+</div>
 
-                    تحويل إلى PDF
+`;
 
-                </button>
-
-                <button id="ocrTool">
-
-                    OCR
-
-                </button>
-
-            </div>
-
-        </div>
-
-    `;
-
-    document
-    .getElementById("removeBg")
-    .onclick = () => {
-
-        renderBackgroundRemover();
-
-    };
-
-    document
-        .getElementById("pdfTool")
-        .onclick = () => {
-
-            alert("قريبًا 🚀");
-
-        };
-
-    document
-        .getElementById("ocrTool")
-        .onclick = () => {
-
-            alert("قريبًا 🚀");
-
-        };
-
-}
-
-renderHome();
-function renderBackgroundRemover() {
-
-    app.innerHTML = `
-
-        <h2>🖼️ إزالة الخلفية</h2>
-
-        <p>
-
-            اختر صورة لإزالة الخلفية باستخدام الذكاء الاصطناعي.
-
-        </p>
-
-        <input
-            type="file"
-            id="imageInput"
-            accept="image/*"
-        >
-
-        <br><br>
-
-        <button id="removeButton">
-
-            إزالة الخلفية
-
-        </button>
-
-        <br><br>
-
-        <button id="backHome">
-
-            ← الرجوع للرئيسية
-
-        </button>
-
-    `;
-
-    document
-        .getElementById("backHome")
-        .onclick = renderHome;
-
-
-document
-    .getElementById("removeButton")
-    .onclick = async () => {
-
-        const input = document.getElementById("imageInput");
-
-        if (!input.files.length) {
-
-            alert("اختر صورة أولاً.");
-
-            return;
-
-        }
-
-        const file = input.files[0];
-
-        alert("⏳ جاري إزالة الخلفية...");
-
-        const result = await runGateway(file);
-
-        if (!result.success) {
-
-            alert(result.error);
-
-            return;
-
-        }
-
-        alert("🎉 تمت إزالة الخلفية بنجاح!");
-
-    };
-}
