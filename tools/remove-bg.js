@@ -57,9 +57,11 @@ removeBtn.addEventListener("click", async () => {
 
     catch(error){
 
-        console.error(error);
+    console.error(error);
 
-        removeBtn.textContent = "حدث خطأ";
+    alert(error.message);
+
+    removeBtn.textContent = "حدث خطأ";
 
     }
 
