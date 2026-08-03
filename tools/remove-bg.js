@@ -1,6 +1,11 @@
 import WebBagAI from "../webbag-engine.js";
 const input = document.getElementById("imageInput");
 const preview = document.getElementById("preview");
+const progress =
+document.querySelector(".progress-fill");
+
+const progressText =
+document.querySelector(".progress-text");
 const removeBtn = document.getElementById("removeBtn");
 
 let selectedFile = null;
