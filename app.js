@@ -200,7 +200,7 @@ categoryCards.forEach(card => {
 
             } else {
 
-                tool.style.display = "none";
+                tool.style.display = "flex";
 
             }
 
@@ -216,7 +216,7 @@ showAllBtn.addEventListener("click", () => {
 
     document.querySelectorAll(".tool-card").forEach(card => {
 
-        card.style.display = "";
+        card.style.display = "flex";
 
     });
 
