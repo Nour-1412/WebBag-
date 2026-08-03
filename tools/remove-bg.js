@@ -44,9 +44,13 @@ removeBtn.addEventListener("click", async () => {
 
     try{
 
-        await WebBagAI.removeBackground(selectedFile);
+       const result = await WebBagAI.removeBackground(selectedFile);
 
-        removeBtn.textContent = "✅ تم إزالة الخلفية";
+const url = URL.createObjectURL(result);
+
+preview.src = url;
+
+removeBtn.textContent = "✅ تمت المعالجة"; 
 
     }
 
