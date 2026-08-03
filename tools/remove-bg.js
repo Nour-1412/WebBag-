@@ -46,10 +46,29 @@ removeBtn.addEventListener("click", async () => {
 
     removeBtn.disabled = true;
     removeBtn.textContent = "⏳ جاري إزالة الخلفية...";
+    progress.style.width = "0%";
+progressText.textContent = "جاري تجهيز الصورة...";
+
+let percent = 0;
+
+const loading = setInterval(() => {
+
+    percent += 8;
+
+    if(percent > 90) percent = 90;
+
+    progress.style.width = percent + "%";
+
+},250);
 
     try{
 
        const result = await WebBagAI.removeBackground(selectedFile);
+        clearInterval(loading);
+
+progress.style.width = "100%";
+
+progressText.textContent = "اكتملت المعالجة";
 
 const url = URL.createObjectURL(result);
 
@@ -62,6 +81,11 @@ removeBtn.textContent = "✅ تمت المعالجة";
     catch(error){
 
         console.error(error);
+        clearInterval(loading);
+
+progress.style.width = "0%";
+
+progressText.textContent = "فشل الاتصال بالمحرك";
 
         alert(error.message);
 
