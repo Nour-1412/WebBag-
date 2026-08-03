@@ -897,4 +897,76 @@ font-weight:700;
 color:#74829D;
 
 }
+/* ==========================================
+            Drag & Drop
+========================================== */
+
+.upload-area{
+
+width:min(650px,92vw);
+
+margin:40px auto;
+
+padding:45px 20px;
+
+border:3px dashed rgba(94,200,255,.45);
+
+border-radius:28px;
+
+background:rgba(255,255,255,.35);
+
+backdrop-filter:blur(18px);
+
+text-align:center;
+
+cursor:pointer;
+
+transition:.35s;
+
+}
+
+.upload-area:hover{
+
+transform:translateY(-4px);
+
+border-color:#8A72FF;
+
+}
+
+.upload-area.drag{
+
+background:rgba(94,200,255,.12);
+
+border-color:#5EC8FF;
+
+transform:scale(1.02);
+
+}
+
+.upload-icon{
+
+font-size:55px;
+
+margin-bottom:18px;
+
+}
+
+.upload-area h3{
+
+font-size:26px;
+
+margin-bottom:10px;
+
+color:#24344F;
+
+}
+
+.upload-area p{
+
+font-size:18px;
+
+color:#74829D;
+
+   }
+
 
