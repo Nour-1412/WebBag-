@@ -63,7 +63,9 @@ const loading = setInterval(() => {
 
     try{
 
-       const result = await WebBagAI.removeBackground(selectedFile);
+      await new Promise(resolve => setTimeout(resolve, 2500));
+
+const result = await WebBagAI.removeBackground(selectedFile); 
         clearInterval(loading);
 
 progress.style.width = "100%";
