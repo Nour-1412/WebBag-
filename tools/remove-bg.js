@@ -73,11 +73,28 @@ input.addEventListener("change", function () {
 
     reader.onload = function (e) {
 
-        preview.src = e.target.result;
+    uploadArea.innerHTML = `
 
-        preview.style.display = "block";
+        <img
+            src="${e.target.result}"
+            class="upload-thumb"
+        >
 
-    };
+        <h3>${file.name}</h3>
+
+        <p>
+
+            ${(file.size / 1024 / 1024).toFixed(2)} MB
+
+        </p>
+
+    `;
+
+    preview.src = e.target.result;
+
+    preview.style.display = "block";
+
+};
 
     reader.readAsDataURL(file);
 
