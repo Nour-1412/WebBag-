@@ -968,5 +968,20 @@ font-size:18px;
 color:#74829D;
 
    }
+.upload-thumb{
+
+    width:140px;
+
+    height:140px;
+
+    object-fit:cover;
+
+    border-radius:22px;
+
+    margin-bottom:18px;
+
+    box-shadow:0 15px 35px rgba(0,0,0,.15);
+
+}
 
 
