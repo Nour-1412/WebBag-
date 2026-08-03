@@ -329,3 +329,43 @@ new IntersectionObserver(entries=>{
 });
 
 observer.observe(statsSection);
+
+/* ==========================================
+        Popular Tools
+========================================== */
+
+const popularSection =
+document.getElementById("popularTools");
+
+tools
+.filter(tool => tool.popular)
+.forEach(tool => {
+
+popularSection.innerHTML += `
+
+<div class="tool-card"
+data-page="${tool.page}">
+
+<div class="tool-icon">
+
+${tool.icon}
+
+</div>
+
+<div class="tool-title">
+
+${tool.title}
+
+</div>
+
+<div class="tool-desc">
+
+${tool.description}
+
+</div>
+
+</div>
+
+`;
+
+});
