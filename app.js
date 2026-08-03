@@ -174,81 +174,50 @@ window.location.href = page;
         Categories Filter
 ========================================== */
 
-const categoryCards =
-document.querySelectorAll(".category-card");
+const categoryCards = document.querySelectorAll(".category-card");
 
-categoryCards.forEach(card=>{
+categoryCards.forEach(card => {
 
-card.addEventListener("click",()=>{
+    card.addEventListener("click", () => {
 
-const text =
-card.querySelector("span")
-.textContent.trim();
+        const text = card.querySelector("span").textContent.trim();
 
-let category = "";
+        let category = "";
 
-switch(text){
+        if (text === "الذكاء الاصطناعي") category = "ai";
+        if (text === "الصور") category = "images";
+        if (text === "الملفات") category = "files";
+        if (text === "الترجمة") category = "translate";
+        if (text === "الصوت") category = "audio";
 
-case "الذكاء الاصطناعي":
-category="ai";
-break;
+        const cards = document.querySelectorAll(".tool-card");
 
-case "الصور":
-category="images";
-break;
+        cards.forEach(tool => {
 
-case "الملفات":
-category="files";
-break;
+            if (tool.dataset.category === category) {
 
-case "الترجمة":
-category="translate";
-break;
+                tool.style.display = "";
 
-case "الصوت":
-category="audio";
-break;
+            } else {
 
-default:
+                tool.style.display = "none";
 
-document
-.querySelectorAll(".tool-card")
-.forEach(c=>c.style.display="block");
+            }
 
-return;
+        });
 
-}
-
-document
-.querySelectorAll(".tool-card")
-.forEach(tool=>{
-
-if(tool.dataset.category===category){
-
-tool.style.display="block";
-
-}else{
-
-tool.style.display="none";
-
-}
+    });
 
 });
 
-});
+const showAllBtn = document.getElementById("showAllBtn");
 
-});
-const showAllBtn =
-document.getElementById("showAllBtn");
+showAllBtn.addEventListener("click", () => {
 
-showAllBtn.addEventListener("click",()=>{
+    document.querySelectorAll(".tool-card").forEach(card => {
 
-document
-.querySelectorAll(".tool-card")
-.forEach(card=>{
+        card.style.display = "";
 
-card.style.display="block";
-
-});
+    });
 
 });
