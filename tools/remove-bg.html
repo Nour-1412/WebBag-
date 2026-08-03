@@ -83,9 +83,28 @@ WebBag Pro
 
 <div class="upload-box">
 
-<input
-type="file"
-id="imageInput"
+<div class="upload-area" id="uploadArea">
+
+    <input
+        type="file"
+        id="imageInput"
+        accept="image/*"
+        hidden
+    >
+
+    <div class="upload-icon">
+        📂
+    </div>
+
+    <h3>
+        اسحب الصورة هنا
+    </h3>
+
+    <p>
+        أو اضغط لاختيار صورة
+    </p>
+
+</div>
 accept="image/*">
 
 <img id="preview">
