@@ -1,5 +1,42 @@
 import WebBagAI from "../webbag-engine.js";
 const input = document.getElementById("imageInput");
+const uploadArea = document.getElementById("uploadArea");
+
+uploadArea.addEventListener("click", () => {
+
+    input.click();
+
+});
+
+uploadArea.addEventListener("dragover", (e) => {
+
+    e.preventDefault();
+
+    uploadArea.classList.add("drag");
+
+});
+
+uploadArea.addEventListener("dragleave", () => {
+
+    uploadArea.classList.remove("drag");
+
+});
+
+uploadArea.addEventListener("drop", (e) => {
+
+    e.preventDefault();
+
+    uploadArea.classList.remove("drag");
+
+    const file = e.dataTransfer.files[0];
+
+    if (!file) return;
+
+    input.files = e.dataTransfer.files;
+
+    input.dispatchEvent(new Event("change"));
+
+});
 const preview = document.getElementById("preview");
 const progress =
 document.querySelector(".progress-fill");
@@ -99,3 +136,40 @@ progressText.textContent = "فشل الاتصال بالمحرك";
 
 });
 
+uploadArea.addEventListener("click",()=>{
+
+    imageInput.click();
+
+});
+
+uploadArea.addEventListener("dragover",(e)=>{
+
+    e.preventDefault();
+
+    uploadArea.classList.add("drag");
+
+});
+
+uploadArea.addEventListener("dragleave",()=>{
+
+    uploadArea.classList.remove("drag");
+
+});
+
+uploadArea.addEventListener("drop",(e)=>{
+
+    e.preventDefault();
+
+    uploadArea.classList.remove("drag");
+
+    const file = e.dataTransfer.files[0];
+
+    if(!file) return;
+
+    imageInput.files = e.dataTransfer.files;
+
+    imageInput.dispatchEvent(
+        new Event("change")
+    );
+
+});
