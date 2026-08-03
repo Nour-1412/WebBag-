@@ -247,3 +247,79 @@ document
     });
 
 });
+/* ==========================================
+        Animated Stats Counter
+========================================== */
+
+const statNumbers = document.querySelectorAll(".stat-number");
+
+let statsStarted = false;
+
+function startStats(){
+
+    if(statsStarted) return;
+
+    statsStarted = true;
+
+    statNumbers.forEach(stat=>{
+
+        const target = +stat.dataset.target;
+
+        let current = 0;
+
+        const increment = target / 120;
+
+        const timer = setInterval(()=>{
+
+            current += increment;
+
+            if(current >= target){
+
+                current = target;
+
+                clearInterval(timer);
+
+            }
+
+            if(target >= 1000000){
+
+                stat.textContent =
+                (current/1000000).toFixed(1).replace(".0","") + "M+";
+
+            }
+
+            else if(target >= 1000){
+
+                stat.textContent =
+                Math.floor(current/1000) + "K+";
+
+            }
+
+            else{
+
+                stat.textContent =
+                Math.floor(current) + "+";
+
+            }
+
+        },15);
+
+    });
+
+}
+
+const statsSection =
+document.querySelector(".stats-section");
+
+const observer =
+new IntersectionObserver(entries=>{
+
+    if(entries[0].isIntersecting){
+
+        startStats();
+
+    }
+
+});
+
+observer.observe(statsSection);
