@@ -55,11 +55,26 @@ input.addEventListener("change", function () {
 
     selectedFile = file;
 
+    uploadArea.innerHTML = `
+
+        <div class="upload-icon">✅</div>
+
+        <h3>${file.name}</h3>
+
+        <p>
+
+            ${(file.size / 1024 / 1024).toFixed(2)} MB
+
+        </p>
+
+    `;
+
     const reader = new FileReader();
 
     reader.onload = function (e) {
 
         preview.src = e.target.result;
+
         preview.style.display = "block";
 
     };
