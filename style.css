@@ -1062,5 +1062,41 @@ box-shadow:0 25px 55px rgba(94,200,255,.20);
 
    }
 
+.show-all-btn{
 
+margin-bottom:35px;
+
+padding:14px 28px;
+
+border:none;
+
+border-radius:40px;
+
+background:linear-gradient(
+90deg,
+#5EC8FF,
+#8A72FF
+);
+
+color:white;
+
+font-size:17px;
+
+font-weight:700;
+
+cursor:pointer;
+
+transition:.3s;
+
+box-shadow:0 15px 35px rgba(94,200,255,.18);
+
+}
+
+.show-all-btn:hover{
+
+transform:translateY(-3px);
+
+box-shadow:0 22px 45px rgba(94,200,255,.25);
+
+}
 
