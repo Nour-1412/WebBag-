@@ -18,11 +18,16 @@ class WebBagEngine {
 
     }
 
-    async removeBackground(file){
+   async removeBackground(file){
 
-        throw new Error("Background Engine Not Connected");
+    /*
+        هنا سيتم ربط أي خدمة إزالة خلفية لاحقًا.
+        حالياً نعيد الملف كما هو حتى يكتمل بناء المنصة.
+    */
 
-    }
+    return file;
+
+   } 
 
     async chat(message){
 
