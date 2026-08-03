@@ -238,4 +238,17 @@ tool.style.display="none";
 });
 
 });
+const showAllBtn =
+document.getElementById("showAllBtn");
 
+showAllBtn.addEventListener("click",()=>{
+
+document
+.querySelectorAll(".tool-card")
+.forEach(card=>{
+
+card.style.display="block";
+
+});
+
+});
