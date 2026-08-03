@@ -171,36 +171,56 @@ window.location.href = page;
 });
 
 /* ==========================================
-        Categories Filter
+        Categories Filter V2
 ========================================== */
 
-const categoryCards = document.querySelectorAll(".category-card");
+const categoryMap = {
 
-categoryCards.forEach(card => {
+    "الذكاء الاصطناعي":"ai",
 
-    card.addEventListener("click", () => {
+    "الصور":"images",
 
-        const text = card.querySelector("span").textContent.trim();
+    "الملفات":"files",
 
-        let category = "";
+    "الترجمة":"translate",
 
-        if (text === "الذكاء الاصطناعي") category = "ai";
-        if (text === "الصور") category = "images";
-        if (text === "الملفات") category = "files";
-        if (text === "الترجمة") category = "translate";
-        if (text === "الصوت") category = "audio";
+    "الصوت":"audio"
 
-        const cards = document.querySelectorAll(".tool-card");
+};
 
-        cards.forEach(tool => {
+const categoryCards =
+document.querySelectorAll(".category-card");
 
-            if (tool.dataset.category === category) {
+const toolCards =
+document.querySelectorAll(".tool-card");
 
-                tool.style.display = "";
+categoryCards.forEach(card=>{
 
-            } else {
+    card.addEventListener("click",()=>{
 
-                tool.style.display = "flex";
+        categoryCards.forEach(c=>{
+
+            c.classList.remove("active-category");
+
+        });
+
+        card.classList.add("active-category");
+
+        const text =
+        card.querySelector("span").textContent.trim();
+
+        const category =
+        categoryMap[text];
+
+        toolCards.forEach(tool=>{
+
+            if(tool.dataset.category===category){
+
+                tool.style.display="block";
+
+            }else{
+
+                tool.style.display="none";
 
             }
 
@@ -210,13 +230,19 @@ categoryCards.forEach(card => {
 
 });
 
-const showAllBtn = document.getElementById("showAllBtn");
+document
+.getElementById("showAllBtn")
+.addEventListener("click",()=>{
 
-showAllBtn.addEventListener("click", () => {
+    categoryCards.forEach(c=>{
 
-    document.querySelectorAll(".tool-card").forEach(card => {
+        c.classList.remove("active-category");
 
-        card.style.display = "flex";
+    });
+
+    toolCards.forEach(tool=>{
+
+        tool.style.display="block";
 
     });
 
