@@ -1100,3 +1100,12 @@ box-shadow:0 22px 45px rgba(94,200,255,.25);
 
 }
 
+.active-category{
+
+background:white !important;
+
+transform:translateY(-8px);
+
+box-shadow:0 25px 60px rgba(94,200,255,.28);
+
+   }
