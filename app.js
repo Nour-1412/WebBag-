@@ -7,42 +7,48 @@ const tools = [
 icon:"🖼️",
 title:"إزالة الخلفية",
 description:"احذف خلفية أي صورة بالذكاء الاصطناعي.",
-page:"tools/remove-bg.html"
+page:"tools/remove-bg.html",
+category:"images"
 },
 
 {
 icon:"📄",
 title:"تحويل PDF",
 description:"تحويل ملفات PDF إلى Word والعكس.",
-page:"tools/pdf.html"
+page:"tools/pdf.html",
+category:"files"
 },
 
 {
 icon:"🎙️",
 title:"الصوت إلى نص",
 description:"تحويل الملفات الصوتية إلى نص.",
-page:"tools/speech.html"
+page:"tools/speech.html",
+category:"audio"
 },
 
 {
 icon:"🤖",
 title:"Chat AI",
 description:"محادثة ذكية تعتمد على الذكاء الاصطناعي.",
-page:"tools/chat.html"
+page:"tools/chat.html",
+category:"ai"
 },
 
 {
 icon:"🎨",
 title:"توليد الصور",
 description:"إنشاء صور بالذكاء الاصطناعي.",
-page:"tools/image.html"
+page:"tools/image.html",
+category:"images"
 },
 
 {
 icon:"🌍",
 title:"الترجمة",
 description:"ترجمة احترافية بأكثر من 100 لغة.",
-page:"tools/translate.html"
+page:"tools/translate.html",
+category:"translate"
 }
 
 ];
