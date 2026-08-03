@@ -60,7 +60,8 @@ tools.forEach(tool=>{
 toolsSection.innerHTML += `
 
 <div class="tool-card"
-data-page="${tool.page}">
+data-page="${tool.page}"
+data-category="${tool.category}">
 
 <div class="tool-icon">
 
@@ -169,5 +170,72 @@ window.location.href = page;
 
 });
 
+/* ==========================================
+        Categories Filter
+========================================== */
 
+const categoryCards =
+document.querySelectorAll(".category-card");
+
+categoryCards.forEach(card=>{
+
+card.addEventListener("click",()=>{
+
+const text =
+card.querySelector("span")
+.textContent.trim();
+
+let category = "";
+
+switch(text){
+
+case "الذكاء الاصطناعي":
+category="ai";
+break;
+
+case "الصور":
+category="images";
+break;
+
+case "الملفات":
+category="files";
+break;
+
+case "الترجمة":
+category="translate";
+break;
+
+case "الصوت":
+category="audio";
+break;
+
+default:
+
+document
+.querySelectorAll(".tool-card")
+.forEach(c=>c.style.display="block");
+
+return;
+
+}
+
+document
+.querySelectorAll(".tool-card")
+.forEach(tool=>{
+
+if(tool.dataset.category===category){
+
+tool.style.display="block";
+
+}else{
+
+tool.style.display="none";
+
+}
+
+});
+
+});
+
+});
 
