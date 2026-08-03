@@ -9,6 +9,7 @@ title:"إزالة الخلفية",
 description:"احذف خلفية أي صورة بالذكاء الاصطناعي.",
 page:"tools/remove-bg.html",
 category:"images"
+            popular:true
 },
 
 {
@@ -17,6 +18,7 @@ title:"تحويل PDF",
 description:"تحويل ملفات PDF إلى Word والعكس.",
 page:"tools/pdf.html",
 category:"files"
+            popular:true
 },
 
 {
@@ -25,6 +27,7 @@ title:"الصوت إلى نص",
 description:"تحويل الملفات الصوتية إلى نص.",
 page:"tools/speech.html",
 category:"audio"
+            
 },
 
 {
@@ -33,6 +36,7 @@ title:"Chat AI",
 description:"محادثة ذكية تعتمد على الذكاء الاصطناعي.",
 page:"tools/chat.html",
 category:"ai"
+            popular:true
 },
 
 {
@@ -41,6 +45,7 @@ title:"توليد الصور",
 description:"إنشاء صور بالذكاء الاصطناعي.",
 page:"tools/image.html",
 category:"images"
+            popular:true
 },
 
 {
@@ -49,6 +54,7 @@ title:"الترجمة",
 description:"ترجمة احترافية بأكثر من 100 لغة.",
 page:"tools/translate.html",
 category:"translate"
+            
 }
 
 ];
