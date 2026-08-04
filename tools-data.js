@@ -1,8 +1,7 @@
 export const tools = [
 
 {
-id:1,
-image:"https://cdn.simpleicons.org/openai",
+icon:"🤖",
 title:"ChatGPT",
 description:"أفضل مساعد ذكاء اصطناعي للكتابة والبرمجة.",
 category:"ai",
@@ -14,7 +13,7 @@ page:"tools/chatgpt.html"
 
 {
 id:2,
-image:"https://cdn.simpleicons.org/midjourney",
+icon:"🎨",
 title:"Midjourney",
 description:"إنشاء صور احترافية بالذكاء الاصطناعي.",
 category:"images",
@@ -38,7 +37,7 @@ page:"tools/pdf.html"
 
 {
 id:4,
-image:"https://cdn.simpleicons.org/deepl",
+icon:"🌍",
 title:"DeepL",
 description:"ترجمة احترافية بأكثر من 100 لغة.",
 category:"translate",
