@@ -1409,3 +1409,64 @@ display:block;
 margin:auto;
 
 }
+/* ================= ABOUT ================= */
+
+.about-section{
+
+display:grid;
+
+grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+
+gap:30px;
+
+margin:70px 0;
+
+}
+
+.about-card{
+
+background:rgba(255,255,255,.45);
+
+backdrop-filter:blur(18px);
+
+-webkit-backdrop-filter:blur(18px);
+
+border:1px solid rgba(255,255,255,.5);
+
+border-radius:28px;
+
+padding:35px;
+
+transition:.35s;
+
+box-shadow:0 20px 45px rgba(90,130,255,.12);
+
+}
+
+.about-card:hover{
+
+transform:translateY(-8px);
+
+box-shadow:0 30px 60px rgba(90,130,255,.18);
+
+}
+
+.about-card h2{
+
+font-size:28px;
+
+margin-bottom:20px;
+
+color:#5A82FF;
+
+}
+
+.about-card p{
+
+font-size:18px;
+
+line-height:2;
+
+color:var(--muted);
+
+   }
