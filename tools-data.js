@@ -6,7 +6,7 @@ id:1,
 
 icon:"🤖",
 
-name:"ChatGPT",
+title:"ChatGPT",
 
 description:"أفضل مساعد ذكاء اصطناعي للكتابة والبرمجة.",
 
@@ -26,7 +26,7 @@ id:2,
 
 icon:"🎨",
 
-name:"Midjourney",
+title:"Midjourney",
 
 description:"إنشاء صور احترافية بالذكاء الاصطناعي.",
 
@@ -46,7 +46,7 @@ id:3,
 
 icon:"📄",
 
-name:"PDF AI",
+title:"PDF AI",
 
 description:"تلخيص وتحويل وقراءة ملفات PDF.",
 
@@ -66,7 +66,7 @@ id:4,
 
 icon:"🌍",
 
-name:"DeepL",
+title:"DeepL",
 
 description:"ترجمة احترافية بأكثر من 100 لغة.",
 
@@ -86,7 +86,7 @@ id:5,
 
 icon:"🎙️",
 
-name:"Whisper",
+title:"Whisper",
 
 description:"تحويل الصوت إلى نص.",
 
