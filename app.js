@@ -14,7 +14,10 @@ data-category="${tool.category}">
 
 <div class="tool-icon">
 
-${tool.icon}
+<img
+class="tool-logo"
+src="${tool.image}"
+alt="${tool.title}">
 
 </div>
 
