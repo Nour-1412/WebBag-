@@ -282,7 +282,7 @@ document.getElementById("popularTools");
 
 tools
 .filter(tool => tool.popular)
-.forEach(tool => {
+.forEach(tool=>{
 
 popularSection.innerHTML += `
 
@@ -290,22 +290,20 @@ popularSection.innerHTML += `
 data-page="${tool.page}">
 
 <div class="tool-icon">
-
 ${tool.icon}
-
 </div>
 
 <div class="tool-title">
-
 ${tool.title}
-
 </div>
 
 <div class="tool-desc">
-
 ${tool.description}
-
 </div>
+
+<button class="tool-btn" type="button">
+استخدام الأداة
+</button>
 
 </div>
 
@@ -317,50 +315,14 @@ ${tool.description}
         Popular Tools Dynamic
 ========================================== */
 
-const popularToolsContainer =
-document.getElementById("popularTools");
+document
+.querySelectorAll("#popularTools .tool-card")
+.forEach(card=>{
 
-if(popularToolsContainer){
+card.addEventListener("click",()=>{
 
-tools
-.filter(tool => tool.popular)
-
-.forEach(tool=>{
-
-popularToolsContainer.innerHTML += `
-
-<div class="tool-card">
-
-<div class="tool-icon">
-
-${tool.icon}
-
-</div>
-
-<div class="tool-title">
-
-${tool.name}
-
-</div>
-
-<div class="tool-desc">
-
-${tool.description}
-
-</div>
-
-<button class="tool-btn"
-
-onclick="window.open('${tool.url}','_blank')">
-
-استخدام الأداة
-
-</button>
-
-</div>
-
-`;
+window.location.href = card.dataset.page;
 
 });
 
-}
+});
