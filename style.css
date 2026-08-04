@@ -1182,3 +1182,44 @@ font-weight:700;
 color:#394B63;
 
                             }
+.tool-btn{
+
+margin-top:20px;
+
+width:100%;
+
+padding:14px;
+
+border:none;
+
+border-radius:18px;
+
+font-size:17px;
+
+font-weight:700;
+
+cursor:pointer;
+
+background:linear-gradient(
+
+90deg,
+
+#58C9FF,
+
+#8A72FF
+
+);
+
+color:white;
+
+transition:.35s;
+
+}
+
+.tool-btn:hover{
+
+transform:translateY(-3px);
+
+box-shadow:0 20px 40px rgba(88,201,255,.30);
+
+   }
