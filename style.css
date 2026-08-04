@@ -1546,3 +1546,81 @@ color:var(--muted);
 font-size:17px;
 
    }
+/* ================= JOURNEY ================= */
+
+.journey-section{
+
+margin:100px 0;
+
+}
+
+.timeline{
+
+position:relative;
+
+padding-right:30px;
+
+border-right:3px solid #5A82FF;
+
+}
+
+.timeline-item{
+
+position:relative;
+
+margin-bottom:50px;
+
+}
+
+.timeline-dot{
+
+position:absolute;
+
+right:-41px;
+
+top:8px;
+
+width:20px;
+
+height:20px;
+
+border-radius:50%;
+
+background:#5A82FF;
+
+box-shadow:0 0 20px rgba(90,130,255,.5);
+
+}
+
+.timeline-content{
+
+background:rgba(255,255,255,.45);
+
+backdrop-filter:blur(18px);
+
+border-radius:22px;
+
+padding:25px;
+
+border:1px solid rgba(255,255,255,.45);
+
+}
+
+.timeline-content h3{
+
+color:#5A82FF;
+
+margin-bottom:10px;
+
+font-size:24px;
+
+}
+
+.timeline-content p{
+
+line-height:1.9;
+
+color:var(--muted);
+
+                             }
+
