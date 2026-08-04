@@ -343,8 +343,19 @@ margin:auto;
         Theme Mode
 ========================================== */
 
-const themeBtn =
-document.getElementById("themeToggle");
+const themeBtn = document.getElementById("themeToggle");
+
+console.log("Theme Button:", themeBtn);
+
+if(themeBtn){
+
+    console.log("Theme button found ✅");
+
+}else{
+
+    console.log("Theme button NOT found ❌");
+
+}
 
 const savedTheme =
 localStorage.getItem("theme");
