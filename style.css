@@ -1396,3 +1396,16 @@ body.dark .footer-copy{
 color:#bfc6d9;
 
    }
+.tool-logo{
+
+width:60px;
+
+height:60px;
+
+object-fit:contain;
+
+display:block;
+
+margin:auto;
+
+}
