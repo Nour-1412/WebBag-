@@ -18,6 +18,8 @@ rating:"4.9",
 
 url:"https://chat.openai.com"
 
+page:"tools/chatgpt.html"
+
 },
 
 {
@@ -38,6 +40,8 @@ rating:"4.8",
 
 url:"https://www.midjourney.com"
 
+page:"tools/midjourney.html"
+
 },
 
 {
@@ -57,7 +61,7 @@ popular:true,
 rating:"4.7",
 
 url:"#"
-
+page:"tools/pdf.html"
 },
 
 {
@@ -77,7 +81,7 @@ popular:true,
 rating:"4.9",
 
 url:"https://www.deepl.com"
-
+page:"tools/deepl.html"
 },
 
 {
@@ -97,7 +101,7 @@ popular:false,
 rating:"4.8",
 
 url:"#"
-
+page:"tools/whisper.html"
 }
 
 ];
