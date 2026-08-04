@@ -329,3 +329,16 @@ window.location.href = card.dataset.page;
 });
 
 });
+.tool-logo{
+
+width:60px;
+
+height:60px;
+
+object-fit:contain;
+
+display:block;
+
+margin:auto;
+
+}
