@@ -312,3 +312,55 @@ ${tool.description}
 `;
 
 });
+
+/* ==========================================
+        Popular Tools Dynamic
+========================================== */
+
+const popularToolsContainer =
+document.getElementById("popularTools");
+
+if(popularToolsContainer){
+
+tools
+.filter(tool => tool.popular)
+
+.forEach(tool=>{
+
+popularToolsContainer.innerHTML += `
+
+<div class="tool-card">
+
+<div class="tool-icon">
+
+${tool.icon}
+
+</div>
+
+<div class="tool-title">
+
+${tool.name}
+
+</div>
+
+<div class="tool-desc">
+
+${tool.description}
+
+</div>
+
+<button class="tool-btn"
+
+onclick="window.open('${tool.url}','_blank')">
+
+استخدام الأداة
+
+</button>
+
+</div>
+
+`;
+
+});
+
+}
