@@ -1314,3 +1314,85 @@ color:var(--muted);
 margin-top:20px;
 
    }
+
+/* ================= DARK MODE ================= */
+
+.theme-btn{
+
+margin-right:15px;
+
+width:48px;
+
+height:48px;
+
+border:none;
+
+border-radius:50%;
+
+cursor:pointer;
+
+font-size:22px;
+
+background:rgba(255,255,255,.45);
+
+backdrop-filter:blur(18px);
+
+-webkit-backdrop-filter:blur(18px);
+
+transition:.3s;
+
+}
+
+.theme-btn:hover{
+
+transform:rotate(20deg) scale(1.1);
+
+}
+
+body.dark{
+
+background:#0B1020;
+
+color:#fff;
+
+}
+
+body.dark .navbar,
+
+body.dark .tool-card,
+
+body.dark .category-card,
+
+body.dark .footer,
+
+body.dark .stat-card{
+
+background:rgba(20,25,45,.55);
+
+border:1px solid rgba(255,255,255,.08);
+
+}
+
+body.dark .tool-title,
+
+body.dark .hero-title,
+
+body.dark .section-title,
+
+body.dark a{
+
+color:#fff;
+
+}
+
+body.dark .tool-desc,
+
+body.dark .hero-text,
+
+body.dark .footer-text,
+
+body.dark .footer-copy{
+
+color:#bfc6d9;
+
+   }
