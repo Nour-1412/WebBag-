@@ -375,4 +375,4 @@ localStorage.setItem("theme","light");
 }
 
 });
-alert("app.js يعمل");
+
