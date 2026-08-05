@@ -376,3 +376,33 @@ localStorage.setItem("theme","light");
 
 });
 
+/* ==========================================
+        Scroll Animation
+========================================== */
+
+const observer = new IntersectionObserver((entries)=>{
+
+entries.forEach(entry=>{
+
+if(entry.isIntersecting){
+
+entry.target.classList.add("show");
+
+}
+
+});
+
+});
+
+document.querySelectorAll(
+
+".tool-card, .stat-card, .category-card, .feature-card, .price-card, .about-card, .why-card, .team-card, .value-card, .timeline-item"
+
+).forEach(el=>{
+
+el.classList.add("hidden");
+
+observer.observe(el);
+
+});
+
