@@ -394,15 +394,18 @@ entry.target.classList.add("show");
 
 });
 
+setTimeout(() => {
+
 document.querySelectorAll(
-
 ".tool-card, .stat-card, .category-card, .feature-card, .price-card, .about-card, .why-card, .team-card, .value-card, .timeline-item"
-
-).forEach(el=>{
+).forEach(el => {
 
 el.classList.add("hidden");
 
 observer.observe(el);
 
 });
+
+}, 300);
+
 
