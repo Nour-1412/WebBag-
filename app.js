@@ -411,4 +411,47 @@ observer.observe(el);
 
 }, 300);
 
+/* ==========================================
+        FAQ
+========================================== */
 
+document.querySelectorAll(".faq-question").forEach(btn=>{
+
+btn.addEventListener("click",()=>{
+
+const answer =
+btn.nextElementSibling;
+
+const icon =
+btn.querySelector("span");
+
+document.querySelectorAll(".faq-answer").forEach(item=>{
+
+if(item!==answer){
+
+item.style.maxHeight=null;
+
+item.previousElementSibling.querySelector("span").textContent="+";
+
+}
+
+});
+
+if(answer.style.maxHeight){
+
+answer.style.maxHeight=null;
+
+icon.textContent="+";
+
+}else{
+
+answer.style.maxHeight=
+answer.scrollHeight+"px";
+
+icon.textContent="−";
+
+}
+
+});
+
+});
