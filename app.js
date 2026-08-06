@@ -414,7 +414,7 @@ observer.observe(el);
 /* ==========================================
         FAQ
 ========================================== */
-
+alert("وصلنا إلى FAQ");
 document.querySelectorAll(".faq-question").forEach(btn=>{
 
 btn.addEventListener("click",()=>{
