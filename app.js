@@ -355,6 +355,7 @@ document.body.classList.add("dark");
 themeBtn.textContent="☀️";
 
 }
+if(themeBtn){
 
 themeBtn.addEventListener("click",()=>{
 
@@ -375,6 +376,8 @@ localStorage.setItem("theme","light");
 }
 
 });
+
+}
 
 /* ==========================================
         Scroll Animation
