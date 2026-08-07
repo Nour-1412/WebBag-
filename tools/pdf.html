@@ -29,11 +29,9 @@
 
 <div class="aurora">
 
-<div class="blob blob1"></div>
-
-<div class="blob blob2"></div>
-
-<div class="blob blob3"></div>
+    <div class="blob blob1"></div>
+    <div class="blob blob2"></div>
+    <div class="blob blob3"></div>
 
 </div>
 
@@ -43,225 +41,257 @@
 
 <header class="navbar">
 
-<div class="brand">
+    <div class="brand">
+        WebBag
+    </div>
 
-WebBag
+    <nav class="menu">
 
-</div>
+        <a href="../index.html">
+            الرئيسية
+        </a>
 
-<nav class="menu">
+        <a href="../about.html">
+            من نحن
+        </a>
 
-<a href="../index.html">
-الرئيسية
-</a>
+        <a href="../features.html">
+            المميزات
+        </a>
 
-<a href="../about.html">
-من نحن
-</a>
+        <a href="../pricing.html">
+            الأسعار
+        </a>
 
-<a href="../features.html">
-المميزات
-</a>
+        <a href="../contact.html">
+            تواصل معنا
+        </a>
 
-<a href="../pricing.html">
-الأسعار
-</a>
+        <a href="../faq.html">
+            الأسئلة الشائعة
+        </a>
 
-<a href="../contact.html">
-تواصل معنا
-</a>
+    </nav>
 
-<a href="../faq.html">
-الأسئلة الشائعة
-</a>
-
-</nav>
-
-<button class="pro-btn">
-
-WebBag Pro
-
-</button>
+    <button class="pro-btn">
+        WebBag Pro
+    </button>
 
 </header>
 
 <section class="hero">
 
-<h1 class="hero-logo">
+    <h1 class="hero-logo">
+        📄
+    </h1>
 
-📄
+    <h2 class="hero-title">
+        PDF AI
+    </h2>
 
-</h1>
+    <p class="hero-text">
+        ارفع ملف PDF ودعه يصبح أسهل في القراءة والفهم.
+    </p>
 
-<h2 class="hero-title">
+</section>
 
-PDF AI
+<!-- ================= PDF AI TOOL ================= -->
 
-</h2>
+<section class="pdf-tool-section">
 
-<p class="hero-text">
+    <div class="pdf-tool-card">
 
-تلخيص وتحويل وقراءة ملفات PDF بسهولة.
+        <div class="pdf-upload-icon">
+            📤
+        </div>
 
-</p>
+        <h2>
+            ارفع ملف PDF
+        </h2>
 
-  </section>
-  <!-- ================= PDF AI TOOL ================= -->
+        <p>
+            اختر ملف PDF من جهازك للبدء.
+        </p>
 
-<section class="tool-page">
+        <label
+            for="pdfFile"
+            class="pdf-upload-btn">
 
-<div class="tool-hero">
+            📁 اختيار ملف PDF
 
-<div class="tool-logo">
+        </label>
 
-📄
+        <input
+            type="file"
+            id="pdfFile"
+            accept=".pdf,application/pdf"
+            hidden>
 
-</div>
+        <p
+            id="pdfFileName"
+            class="pdf-file-name">
 
-<h1 class="hero-title">
+            لم يتم اختيار ملف
 
-PDF AI
+        </p>
 
-</h1>
+    </div>
 
-<p class="hero-text">
+</section>
+      <!-- ================= PDF RESULTS ================= -->
 
-أداة ذكية تساعدك على قراءة ملفات PDF
-وتلخيص محتواها واستخراج المعلومات المهمة بسهولة.
+<section class="pdf-results-section">
 
-</p>
+    <div class="pdf-result-card">
+
+        <h2>
+            📋 محتوى الملف
+        </h2>
+
+        <div
+            id="pdfStatus"
+            class="pdf-status">
+
+            في انتظار اختيار ملف PDF...
+
+        </div>
+
+        <div
+            id="pdfText"
+            class="pdf-text">
+
+            <p class="pdf-placeholder">
+
+                سيظهر محتوى الملف هنا بعد قراءته.
+
+            </p>
+
+        </div>
+
+        <div class="pdf-actions">
+
+            <button
+                id="summarizePdf"
+                class="pdf-action-btn"
+                type="button"
+                disabled>
+
+                ✨ تلخيص الملف
+
+            </button>
+
+            <button
+                id="copyPdfText"
+                class="pdf-action-btn secondary"
+                type="button"
+                disabled>
+
+                📋 نسخ النص
+
+            </button>
+
+            <button
+                id="clearPdf"
+                class="pdf-action-btn danger"
+                type="button">
+
+                🗑️ مسح الملف
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <div
+        id="pdfSummaryCard"
+        class="pdf-result-card pdf-summary-card">
+
+        <h2>
+            ✨ ملخص الملف
+        </h2>
+
+        <div
+            id="pdfSummary"
+            class="pdf-text">
+
+            <p class="pdf-placeholder">
+
+                سيظهر الملخص هنا بعد اختيار الملف.
+
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
 
 <div class="tool-actions">
 
-<a
-href="#"
-class="chatgpt-btn">
+    <a
+        href="../index.html#tools"
+        class="back-btn">
 
-🚀 استخدام PDF AI
+        🛠️ العودة إلى الأدوات
 
-</a>
-
-<a
-href="../index.html#tools"
-class="back-btn">
-
-🛠️ العودة إلى الأدوات
-
-</a>
+    </a>
 
 </div>
-
-</div>
-
-
-<div class="tool-details">
-
-<div class="about-card">
-
-<h2>
-
-💡 عن PDF AI
-
-</h2>
-
-<p>
-
-يمكنك استخدام أدوات الذكاء الاصطناعي
-للتعامل مع ملفات PDF وفهم محتواها
-وتلخيص النصوص واستخراج المعلومات المهمة.
-
-</p>
-
-</div>
-
-
-<div class="about-card">
-
-<h2>
-
-⭐ تقييم WebBag
-
-</h2>
-
-<p>
-
-تقييم PDF AI على WebBag:
-
-<strong>
-
-4.7 / 5
-
-</strong>
-
-</p>
-
-</div>
-
-</div>
-
-  </section>
-  <!-- ================= FOOTER ================= -->
+      <!-- ================= FOOTER ================= -->
 
 <footer class="footer">
 
-<div class="footer-logo">
+    <div class="footer-logo">
+        💙 WebBag
+    </div>
 
-💙 WebBag
+    <p class="footer-text">
+        منصة عربية تجمع أفضل أدوات الذكاء الاصطناعي في مكان واحد.
+    </p>
 
-</div>
+    <div class="footer-links">
 
-<p class="footer-text">
+        <a href="../index.html">
+            الرئيسية
+        </a>
 
-منصة عربية تجمع أفضل أدوات الذكاء الاصطناعي
-في مكان واحد.
+        <a href="../about.html">
+            من نحن
+        </a>
 
-</p>
+        <a href="../features.html">
+            المميزات
+        </a>
 
-<div class="footer-links">
+        <a href="../pricing.html">
+            الأسعار
+        </a>
 
-<a href="../index.html">
-الرئيسية
-</a>
+        <a href="../contact.html">
+            تواصل معنا
+        </a>
 
-<a href="../about.html">
-من نحن
-</a>
+        <a href="../faq.html">
+            الأسئلة الشائعة
+        </a>
 
-<a href="../features.html">
-المميزات
-</a>
+    </div>
 
-<a href="../pricing.html">
-الأسعار
-</a>
+    <div class="footer-social">
 
-<a href="../contact.html">
-تواصل معنا
-</a>
+        <a href="#">🌍</a>
+        <a href="#">💼</a>
+        <a href="#">🐦</a>
+        <a href="#">📘</a>
 
-<a href="../faq.html">
-الأسئلة الشائعة
-</a>
+    </div>
 
-</div>
-
-<div class="footer-social">
-
-<a href="#">🌍</a>
-
-<a href="#">💼</a>
-
-<a href="#">🐦</a>
-
-<a href="#">📘</a>
-
-</div>
-
-<div class="footer-copy">
-
-© 2026 WebBag — جميع الحقوق محفوظة.
-
-</div>
+    <div class="footer-copy">
+        © 2026 WebBag — جميع الحقوق محفوظة.
+    </div>
 
 </footer>
 
@@ -269,6 +299,9 @@ class="back-btn">
 
 <script type="module" src="../app.js"></script>
 
+<script type="module" src="pdf.js"></script>
+
 </body>
 
-  </html>
+</html>
+
