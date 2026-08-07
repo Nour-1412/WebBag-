@@ -2365,3 +2365,125 @@ line-height:1.9;
 color:var(--muted);
 
 }
+/* ================= CHATGPT TOOL BUTTONS ================= */
+
+.tool-actions{
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:16px;
+
+    flex-wrap:wrap;
+
+    margin-top:30px;
+
+}
+
+.chatgpt-btn,
+.back-btn{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    min-width:210px;
+
+    padding:14px 24px;
+
+    border-radius:18px;
+
+    text-decoration:none;
+
+    font-family:"Cairo",sans-serif;
+
+    font-size:17px;
+
+    font-weight:700;
+
+    transition:all .3s ease;
+
+    box-sizing:border-box;
+
+}
+
+.chatgpt-btn{
+
+    background:linear-gradient(
+        135deg,
+        #5A82FF,
+        #8A72FF
+    );
+
+    color:white;
+
+    box-shadow:
+        0 10px 25px
+        rgba(90,130,255,.20);
+
+}
+
+.chatgpt-btn:hover{
+
+    transform:translateY(-3px);
+
+    box-shadow:
+        0 15px 32px
+        rgba(90,130,255,.30);
+
+}
+
+.back-btn{
+
+    background:rgba(255,255,255,.55);
+
+    color:#5A6FA8;
+
+    border:1px solid
+        rgba(90,130,255,.18);
+
+    box-shadow:
+        0 8px 20px
+        rgba(90,130,255,.08);
+
+}
+
+.back-btn:hover{
+
+    transform:translateY(-3px);
+
+    background:rgba(255,255,255,.8);
+
+    color:#4F70D9;
+
+}
+
+/* الهاتف */
+
+@media(max-width:600px){
+
+    .tool-actions{
+
+        flex-direction:column;
+
+        width:100%;
+
+    }
+
+    .chatgpt-btn,
+    .back-btn{
+
+        width:100%;
+
+        max-width:330px;
+
+        min-width:0;
+
+    }
+
+}
