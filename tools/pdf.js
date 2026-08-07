@@ -494,5 +494,531 @@ if (pdfStatus) {
         "✅ أداة PDF AI جاهزة.";
 
       }
+/* ==========================================
+   TEXT → PDF
+========================================== */
 
+const textToPdfInput =
+    document.getElementById("textToPdfInput");
+
+const createTextPdf =
+    document.getElementById("createTextPdf");
+
+
+if (createTextPdf) {
+
+    createTextPdf.addEventListener(
+        "click",
+        async () => {
+
+            const text =
+                textToPdfInput
+                    ? textToPdfInput.value.trim()
+                    : "";
+
+            if (!text) {
+
+                alert(
+                    "من فضلك اكتب النص أولاً."
+                );
+
+                return;
+            }
+
+
+            const buttonText =
+                createTextPdf.textContent;
+
+            createTextPdf.disabled = true;
+
+            createTextPdf.textContent =
+                "⏳ جارٍ إنشاء PDF...";
+
+
+            try {
+
+                const container =
+                    document.createElement("div");
+
+
+                container.style.position =
+                    "fixed";
+
+                container.style.left =
+                    "-10000px";
+
+                container.style.top =
+                    "0";
+
+                container.style.width =
+                    "800px";
+
+                container.style.padding =
+                    "50px";
+
+                container.style.background =
+                    "#ffffff";
+
+                container.style.color =
+                    "#222222";
+
+                container.style.fontFamily =
+                    "Cairo, Arial, sans-serif";
+
+                container.style.fontSize =
+                    "18px";
+
+                container.style.lineHeight =
+                    "2";
+
+                container.style.direction =
+                    "rtl";
+
+                container.style.textAlign =
+                    "right";
+
+                container.style.whiteSpace =
+                    "pre-wrap";
+
+                container.textContent =
+                    text;
+
+
+                document.body.appendChild(
+                    container
+                );
+
+
+                const {
+                    jsPDF
+                } = window.jspdf;
+
+
+                const pdf =
+                    new jsPDF({
+                        orientation:"p",
+                        unit:"mm",
+                        format:"a4"
+                    });
+
+
+                await pdf.html(
+                    container,
+                    {
+
+                        margin:15,
+
+                        autoPaging:"text",
+
+                        html2canvas:{
+                            scale:1.5,
+
+                            useCORS:true,
+
+                            backgroundColor:
+                                "#ffffff"
+                        },
+
+                        callback:function(doc){
+
+                            doc.save(
+                                "WebBag-Text.pdf"
+                            );
+
+                        }
+
+                    }
+                );
+
+
+                container.remove();
+
+
+            } catch(error){
+
+                console.error(error);
+
+                alert(
+                    "حدث خطأ أثناء إنشاء ملف PDF."
+                );
+
+            } finally {
+
+                createTextPdf.disabled =
+                    false;
+
+                createTextPdf.textContent =
+                    buttonText;
+
+            }
+
+        }
+    );
+
+}
+
+
+/* ==========================================
+   IMAGES → PDF
+========================================== */
+
+const imagesToPdfInput =
+    document.getElementById(
+        "imagesToPdfInput"
+    );
+
+const imagesPreview =
+    document.getElementById(
+        "imagesPreview"
+    );
+
+const createImagesPdf =
+    document.getElementById(
+        "createImagesPdf"
+    );
+
+
+let selectedImages = [];
+
+
+if (imagesToPdfInput) {
+
+    imagesToPdfInput.addEventListener(
+        "change",
+        () => {
+
+            selectedImages =
+                Array.from(
+                    imagesToPdfInput.files
+                );
+
+
+            if (!selectedImages.length){
+
+                imagesPreview.textContent =
+                    "لم يتم اختيار صور";
+
+                createImagesPdf.disabled =
+                    true;
+
+                return;
+
+            }
+
+
+            imagesPreview.innerHTML =
+                "";
+
+
+            selectedImages.forEach(
+                file => {
+
+                    const image =
+                        document.createElement(
+                            "img"
+                        );
+
+                    image.className =
+                        "image-preview-item";
+
+                    image.alt =
+                        file.name;
+
+
+                    const reader =
+                        new FileReader();
+
+
+                    reader.onload = event => {
+
+                        image.src =
+                            event.target.result;
+
+                    };
+
+
+                    reader.readAsDataURL(
+                        file
+                    );
+
+
+                    imagesPreview.appendChild(
+                        image
+                    );
+
+                }
+            );
+
+
+            createImagesPdf.disabled =
+                false;
+
+        }
+    );
+
+}
+
+
+if (createImagesPdf) {
+
+    createImagesPdf.addEventListener(
+        "click",
+        async () => {
+
+            if (!selectedImages.length){
+
+                return;
+
+            }
+
+
+            const buttonText =
+                createImagesPdf.textContent;
+
+            createImagesPdf.disabled =
+                true;
+
+            createImagesPdf.textContent =
+                "⏳ جارٍ إنشاء PDF...";
+
+
+            try {
+
+                const {
+                    jsPDF
+                } = window.jspdf;
+
+
+                let pdf = null;
+
+
+                for (
+                    let i = 0;
+                    i < selectedImages.length;
+                    i++
+                ){
+
+                    const file =
+                        selectedImages[i];
+
+
+                    const dataUrl =
+                        await readImageFile(
+                            file
+                        );
+
+
+                    const image =
+                        await loadPdfImage(
+                            dataUrl
+                        );
+
+
+                    const width =
+                        image.naturalWidth;
+
+                    const height =
+                        image.naturalHeight;
+
+
+                    const ratio =
+                        width / height;
+
+
+                    let pageWidth =
+                        210;
+
+                    let pageHeight =
+                        297;
+
+
+                    let imageWidth =
+                        pageWidth - 20;
+
+                    let imageHeight =
+                        imageWidth / ratio;
+
+
+                    if (
+                        imageHeight >
+                        pageHeight - 20
+                    ){
+
+                        imageHeight =
+                            pageHeight - 20;
+
+                        imageWidth =
+                            imageHeight * ratio;
+
+                    }
+
+
+                    if (!pdf){
+
+                        pdf =
+                            new jsPDF({
+                                orientation:
+                                    imageWidth >
+                                    imageHeight
+                                        ? "landscape"
+                                        : "portrait",
+
+                                unit:"mm",
+
+                                format:"a4"
+                            });
+
+                    } else {
+
+                        pdf.addPage(
+                            "a4",
+                            imageWidth >
+                            imageHeight
+                                ? "landscape"
+                                : "portrait"
+                        );
+
+                    }
+
+
+                    const x =
+                        (pdf.internal.pageSize.getWidth()
+                            - imageWidth) / 2;
+
+                    const y =
+                        (pdf.internal.pageSize.getHeight()
+                            - imageHeight) / 2;
+
+
+                    pdf.addImage(
+                        dataUrl,
+                        getImageFormat(file),
+                        x,
+                        y,
+                        imageWidth,
+                        imageHeight
+                    );
+
+                }
+
+
+                if (pdf){
+
+                    pdf.save(
+                        "WebBag-Images.pdf"
+                    );
+
+                }
+
+
+            } catch(error){
+
+                console.error(error);
+
+                alert(
+                    "حدث خطأ أثناء تحويل الصور إلى PDF."
+                );
+
+            } finally {
+
+                createImagesPdf.disabled =
+                    selectedImages.length === 0;
+
+                createImagesPdf.textContent =
+                    buttonText;
+
+            }
+
+        }
+    );
+
+}
+
+
+/* ==========================================
+   IMAGE HELPERS
+========================================== */
+
+function readImageFile(file){
+
+    return new Promise(
+        (resolve,reject) => {
+
+            const reader =
+                new FileReader();
+
+
+            reader.onload =
+                () => resolve(
+                    reader.result
+                );
+
+
+            reader.onerror =
+                reject;
+
+
+            reader.readAsDataURL(
+                file
+            );
+
+        }
+    );
+
+}
+
+
+function loadPdfImage(dataUrl){
+
+    return new Promise(
+        (resolve,reject) => {
+
+            const image =
+                new Image();
+
+
+            image.onload =
+                () => resolve(image);
+
+
+            image.onerror =
+                reject;
+
+
+            image.src =
+                dataUrl;
+
+        }
+    );
+
+}
+
+
+function getImageFormat(file){
+
+    const type =
+        file.type.toLowerCase();
+
+
+    if (
+        type.includes("png")
+    ){
+
+        return "PNG";
+
+    }
+
+
+    if (
+        type.includes("webp")
+    ){
+
+        return "WEBP";
+
+    }
+
+
+    return "JPEG";
+
+                       }
 
