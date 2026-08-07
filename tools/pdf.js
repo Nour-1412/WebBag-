@@ -495,7 +495,7 @@ if (pdfStatus) {
 
       }
 /* ==========================================
-   TEXT → PDF
+   TEXT → PDF — FIXED
 ========================================== */
 
 const textToPdfInput =
@@ -505,158 +505,126 @@ const createTextPdf =
     document.getElementById("createTextPdf");
 
 
-if (createTextPdf) {
+if (createTextPdf && textToPdfInput) {
 
-    createTextPdf.addEventListener(
-        "click",
-        async () => {
+    createTextPdf.addEventListener("click", () => {
 
-            const text =
-                textToPdfInput
-                    ? textToPdfInput.value.trim()
-                    : "";
+        const text =
+            textToPdfInput.value.trim();
 
-            if (!text) {
+        if (!text) {
 
-                alert(
-                    "من فضلك اكتب النص أولاً."
-                );
+            alert("من فضلك اكتب النص أولاً.");
 
-                return;
-            }
+            return;
+
+        }
 
 
-            const buttonText =
-                createTextPdf.textContent;
+        try {
 
-            createTextPdf.disabled = true;
+            const { jsPDF } =
+                window.jspdf;
 
-            createTextPdf.textContent =
-                "⏳ جارٍ إنشاء PDF...";
-
-
-            try {
-
-                const container =
-                    document.createElement("div");
+            const pdf =
+                new jsPDF({
+                    orientation: "p",
+                    unit: "mm",
+                    format: "a4"
+                });
 
 
-                container.style.position =
-                    "fixed";
+            const pageWidth =
+                pdf.internal.pageSize.getWidth();
 
-                container.style.left =
-                    "-10000px";
-
-                container.style.top =
-                    "0";
-
-                container.style.width =
-                    "800px";
-
-                container.style.padding =
-                    "50px";
-
-                container.style.background =
-                    "#ffffff";
-
-                container.style.color =
-                    "#222222";
-
-                container.style.fontFamily =
-                    "Cairo, Arial, sans-serif";
-
-                container.style.fontSize =
-                    "18px";
-
-                container.style.lineHeight =
-                    "2";
-
-                container.style.direction =
-                    "rtl";
-
-                container.style.textAlign =
-                    "right";
-
-                container.style.whiteSpace =
-                    "pre-wrap";
-
-                container.textContent =
-                    text;
+            const pageHeight =
+                pdf.internal.pageSize.getHeight();
 
 
-                document.body.appendChild(
-                    container
+            const margin = 18;
+
+            const maxWidth =
+                pageWidth - (margin * 2);
+
+
+            /*
+               نستخدم تقسيم النص إلى أسطر
+               بدل html2canvas حتى لا نحصل
+               على صفحة بيضاء.
+            */
+
+            pdf.setFontSize(16);
+
+            pdf.setTextColor(
+                35,
+                45,
+                70
+            );
+
+
+            const lines =
+                pdf.splitTextToSize(
+                    text,
+                    maxWidth
                 );
 
 
-                const {
-                    jsPDF
-                } = window.jspdf;
+            let y = margin;
 
 
-                const pdf =
-                    new jsPDF({
-                        orientation:"p",
-                        unit:"mm",
-                        format:"a4"
-                    });
+            const lineHeight = 8;
 
 
-                await pdf.html(
-                    container,
+            lines.forEach(line => {
+
+                if (
+                    y + lineHeight >
+                    pageHeight - margin
+                ) {
+
+                    pdf.addPage();
+
+                    y = margin;
+
+                }
+
+
+                pdf.text(
+                    line,
+                    pageWidth - margin,
+                    y,
                     {
-
-                        margin:15,
-
-                        autoPaging:"text",
-
-                        html2canvas:{
-                            scale:1.5,
-
-                            useCORS:true,
-
-                            backgroundColor:
-                                "#ffffff"
-                        },
-
-                        callback:function(doc){
-
-                            doc.save(
-                                "WebBag-Text.pdf"
-                            );
-
-                        }
-
+                        align: "right"
                     }
                 );
 
 
-                container.remove();
+                y += lineHeight;
+
+            });
 
 
-            } catch(error){
+            pdf.save(
+                "WebBag-Text.pdf"
+            );
 
-                console.error(error);
 
-                alert(
-                    "حدث خطأ أثناء إنشاء ملف PDF."
-                );
+        } catch (error) {
 
-            } finally {
+            console.error(
+                "TEXT PDF ERROR:",
+                error
+            );
 
-                createTextPdf.disabled =
-                    false;
-
-                createTextPdf.textContent =
-                    buttonText;
-
-            }
+            alert(
+                "حدث خطأ أثناء إنشاء ملف PDF."
+            );
 
         }
-    );
 
-}
+    });
 
+               }
 
 /* ==========================================
    IMAGES → PDF
