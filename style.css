@@ -2138,11 +2138,18 @@ text-align:center;
 
 display:grid;
 
-grid-template-columns:repeat(auto-fit,minmax(350px,1fr));
+grid-template-columns:repeat(
+    auto-fit,
+    minmax(min(350px, 100%), 1fr)
+);
 
 gap:40px;
 
 margin-top:50px;
+
+width:100%;
+
+box-sizing:border-box;
 
 }
 
@@ -2247,6 +2254,25 @@ transition:.3s;
 }
 
 .send-btn:hover{
+   .contact-info,
+.contact-form{
+
+width:100%;
+
+box-sizing:border-box;
+
+min-width:0;
+
+}
+
+.contact-form input,
+.contact-form textarea{
+
+width:100%;
+
+box-sizing:border-box;
+
+}
 
 transform:translateY(-3px);
 
