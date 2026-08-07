@@ -207,41 +207,40 @@ if (showAllBtn) {
 ========================================== */
 
 const popularSection =
-    document.getElementById("popularTools");
+document.getElementById("popularTools");
 
-if (popularSection && Array.isArray(tools)) {
+if(popularSection){
 
     tools
-        .filter(tool => tool.popular)
-        .forEach(tool => {
+    .filter(tool => tool.popular)
+    .slice(0, 3)
+    .forEach(tool => {
 
-            popularSection.innerHTML += `
+        popularSection.innerHTML += `
 
-                <div class="tool-card"
-                     data-page="${tool.page}"
-                     data-category="${tool.category}">
+        <div class="popular-tool">
 
-                    <div class="tool-icon">
-                        ${tool.icon}
-                    </div>
+            <div class="popular-icon">
+                ${tool.icon}
+            </div>
 
-                    <div class="tool-title">
-                        ${tool.title}
-                    </div>
+            <div class="popular-info">
 
-                    <div class="tool-desc">
-                        ${tool.description}
-                    </div>
-
-                    <button class="tool-btn" type="button">
-                        استخدام الأداة
-                    </button>
-
+                <div class="popular-title">
+                    ${tool.title}
                 </div>
 
-            `;
+                <div class="popular-rating">
+                    ⭐ ${tool.rating} / 5
+                </div>
 
-        });
+            </div>
+
+        </div>
+
+        `;
+
+    });
 
 }
 /* ==========================================
