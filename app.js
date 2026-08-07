@@ -1,70 +1,96 @@
 import { tools } from "./tools-data.js";
+
 /* ==========================================
-            WebBag Aurora V2
+        WebBag Aurora V3
+        Safe Multi-Page JavaScript
+========================================== */
+
+
+/* ==========================================
+        Tools Section
 ========================================== */
 
 const toolsSection = document.getElementById("tools");
-tools.forEach(tool=>{
 
-toolsSection.innerHTML += `
+if (toolsSection && Array.isArray(tools)) {
 
-<div class="tool-card"
-data-page="${tool.page}"
-data-category="${tool.category}">
+    tools.forEach(tool => {
 
-<div class="tool-icon">
+        toolsSection.innerHTML += `
 
-${tool.icon}
+            <div class="tool-card"
+                 data-page="${tool.page}"
+                 data-category="${tool.category}">
 
-</div>
+                <div class="tool-icon">
+                    ${tool.icon}
+                </div>
 
-<div class="tool-title">
+                <div class="tool-title">
+                    ${tool.title}
+                </div>
 
-${tool.title}
+                <div class="tool-desc">
+                    ${tool.description}
+                </div>
 
-</div>
+            </div>
 
-<div class="tool-desc">
+        `;
 
-${tool.description}
+    });
 
-</div>
-
-</div>
-
-`;
-
-});
+}
 
 /* ==========================================
-        Hover Animation
+        Tool Cards Hover Animation
 ========================================== */
 
-const cards = document.querySelectorAll(".tool-card");
+const toolCards = document.querySelectorAll(".tool-card");
 
-cards.forEach(card=>{
+toolCards.forEach(card => {
 
-card.addEventListener("mousemove",(e)=>{
+    card.addEventListener("mousemove", event => {
 
-const rect=card.getBoundingClientRect();
+        const rect = card.getBoundingClientRect();
 
-const x=e.clientX-rect.left;
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
 
-const y=e.clientY-rect.top;
+        card.style.background = `
+            radial-gradient(
+                circle at ${x}px ${y}px,
+                rgba(255,255,255,.95),
+                rgba(255,255,255,.42)
+            )
+        `;
 
-card.style.background=
+    });
 
-`radial-gradient(circle at ${x}px ${y}px,
-rgba(255,255,255,.95),
-rgba(255,255,255,.42))`;
+    card.addEventListener("mouseleave", () => {
+
+        card.style.background = "rgba(255,255,255,.42)";
+
+    });
 
 });
+/* ==========================================
+        Open Tool
+========================================== */
 
-card.addEventListener("mouseleave",()=>{
+document.querySelectorAll(".tool-card").forEach(card => {
 
-card.style.background="rgba(255,255,255,.42)";
+    card.addEventListener("click", () => {
 
-});
+        const page = card.dataset.page;
+
+        if (page) {
+
+            window.location.href = page;
+
+        }
+
+    });
 
 });
 /* ==========================================
@@ -73,105 +99,78 @@ card.style.background="rgba(255,255,255,.42)";
 
 const searchInput = document.getElementById("search");
 
-if(searchInput){
+if (searchInput) {
 
-searchInput.addEventListener("input",()=>{
+    searchInput.addEventListener("input", () => {
 
-const value = searchInput.value.toLowerCase();
+        const value = searchInput.value.trim().toLowerCase();
 
-const cards = document.querySelectorAll(".tool-card");
+        document.querySelectorAll(".tool-card").forEach(card => {
 
-cards.forEach(card=>{
+            const title =
+                card.querySelector(".tool-title")?.textContent.toLowerCase() || "";
 
-const title = card.querySelector(".tool-title").textContent.toLowerCase();
+            const description =
+                card.querySelector(".tool-desc")?.textContent.toLowerCase() || "";
 
-const desc = card.querySelector(".tool-desc").textContent.toLowerCase();
+            const matches =
+                title.includes(value) ||
+                description.includes(value);
 
-if(title.includes(value) || desc.includes(value)){
+            card.style.display = matches ? "block" : "none";
 
-card.style.display="block";
+        });
 
-}else{
+    });
 
-card.style.display="none";
-
-}
-
-});
-
-});
-
-            }
-
+                }
 /* ==========================================
-        Open Tool
-========================================== */
-
-document.querySelectorAll(".tool-card").forEach(card=>{
-
-card.addEventListener("click",()=>{
-
-const page = card.dataset.page;
-
-window.location.href = page;
-
-});
-
-});
-
-/* ==========================================
-        Categories Filter V2
+        Categories Filter
 ========================================== */
 
 const categoryMap = {
 
-    "الذكاء الاصطناعي":"ai",
-
-    "الصور":"images",
-
-    "الملفات":"files",
-
-    "الترجمة":"translate",
-
-    "الصوت":"audio"
+    "الذكاء الاصطناعي": "ai",
+    "الصور": "images",
+    "الملفات": "files",
+    "الترجمة": "translate",
+    "الصوت": "audio"
 
 };
 
 const categoryCards =
-document.querySelectorAll(".category-card");
+    document.querySelectorAll(".category-card");
 
-const toolCards =
-document.querySelectorAll(".tool-card");
+const allToolCards =
+    document.querySelectorAll(".tool-card");
 
-categoryCards.forEach(card=>{
 
-    card.addEventListener("click",()=>{
+categoryCards.forEach(card => {
 
-        categoryCards.forEach(c=>{
+    card.addEventListener("click", () => {
 
-            c.classList.remove("active-category");
+        categoryCards.forEach(item => {
+
+            item.classList.remove("active-category");
 
         });
 
         card.classList.add("active-category");
 
         const text =
-        card.querySelector("span").textContent.trim();
+            card.querySelector("span")?.textContent.trim();
 
         const category =
-        categoryMap[text];
+            categoryMap[text];
 
-        toolCards.forEach(tool=>{
+        if (!category) return;
 
-            if(tool.dataset.category===category){
+        allToolCards.forEach(tool => {
 
-                tool.style.display="block";
-
-            }else{
-
-                tool.style.display="none";
-
-            }
+            tool.style.display =
+                tool.dataset.category === category
+                    ? "block"
+                    : "none";
 
         });
 
@@ -179,279 +178,379 @@ categoryCards.forEach(card=>{
 
 });
 
-document
-.getElementById("showAllBtn")
-.addEventListener("click",()=>{
 
-    categoryCards.forEach(c=>{
+const showAllBtn =
+    document.getElementById("showAllBtn");
 
-        c.classList.remove("active-category");
 
-    });
+if (showAllBtn) {
 
-    toolCards.forEach(tool=>{
+    showAllBtn.addEventListener("click", () => {
 
-        tool.style.display="block";
+        categoryCards.forEach(card => {
 
-    });
+            card.classList.remove("active-category");
 
-});
-/* ==========================================
-        Animated Stats Counter
-========================================== */
+        });
 
-const statNumbers = document.querySelectorAll(".stat-number");
+        allToolCards.forEach(tool => {
 
-let statsStarted = false;
+            tool.style.display = "block";
 
-function startStats(){
-
-    if(statsStarted) return;
-
-    statsStarted = true;
-
-    statNumbers.forEach(stat=>{
-
-        const target = +stat.dataset.target;
-
-        let current = 0;
-
-        const increment = target / 120;
-
-        const timer = setInterval(()=>{
-
-            current += increment;
-
-            if(current >= target){
-
-                current = target;
-
-                clearInterval(timer);
-
-            }
-
-            if(target >= 1000000){
-
-                stat.textContent =
-                (current/1000000).toFixed(1).replace(".0","") + "M+";
-
-            }
-
-            else if(target >= 1000){
-
-                stat.textContent =
-                Math.floor(current/1000) + "K+";
-
-            }
-
-            else{
-
-                stat.textContent =
-                Math.floor(current) + "+";
-
-            }
-
-        },15);
+        });
 
     });
 
-}
-
-const statsSection =
-document.querySelector(".stats-section");
-
-const observer =
-new IntersectionObserver(entries=>{
-
-    if(entries[0].isIntersecting){
-
-        startStats();
-
-    }
-
-});
-
-observer.observe(statsSection);
-
+            }
 /* ==========================================
         Popular Tools
 ========================================== */
 
 const popularSection =
-document.getElementById("popularTools");
+    document.getElementById("popularTools");
 
-tools
-.filter(tool => tool.popular)
-.forEach(tool=>{
+if (popularSection && Array.isArray(tools)) {
 
-popularSection.innerHTML += `
+    tools
+        .filter(tool => tool.popular)
+        .forEach(tool => {
 
-<div class="tool-card"
-data-page="${tool.page}">
+            popularSection.innerHTML += `
 
-<div class="tool-icon">
-${tool.icon}
-</div>
+                <div class="tool-card"
+                     data-page="${tool.page}"
+                     data-category="${tool.category}">
 
-<div class="tool-title">
-${tool.title}
-</div>
+                    <div class="tool-icon">
+                        ${tool.icon}
+                    </div>
 
-<div class="tool-desc">
-${tool.description}
-</div>
+                    <div class="tool-title">
+                        ${tool.title}
+                    </div>
 
-<button class="tool-btn" type="button">
-استخدام الأداة
-</button>
+                    <div class="tool-desc">
+                        ${tool.description}
+                    </div>
 
-</div>
+                    <button class="tool-btn" type="button">
+                        استخدام الأداة
+                    </button>
 
-`;
+                </div>
 
-});
+            `;
 
-/* ==========================================
-        Popular Tools Dynamic
-========================================== */
+        });
 
-document
-.querySelectorAll("#popularTools .tool-card")
-.forEach(card=>{
-
-card.addEventListener("click",()=>{
-
-window.location.href = card.dataset.page;
-
-});
-
-});
-
+}
 /* ==========================================
         Theme Mode
 ========================================== */
 
-const themeBtn = document.getElementById("themeToggle");
-
-console.log("Theme Button:", themeBtn);
-
-if(themeBtn){
-
-    console.log("Theme button found ✅");
-
-}else{
-
-    console.log("Theme button NOT found ❌");
-
-}
+const themeBtn =
+    document.getElementById("themeToggle");
 
 const savedTheme =
-localStorage.getItem("theme");
+    localStorage.getItem("theme");
 
-if(savedTheme==="dark"){
 
-document.body.classList.add("dark");
+if (savedTheme === "dark") {
 
-themeBtn.textContent="☀️";
-
-}
-if(themeBtn){
-
-themeBtn.addEventListener("click",()=>{
-
-document.body.classList.toggle("dark");
-
-if(document.body.classList.contains("dark")){
-
-themeBtn.textContent="☀️";
-
-localStorage.setItem("theme","dark");
-
-}else{
-
-themeBtn.textContent="🌙";
-
-localStorage.setItem("theme","light");
+    document.body.classList.add("dark");
 
 }
+
+
+if (themeBtn) {
+
+    themeBtn.textContent =
+        document.body.classList.contains("dark")
+            ? "☀️"
+            : "🌙";
+
+
+    themeBtn.addEventListener("click", () => {
+
+        document.body.classList.toggle("dark");
+
+        const isDark =
+            document.body.classList.contains("dark");
+
+
+        themeBtn.textContent =
+            isDark ? "☀️" : "🌙";
+
+
+        localStorage.setItem(
+            "theme",
+            isDark ? "dark" : "light"
+        );
+
+    });
+
+}
+/* ==========================================
+        FAQ Accordion
+========================================== */
+
+const faqQuestions =
+    document.querySelectorAll(".faq-question");
+
+
+faqQuestions.forEach(question => {
+
+    question.addEventListener("click", () => {
+
+        const answer =
+            question.nextElementSibling;
+
+        const icon =
+            question.querySelector("span");
+
+
+        if (!answer) return;
+
+
+        /* Close all other answers */
+
+        document
+            .querySelectorAll(".faq-answer")
+            .forEach(otherAnswer => {
+
+                if (otherAnswer !== answer) {
+
+                    otherAnswer.style.maxHeight = null;
+
+
+                    const otherIcon =
+                        otherAnswer
+                            .previousElementSibling
+                            ?.querySelector("span");
+
+
+                    if (otherIcon) {
+
+                        otherIcon.textContent = "+";
+
+                    }
+
+                }
+
+            });
+
+
+        /* Toggle current answer */
+
+        if (answer.style.maxHeight) {
+
+            answer.style.maxHeight = null;
+
+            if (icon) {
+
+                icon.textContent = "+";
+
+            }
+
+        } else {
+
+            answer.style.maxHeight =
+                answer.scrollHeight + "px";
+
+            if (icon) {
+
+                icon.textContent = "−";
+
+            }
+
+        }
+
+    });
 
 });
+ /* ==========================================
+        Animated Stats Counter
+========================================== */
+
+const statNumbers =
+    document.querySelectorAll(".stat-number");
+
+let statsStarted = false;
+
+
+function startStats() {
+
+    if (statsStarted || statNumbers.length === 0) {
+        return;
+    }
+
+    statsStarted = true;
+
+
+    statNumbers.forEach(stat => {
+
+        const target =
+            Number(stat.dataset.target);
+
+
+        if (!Number.isFinite(target)) {
+            return;
+        }
+
+
+        let current = 0;
+
+        const increment =
+            target / 120;
+
+
+        const timer =
+            setInterval(() => {
+
+                current += increment;
+
+
+                if (current >= target) {
+
+                    current = target;
+
+                    clearInterval(timer);
+
+                }
+
+
+                if (target >= 1000000) {
+
+                    stat.textContent =
+                        (current / 1000000)
+                            .toFixed(1)
+                            .replace(".0", "") + "M+";
+
+                }
+
+                else if (target >= 1000) {
+
+                    stat.textContent =
+                        Math.floor(current / 1000) + "K+";
+
+                }
+
+                else {
+
+                    stat.textContent =
+                        Math.floor(current) + "+";
+
+                }
+
+            }, 15);
+
+    });
 
 }
 
-/* ==========================================
+
+/* Start counter when stats section appears */
+
+const statsSection =
+    document.querySelector(".stats-section");
+
+
+if (statsSection) {
+
+    const statsObserver =
+        new IntersectionObserver(entries => {
+
+            if (entries[0].isIntersecting) {
+
+                startStats();
+
+                statsObserver.disconnect();
+
+            }
+
+        });
+
+
+    statsObserver.observe(statsSection);
+
+                              }
+ /* ==========================================
         Scroll Animation
 ========================================== */
 
-const observer = new IntersectionObserver((entries)=>{
+const animatedElements =
+    document.querySelectorAll(
+        ".tool-card, .stat-card, .category-card, " +
+        ".feature-card, .price-card, .about-card, " +
+        ".why-card, .team-card, .value-card, " +
+        ".timeline-item"
+    );
 
-entries.forEach(entry=>{
 
-if(entry.isIntersecting){
+if (animatedElements.length > 0) {
 
-entry.target.classList.add("show");
+    animatedElements.forEach(element => {
+
+        element.classList.add("hidden");
+
+    });
+
+
+    const scrollObserver =
+        new IntersectionObserver(entries => {
+
+            entries.forEach(entry => {
+
+                if (entry.isIntersecting) {
+
+                    entry.target.classList.add("show");
+
+                    scrollObserver.unobserve(
+                        entry.target
+                    );
+
+                }
+
+            });
+
+        }, {
+
+            threshold: 0.1
+
+        });
+
+
+    animatedElements.forEach(element => {
+
+        scrollObserver.observe(element);
+
+    });
 
 }
-
-});
-
-});
-
-setTimeout(() => {
-
-document.querySelectorAll(
-".tool-card, .stat-card, .category-card, .feature-card, .price-card, .about-card, .why-card, .team-card, .value-card, .timeline-item"
-).forEach(el => {
-
-el.classList.add("hidden");
-
-observer.observe(el);
-
-});
-
-}, 300);
-
 /* ==========================================
-        FAQ
+        Popular Tools Click
 ========================================== */
-alert("وصلنا إلى FAQ");
-document.querySelectorAll(".faq-question").forEach(btn=>{
 
-btn.addEventListener("click",()=>{
+document
+    .querySelectorAll("#popularTools .tool-card")
+    .forEach(card => {
 
-const answer =
-btn.nextElementSibling;
+        card.addEventListener("click", () => {
 
-const icon =
-btn.querySelector("span");
+            const page =
+                card.dataset.page;
 
-document.querySelectorAll(".faq-answer").forEach(item=>{
+            if (page) {
 
-if(item!==answer){
+                window.location.href = page;
 
-item.style.maxHeight=null;
+            }
 
-item.previousElementSibling.querySelector("span").textContent="+";
+        });
 
-}
+    });
+/* ==========================================
+        WebBag App Ready
+========================================== */
 
-});
-
-if(answer.style.maxHeight){
-
-answer.style.maxHeight=null;
-
-icon.textContent="+";
-
-}else{
-
-answer.style.maxHeight=
-answer.scrollHeight+"px";
-
-icon.textContent="−";
-
-}
-
-});
-
-});
+document.documentElement.classList.add("app-ready");
