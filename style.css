@@ -3040,3 +3040,251 @@ body.dark .popular-rating{
 
        }
 
+/* ==========================================
+   CREATE PDF
+========================================== */
+
+.pdf-create-section{
+
+    width:100%;
+    max-width:1100px;
+
+    margin:80px auto;
+
+    padding:0 20px;
+
+    text-align:center;
+
+}
+
+.pdf-create-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fit,
+            minmax(320px,1fr)
+        );
+
+    gap:30px;
+
+    margin-top:40px;
+
+}
+
+.pdf-create-card{
+
+    background:rgba(255,255,255,.42);
+
+    backdrop-filter:blur(20px);
+    -webkit-backdrop-filter:blur(20px);
+
+    border:1px solid rgba(255,255,255,.65);
+
+    border-radius:30px;
+
+    padding:30px;
+
+    box-shadow:
+        0 20px 55px rgba(90,130,255,.12);
+
+}
+
+.pdf-create-icon{
+
+    font-size:55px;
+
+    margin-bottom:10px;
+
+}
+
+.pdf-create-card h3{
+
+    color:#27365f;
+
+    font-size:27px;
+
+    margin-bottom:10px;
+
+}
+
+.pdf-create-card p{
+
+    color:#71809f;
+
+    font-size:16px;
+
+    line-height:1.9;
+
+    margin-bottom:20px;
+
+}
+
+.text-to-pdf-input{
+
+    width:100%;
+
+    min-height:220px;
+
+    box-sizing:border-box;
+
+    padding:18px;
+
+    border:none;
+
+    outline:none;
+
+    resize:vertical;
+
+    border-radius:20px;
+
+    background:rgba(255,255,255,.72);
+
+    color:#53627f;
+
+    font-family:"Cairo",sans-serif;
+
+    font-size:16px;
+
+    line-height:2;
+
+    margin-bottom:18px;
+
+}
+
+.pdf-create-btn{
+
+    width:100%;
+
+    padding:15px 20px;
+
+    border:none;
+
+    border-radius:18px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #4fc3f7,
+            #6875ff,
+            #8a62f5
+        );
+
+    color:white;
+
+    font-family:"Cairo",sans-serif;
+
+    font-size:17px;
+
+    font-weight:800;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+.pdf-create-btn:hover:not(:disabled){
+
+    transform:translateY(-3px);
+
+    box-shadow:
+        0 15px 30px rgba(90,130,255,.22);
+
+}
+
+.pdf-create-btn:disabled{
+
+    opacity:.45;
+
+    cursor:not-allowed;
+
+}
+
+
+/* ==========================================
+   IMAGE PREVIEW
+========================================== */
+
+.images-preview{
+
+    min-height:100px;
+
+    margin:20px 0;
+
+    padding:15px;
+
+    border-radius:20px;
+
+    background:rgba(255,255,255,.35);
+
+    color:#7d89a2;
+
+    display:flex;
+
+    flex-wrap:wrap;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:12px;
+
+}
+
+.image-preview-item{
+
+    width:90px;
+
+    height:90px;
+
+    object-fit:cover;
+
+    border-radius:15px;
+
+    border:2px solid rgba(255,255,255,.8);
+
+    box-shadow:
+        0 8px 20px rgba(90,130,255,.12);
+
+}
+
+
+/* ==========================================
+   MOBILE
+========================================== */
+
+@media(max-width:600px){
+
+    .pdf-create-section{
+
+        margin:55px auto;
+
+        padding:0 14px;
+
+    }
+
+    .pdf-create-card{
+
+        padding:24px 18px;
+
+        border-radius:25px;
+
+    }
+
+    .pdf-create-card h3{
+
+        font-size:24px;
+
+    }
+
+    .text-to-pdf-input{
+
+        min-height:190px;
+
+        font-size:15px;
+
+    }
+
+   }
