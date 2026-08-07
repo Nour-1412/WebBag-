@@ -139,6 +139,103 @@
     </div>
 
 </section>
+      <!-- ================= CREATE PDF ================= -->
+
+<section class="pdf-create-section">
+
+    <h2 class="section-title">
+        📝 إنشاء PDF
+    </h2>
+
+    <div class="pdf-create-grid">
+
+        <!-- ================= TEXT TO PDF ================= -->
+
+        <div class="pdf-create-card">
+
+            <div class="pdf-create-icon">
+                📝
+            </div>
+
+            <h3>
+                نص → PDF
+            </h3>
+
+            <p>
+                اكتب أو الصق النص الذي تريد تحويله إلى ملف PDF.
+            </p>
+
+            <textarea
+                id="textToPdfInput"
+                class="text-to-pdf-input"
+                placeholder="اكتب النص هنا..."
+                dir="auto">
+            </textarea>
+
+            <button
+                id="createTextPdf"
+                class="pdf-create-btn">
+
+                📄 تحويل النص إلى PDF
+
+            </button>
+
+        </div>
+
+
+        <!-- ================= IMAGE TO PDF ================= -->
+
+        <div class="pdf-create-card">
+
+            <div class="pdf-create-icon">
+                🖼️
+            </div>
+
+            <h3>
+                صورة → PDF
+            </h3>
+
+            <p>
+                اختر صورة أو عدة صور وحولها إلى ملف PDF واحد.
+            </p>
+
+            <label
+                for="imagesToPdfInput"
+                class="pdf-upload-btn">
+
+                🖼️ اختيار الصور
+
+            </label>
+
+            <input
+                type="file"
+                id="imagesToPdfInput"
+                accept="image/*"
+                multiple
+                hidden>
+
+            <div
+                id="imagesPreview"
+                class="images-preview">
+
+                لم يتم اختيار صور
+
+            </div>
+
+            <button
+                id="createImagesPdf"
+                class="pdf-create-btn"
+                disabled>
+
+                📚 تحويل الصور إلى PDF
+
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
       <!-- ================= PDF RESULTS ================= -->
 
 <section class="pdf-results-section">
