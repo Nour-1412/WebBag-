@@ -1140,6 +1140,76 @@ if (enhanceHandwriting) {
 
             if (!handwritingOriginalImage) {
 
+                alert("من فضلك اختر صورة أولاً.");
+
+                return;
+
+            }
+
+            const originalText =
+                enhanceHandwriting.textContent;
+
+            enhanceHandwriting.disabled = true;
+
+            enhanceHandwriting.textContent =
+                "⏳ جارٍ تحسين الصورة...";
+
+            try {
+
+                const result =
+                    await enhanceHandwritingImage(
+                        handwritingOriginalImage
+                    );
+
+                if (!result) {
+
+                    throw new Error(
+                        "لم يتم إنشاء الصورة المحسنة."
+                    );
+
+                }
+
+                handwritingEnhancedImage =
+                    result;
+
+                showHandwritingPreview(
+                    handwritingEnhancedImage
+                );
+
+            } catch (error) {
+
+                console.error(
+                    "HANDWRITING ENHANCE ERROR:",
+                    error
+                );
+
+                alert(
+                    "تعذر تحسين الصورة. سيتم استخدام الصورة الأصلية."
+                );
+
+                handwritingEnhancedImage = null;
+
+                showHandwritingPreview(
+                    handwritingOriginalImage
+                );
+
+            } finally {
+
+                enhanceHandwriting.disabled =
+                    false;
+
+                enhanceHandwriting.textContent =
+                    originalText;
+
+            }
+
+        }
+    );
+
+}
+
+            if (!handwritingOriginalImage) {
+
                 return;
 
             }
