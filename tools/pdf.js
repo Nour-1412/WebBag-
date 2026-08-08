@@ -7,7 +7,8 @@ const pdfFileInput = document.getElementById("pdfFile");
 const pdfFileName = document.getElementById("pdfFileName");
 const pdfStatus = document.getElementById("pdfStatus");
 const pdfText = document.getElementById("pdfText");
-
+const pdfSummary =
+    document.getElementById("pdfSummary");
 const summarizePdf = document.getElementById("summarizePdf");
 const copyPdfText = document.getElementById("copyPdfText");
 const clearPdf = document.getElementById("clearPdf");
@@ -1238,68 +1239,7 @@ if (enhanceHandwriting) {
 
 }
 
-            if (!handwritingOriginalImage) {
-
-                return;
-
-            }
-
-
-            const originalText =
-                enhanceHandwriting.textContent;
-
-
-            enhanceHandwriting.disabled =
-                true;
-
-            enhanceHandwriting.textContent =
-                "⏳ جارٍ تحسين الصورة...";
-
-
-            try {
-
-                handwritingEnhancedImage =
-                    await enhanceHandwritingImage(
-                        handwritingOriginalImage
-                    );
-
-
-                showHandwritingPreview(
-                    handwritingEnhancedImage
-                );
-
-
-                /*
-                 * بعد التحسين نستخدم النسخة المحسنة
-                 * عند إنشاء PDF.
-                 */
-
-            } catch (error) {
-
-                console.error(
-                    "HANDWRITING ENHANCE ERROR:",
-                    error
-                );
-
-
-                alert(
-                    "حدث خطأ أثناء تحسين الصورة."
-                );
-
-            } finally {
-
-                enhanceHandwriting.disabled =
-                    false;
-
-                enhanceHandwriting.textContent =
-                    originalText;
-
-            }
-
-        }
-    );
-
-}
+            
 
 
 /* ==========================================
