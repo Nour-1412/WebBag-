@@ -1239,146 +1239,214 @@ if (enhanceHandwriting) {
 
 }
 
-            
-
-
-/* ==========================================
-   معالجة الصورة محليًا
+ /* ==========================================
+   تحسين صورة خط اليد — LOCAL
 ========================================== */
 
 function enhanceHandwritingImage(imageData) {
 
     return new Promise((resolve, reject) => {
 
-        const image =
-            new Image();
+        if (!imageData) {
+            reject(
+                new Error("لا توجد صورة للتحسين.")
+            );
+            return;
+        }
 
 
-        image.onload = () => {
+        const image = new Image();
 
-            const canvas =
-                document.createElement(
-                    "canvas"
+
+        image.onload = function () {
+
+            try {
+
+                const width =
+                    image.naturalWidth ||
+                    image.width;
+
+                const height =
+                    image.naturalHeight ||
+                    image.height;
+
+
+                if (!width || !height) {
+
+                    throw new Error(
+                        "تعذر معرفة أبعاد الصورة."
+                    );
+
+                }
+
+
+                const canvas =
+                    document.createElement("canvas");
+
+
+                canvas.width =
+                    width;
+
+                canvas.height =
+                    height;
+
+
+                const context =
+                    canvas.getContext("2d");
+
+
+                if (!context) {
+
+                    throw new Error(
+                        "تعذر إنشاء Canvas."
+                    );
+
+                }
+
+
+                /*
+                 * رسم الصورة الأصلية
+                 */
+
+                context.drawImage(
+                    image,
+                    0,
+                    0,
+                    width,
+                    height
                 );
 
 
-            canvas.width =
-                image.naturalWidth;
+                /*
+                 * استخراج بيانات الصورة
+                 */
 
-            canvas.height =
-                image.naturalHeight;
+                const pixels =
+                    context.getImageData(
+                        0,
+                        0,
+                        width,
+                        height
+                    );
 
 
-            const context =
-                canvas.getContext(
-                    "2d"
+                const data =
+                    pixels.data;
+
+
+                /*
+                 * تحسين بسيط:
+                 * - زيادة التباين
+                 * - الحفاظ على الألوان
+                 * - لا يوجد API
+                 * - لا يوجد AI
+                 */
+
+                const contrast =
+                    1.25;
+
+                const factor =
+                    (259 * (contrast + 255)) /
+                    (255 * (259 - contrast));
+
+
+                for (
+                    let i = 0;
+                    i < data.length;
+                    i += 4
+                ) {
+
+                    data[i] =
+                        Math.max(
+                            0,
+                            Math.min(
+                                255,
+                                factor *
+                                (data[i] - 128) +
+                                128
+                            )
+                        );
+
+
+                    data[i + 1] =
+                        Math.max(
+                            0,
+                            Math.min(
+                                255,
+                                factor *
+                                (data[i + 1] - 128) +
+                                128
+                            )
+                        );
+
+
+                    data[i + 2] =
+                        Math.max(
+                            0,
+                            Math.min(
+                                255,
+                                factor *
+                                (data[i + 2] - 128) +
+                                128
+                            )
+                        );
+
+                }
+
+
+                /*
+                 * إعادة البيانات إلى Canvas
+                 */
+
+                context.putImageData(
+                    pixels,
+                    0,
+                    0
                 );
 
 
-            if (!context) {
+                /*
+                 * إنشاء الصورة المحسنة
+                 */
+
+                const result =
+                    canvas.toDataURL(
+                        "image/jpeg",
+                        0.95
+                    );
+
+
+                if (!result) {
+
+                    throw new Error(
+                        "تعذر إنشاء الصورة المحسنة."
+                    );
+
+                }
+
+
+                resolve(result);
+
+
+            } catch (error) {
+
+                reject(error);
+
+            }
+
+        };
+
+
+        image.onerror =
+            function () {
 
                 reject(
                     new Error(
-                        "تعذر إنشاء Canvas."
+                        "تعذر تحميل الصورة للتحسين."
                     )
                 );
 
-                return;
-
-            }
-
-
-            context.drawImage(
-                image,
-                0,
-                0
-            );
-
-
-            const imageDataObject =
-                context.getImageData(
-                    0,
-                    0,
-                    canvas.width,
-                    canvas.height
-                );
-
-
-            const pixels =
-                imageDataObject.data;
-
-
-            /*
-             * تحسين بسيط وآمن:
-             * زيادة التباين مع الحفاظ على الألوان
-             * وعدم تحويل الورقة إلى أبيض وأسود.
-             */
-
-            const contrast = 1.18;
-
-            const factor =
-                (259 * (contrast + 255)) /
-                (255 * (259 - contrast));
-
-
-            for (
-                let i = 0;
-                i < pixels.length;
-                i += 4
-            ) {
-
-                pixels[i] =
-                    clampColor(
-                        factor *
-                        (pixels[i] - 128) +
-                        128
-                    );
-
-
-                pixels[i + 1] =
-                    clampColor(
-                        factor *
-                        (pixels[i + 1] - 128) +
-                        128
-                    );
-
-
-                pixels[i + 2] =
-                    clampColor(
-                        factor *
-                        (pixels[i + 2] - 128) +
-                        128
-                    );
-
-            }
-
-
-            context.putImageData(
-                imageDataObject,
-                0,
-                0
-            );
-
-
-            resolve(
-                canvas.toDataURL(
-                    "image/jpeg",
-                    0.95
-                )
-            );
-
-        };
-
-
-        image.onerror = () => {
-
-            reject(
-                new Error(
-                    "تعذر تحميل الصورة."
-                )
-            );
-
-        };
+            };
 
 
         image.src =
@@ -1386,7 +1454,10 @@ function enhanceHandwritingImage(imageData) {
 
     });
 
-}
+                               }           
+
+
+
 
 
 /* ==========================================
