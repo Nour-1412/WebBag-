@@ -850,278 +850,490 @@ if (createTextPdf && textToPdfInput) {
 }
 
 /* ==========================================
-   IMAGES → PDF
+   IMAGES → PDF — FIXED
 ========================================== */
 
 const imagesToPdfInput =
-    document.getElementById(
-        "imagesToPdfInput"
-    );
+    document.getElementById("imagesToPdfInput");
 
 const imagesPreview =
-    document.getElementById(
-        "imagesPreview"
-    );
+    document.getElementById("imagesPreview");
 
 const createImagesPdf =
-    document.getElementById(
-        "createImagesPdf"
-    );
+    document.getElementById("createImagesPdf");
 
 
 let selectedImages = [];
 
 
+/* ==========================================
+   اختيار الصور + المعاينة
+========================================== */
+
 if (imagesToPdfInput) {
 
-    imagesToPdfInput.addEventListener(
-        "change",
-        () => {
+    imagesToPdfInput.addEventListener("change", () => {
 
-            selectedImages =
-                Array.from(
-                    imagesToPdfInput.files
+        selectedImages =
+            Array.from(imagesToPdfInput.files || [])
+                .filter(file =>
+                    file.type.startsWith("image/")
                 );
 
 
-            if (!selectedImages.length){
+        if (!selectedImages.length) {
+
+            if (imagesPreview) {
 
                 imagesPreview.textContent =
                     "لم يتم اختيار صور";
 
+            }
+
+            if (createImagesPdf) {
+
                 createImagesPdf.disabled =
                     true;
 
-                return;
-
             }
 
+            return;
 
-            imagesPreview.innerHTML =
-                "";
-
-
-            selectedImages.forEach(
-                file => {
-
-                    const image =
-                        document.createElement(
-                            "img"
-                        );
-
-                    image.className =
-                        "image-preview-item";
-
-                    image.alt =
-                        file.name;
+        }
 
 
-                    const reader =
-                        new FileReader();
+        if (imagesPreview) {
+
+            imagesPreview.innerHTML = "";
+
+            selectedImages.forEach(file => {
+
+                const reader =
+                    new FileReader();
 
 
-                    reader.onload = event => {
-
-                        image.src =
-                            event.target.result;
-
-                    };
+                const image =
+                    document.createElement("img");
 
 
-                    reader.readAsDataURL(
-                        file
-                    );
+                image.className =
+                    "image-preview-item";
 
 
-                    imagesPreview.appendChild(
-                        image
-                    );
+                image.alt =
+                    file.name;
 
-                }
-            );
 
+                reader.onload = event => {
+
+                    image.src =
+                        event.target.result;
+
+                };
+
+
+                reader.readAsDataURL(file);
+
+
+                imagesPreview.appendChild(image);
+
+            });
+
+        }
+
+
+        if (createImagesPdf) {
 
             createImagesPdf.disabled =
                 false;
 
         }
-    );
+
+    });
 
 }
 
 
+/* ==========================================
+   إنشاء PDF من الصور
+========================================== */
+
 if (createImagesPdf) {
 
-    createImagesPdf.addEventListener(
-        "click",
-        async () => {
+    createImagesPdf.addEventListener("click", async () => {
 
-            if (!selectedImages.length){
+        if (!selectedImages.length) {
 
-                return;
+            alert("من فضلك اختر صورة أولاً.");
 
-            }
-
-
-            const buttonText =
-                createImagesPdf.textContent;
-
-            createImagesPdf.disabled =
-                true;
-
-            createImagesPdf.textContent =
-                "⏳ جارٍ إنشاء PDF...";
-
-
-            try {
-
-                const {
-                    jsPDF
-                } = window.jspdf;
-
-
-                let pdf = null;
-
-
-                for (
-                    let i = 0;
-                    i < selectedImages.length;
-                    i++
-                ){
-
-                    const file =
-                        selectedImages[i];
-
-
-                    const dataUrl =
-                        await readImageFile(
-                            file
-                        );
-
-
-                    const image =
-                        await loadPdfImage(
-                            dataUrl
-                        );
-
-
-                    const width =
-                        image.naturalWidth;
-
-                    const height =
-                        image.naturalHeight;
-
-
-                    const ratio =
-                        width / height;
-
-
-                    let pageWidth =
-                        210;
-
-                    let pageHeight =
-                        297;
-
-
-                    let imageWidth =
-                        pageWidth - 20;
-
-                    let imageHeight =
-                        imageWidth / ratio;
-
-
-                    if (
-                        imageHeight >
-                        pageHeight - 20
-                    ){
-
-                        imageHeight =
-                            pageHeight - 20;
-
-                        imageWidth =
-                            imageHeight * ratio;
-
-                    }
-
-
-                    if (!pdf){
-
-                        pdf =
-                            new jsPDF({
-                                orientation:
-                                    imageWidth >
-                                    imageHeight
-                                        ? "landscape"
-                                        : "portrait",
-
-                                unit:"mm",
-
-                                format:"a4"
-                            });
-
-                    } else {
-
-                        pdf.addPage(
-                            "a4",
-                            imageWidth >
-                            imageHeight
-                                ? "landscape"
-                                : "portrait"
-                        );
-
-                    }
-
-
-                    const x =
-                        (pdf.internal.pageSize.getWidth()
-                            - imageWidth) / 2;
-
-                    const y =
-                        (pdf.internal.pageSize.getHeight()
-                            - imageHeight) / 2;
-
-
-                    pdf.addImage(
-                        dataUrl,
-                        getImageFormat(file),
-                        x,
-                        y,
-                        imageWidth,
-                        imageHeight
-                    );
-
-                }
-
-
-                if (pdf){
-
-                    pdf.save(
-                        "WebBag-Images.pdf"
-                    );
-
-                }
-
-
-            } catch(error){
-
-                console.error(error);
-
-                alert(
-                    "حدث خطأ أثناء تحويل الصور إلى PDF."
-                );
-
-            } finally {
-
-                createImagesPdf.disabled =
-                    selectedImages.length === 0;
-
-                createImagesPdf.textContent =
-                    buttonText;
-
-            }
+            return;
 
         }
-    );
+
+
+        const originalText =
+            createImagesPdf.textContent;
+
+
+        createImagesPdf.disabled =
+            true;
+
+        createImagesPdf.textContent =
+            "⏳ جارٍ إنشاء PDF...";
+
+
+        try {
+
+            const { jsPDF } =
+                window.jspdf;
+
+
+            let pdf = null;
+
+
+            for (
+                let i = 0;
+                i < selectedImages.length;
+                i++
+            ) {
+
+                const file =
+                    selectedImages[i];
+
+
+                /*
+                 * نحول كل صورة إلى JPEG عبر Canvas.
+                 * هذا يتجنب مشاكل PNG / WEBP / بعض
+                 * صيغ الصور مع jsPDF.
+                 */
+
+                const imageData =
+                    await convertImageToJpeg(file);
+
+
+                const image =
+                    await loadImage(imageData);
+
+
+                const imageWidth =
+                    image.naturalWidth ||
+                    image.width;
+
+
+                const imageHeight =
+                    image.naturalHeight ||
+                    image.height;
+
+
+                if (
+                    !imageWidth ||
+                    !imageHeight
+                ) {
+
+                    throw new Error(
+                        "تعذر قراءة أبعاد الصورة."
+                    );
+
+                }
+
+
+                const ratio =
+                    imageWidth /
+                    imageHeight;
+
+
+                /*
+                 * نحدد اتجاه الصفحة حسب
+                 * اتجاه الصورة.
+                 */
+
+                const orientation =
+                    imageWidth >= imageHeight
+                        ? "landscape"
+                        : "portrait";
+
+
+                if (!pdf) {
+
+                    pdf =
+                        new jsPDF({
+                            orientation,
+                            unit: "mm",
+                            format: "a4"
+                        });
+
+                } else {
+
+                    pdf.addPage(
+                        "a4",
+                        orientation
+                    );
+
+                }
+
+
+                const pageWidth =
+                    pdf.internal.pageSize.getWidth();
+
+                const pageHeight =
+                    pdf.internal.pageSize.getHeight();
+
+
+                const margin = 10;
+
+
+                const availableWidth =
+                    pageWidth -
+                    margin * 2;
+
+
+                const availableHeight =
+                    pageHeight -
+                    margin * 2;
+
+
+                let finalWidth =
+                    availableWidth;
+
+
+                let finalHeight =
+                    finalWidth / ratio;
+
+
+                /*
+                 * إذا كانت الصورة أطول من الصفحة،
+                 * نصغرها مع الحفاظ على النسبة.
+                 */
+
+                if (
+                    finalHeight >
+                    availableHeight
+                ) {
+
+                    finalHeight =
+                        availableHeight;
+
+                    finalWidth =
+                        finalHeight * ratio;
+
+                }
+
+
+                /*
+                 * توسيط الصورة في الصفحة.
+                 */
+
+                const x =
+                    (pageWidth -
+                        finalWidth) / 2;
+
+
+                const y =
+                    (pageHeight -
+                        finalHeight) / 2;
+
+
+                pdf.addImage(
+                    imageData,
+                    "JPEG",
+                    x,
+                    y,
+                    finalWidth,
+                    finalHeight
+                );
+
+            }
+
+
+            if (pdf) {
+
+                pdf.save(
+                    "WebBag-Images.pdf"
+                );
+
+            }
+
+
+        } catch (error) {
+
+            console.error(
+                "IMAGES PDF ERROR:",
+                error
+            );
+
+
+            alert(
+                "حدث خطأ أثناء تحويل الصور إلى PDF."
+            );
+
+        } finally {
+
+            createImagesPdf.disabled =
+                selectedImages.length === 0;
+
+
+            createImagesPdf.textContent =
+                originalText;
+
+        }
+
+    });
+
+}
+
+
+/* ==========================================
+   تحويل الصورة إلى JPEG
+========================================== */
+
+function convertImageToJpeg(file) {
+
+    return new Promise((resolve, reject) => {
+
+        const reader =
+            new FileReader();
+
+
+        reader.onload = event => {
+
+            const image =
+                new Image();
+
+
+            image.onload = () => {
+
+                const canvas =
+                    document.createElement("canvas");
+
+
+                canvas.width =
+                    image.naturalWidth;
+
+
+                canvas.height =
+                    image.naturalHeight;
+
+
+                const context =
+                    canvas.getContext("2d");
+
+
+                if (!context) {
+
+                    reject(
+                        new Error(
+                            "تعذر إنشاء Canvas."
+                        )
+                    );
+
+                    return;
+
+                }
+
+
+                /*
+                 * خلفية بيضاء حتى الصور التي
+                 * تحتوي على شفافية لا تظهر سوداء.
+                 */
+
+                context.fillStyle =
+                    "#ffffff";
+
+
+                context.fillRect(
+                    0,
+                    0,
+                    canvas.width,
+                    canvas.height
+                );
+
+
+                context.drawImage(
+                    image,
+                    0,
+                    0
+                );
+
+
+                resolve(
+                    canvas.toDataURL(
+                        "image/jpeg",
+                        0.95
+                    )
+                );
+
+            };
+
+
+            image.onerror = () => {
+
+                reject(
+                    new Error(
+                        "تعذر تحميل الصورة."
+                    )
+                );
+
+            };
+
+
+            image.src =
+                event.target.result;
+
+        };
+
+
+        reader.onerror = () => {
+
+            reject(
+                new Error(
+                    "تعذر قراءة ملف الصورة."
+                )
+            );
+
+        };
+
+
+        reader.readAsDataURL(file);
+
+    });
+
+}
+
+
+/* ==========================================
+   تحميل الصورة
+========================================== */
+
+function loadImage(dataUrl) {
+
+    return new Promise((resolve, reject) => {
+
+        const image =
+            new Image();
+
+
+        image.onload = () => {
+
+            resolve(image);
+
+        };
+
+
+        image.onerror = () => {
+
+            reject(
+                new Error(
+                    "تعذر تحميل بيانات الصورة."
+                )
+            );
+
+        };
+
+
+        image.src =
+            dataUrl;
+
+    });
 
 }
 
