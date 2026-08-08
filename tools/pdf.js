@@ -952,7 +952,629 @@ if (imagesToPdfInput) {
     });
 
 }
+/* ==========================================
+   HANDWRITING IMAGE → PDF
+========================================== */
 
+const handwritingImageInput =
+    document.getElementById("handwritingImageInput");
+
+const handwritingPreview =
+    document.getElementById("handwritingPreview");
+
+const enhanceHandwriting =
+    document.getElementById("enhanceHandwriting");
+
+const createHandwritingPdf =
+    document.getElementById("createHandwritingPdf");
+
+
+let handwritingOriginalImage = null;
+let handwritingEnhancedImage = null;
+
+
+/* ==========================================
+   اختيار الصورة
+========================================== */
+
+if (handwritingImageInput) {
+
+    handwritingImageInput.addEventListener(
+        "change",
+        () => {
+
+            const file =
+                handwritingImageInput.files?.[0];
+
+            if (!file) {
+
+                handwritingOriginalImage = null;
+                handwritingEnhancedImage = null;
+
+                if (handwritingPreview) {
+
+                    handwritingPreview.innerHTML =
+                        "لم يتم اختيار صورة";
+
+                }
+
+                if (enhanceHandwriting) {
+
+                    enhanceHandwriting.disabled = true;
+
+                }
+
+                if (createHandwritingPdf) {
+
+                    createHandwritingPdf.disabled = true;
+
+                }
+
+                return;
+
+            }
+
+
+            if (!file.type.startsWith("image/")) {
+
+                alert(
+                    "من فضلك اختر ملف صورة."
+                );
+
+                return;
+
+            }
+
+
+            const reader =
+                new FileReader();
+
+
+            reader.onload = event => {
+
+                handwritingOriginalImage =
+                    event.target.result;
+
+                handwritingEnhancedImage =
+                    null;
+
+
+                showHandwritingPreview(
+                    handwritingOriginalImage
+                );
+
+
+                if (enhanceHandwriting) {
+
+                    enhanceHandwriting.disabled =
+                        false;
+
+                }
+
+
+                if (createHandwritingPdf) {
+
+                    createHandwritingPdf.disabled =
+                        false;
+
+                }
+
+            };
+
+
+            reader.onerror = () => {
+
+                alert(
+                    "تعذر قراءة الصورة."
+                );
+
+            };
+
+
+            reader.readAsDataURL(file);
+
+        }
+    );
+
+}
+
+
+/* ==========================================
+   عرض المعاينة
+========================================== */
+
+function showHandwritingPreview(imageData) {
+
+    if (!handwritingPreview) {
+        return;
+    }
+
+
+    handwritingPreview.innerHTML = "";
+
+
+    const image =
+        document.createElement("img");
+
+
+    image.src =
+        imageData;
+
+
+    image.alt =
+        "معاينة الورقة";
+
+
+    image.style.maxWidth =
+        "100%";
+
+    image.style.maxHeight =
+        "500px";
+
+    image.style.display =
+        "block";
+
+    image.style.margin =
+        "auto";
+
+    image.style.borderRadius =
+        "18px";
+
+
+    handwritingPreview.appendChild(
+        image
+    );
+
+}
+
+
+/* ==========================================
+   تحسين الورقة
+========================================== */
+
+if (enhanceHandwriting) {
+
+    enhanceHandwriting.addEventListener(
+        "click",
+        async () => {
+
+            if (!handwritingOriginalImage) {
+
+                return;
+
+            }
+
+
+            const originalText =
+                enhanceHandwriting.textContent;
+
+
+            enhanceHandwriting.disabled =
+                true;
+
+            enhanceHandwriting.textContent =
+                "⏳ جارٍ تحسين الصورة...";
+
+
+            try {
+
+                handwritingEnhancedImage =
+                    await enhanceHandwritingImage(
+                        handwritingOriginalImage
+                    );
+
+
+                showHandwritingPreview(
+                    handwritingEnhancedImage
+                );
+
+
+                /*
+                 * بعد التحسين نستخدم النسخة المحسنة
+                 * عند إنشاء PDF.
+                 */
+
+            } catch (error) {
+
+                console.error(
+                    "HANDWRITING ENHANCE ERROR:",
+                    error
+                );
+
+
+                alert(
+                    "حدث خطأ أثناء تحسين الصورة."
+                );
+
+            } finally {
+
+                enhanceHandwriting.disabled =
+                    false;
+
+                enhanceHandwriting.textContent =
+                    originalText;
+
+            }
+
+        }
+    );
+
+}
+
+
+/* ==========================================
+   معالجة الصورة محليًا
+========================================== */
+
+function enhanceHandwritingImage(imageData) {
+
+    return new Promise((resolve, reject) => {
+
+        const image =
+            new Image();
+
+
+        image.onload = () => {
+
+            const canvas =
+                document.createElement(
+                    "canvas"
+                );
+
+
+            canvas.width =
+                image.naturalWidth;
+
+            canvas.height =
+                image.naturalHeight;
+
+
+            const context =
+                canvas.getContext(
+                    "2d"
+                );
+
+
+            if (!context) {
+
+                reject(
+                    new Error(
+                        "تعذر إنشاء Canvas."
+                    )
+                );
+
+                return;
+
+            }
+
+
+            context.drawImage(
+                image,
+                0,
+                0
+            );
+
+
+            const imageDataObject =
+                context.getImageData(
+                    0,
+                    0,
+                    canvas.width,
+                    canvas.height
+                );
+
+
+            const pixels =
+                imageDataObject.data;
+
+
+            /*
+             * تحسين بسيط وآمن:
+             * زيادة التباين مع الحفاظ على الألوان
+             * وعدم تحويل الورقة إلى أبيض وأسود.
+             */
+
+            const contrast = 1.18;
+
+            const factor =
+                (259 * (contrast + 255)) /
+                (255 * (259 - contrast));
+
+
+            for (
+                let i = 0;
+                i < pixels.length;
+                i += 4
+            ) {
+
+                pixels[i] =
+                    clampColor(
+                        factor *
+                        (pixels[i] - 128) +
+                        128
+                    );
+
+
+                pixels[i + 1] =
+                    clampColor(
+                        factor *
+                        (pixels[i + 1] - 128) +
+                        128
+                    );
+
+
+                pixels[i + 2] =
+                    clampColor(
+                        factor *
+                        (pixels[i + 2] - 128) +
+                        128
+                    );
+
+            }
+
+
+            context.putImageData(
+                imageDataObject,
+                0,
+                0
+            );
+
+
+            resolve(
+                canvas.toDataURL(
+                    "image/jpeg",
+                    0.95
+                )
+            );
+
+        };
+
+
+        image.onerror = () => {
+
+            reject(
+                new Error(
+                    "تعذر تحميل الصورة."
+                )
+            );
+
+        };
+
+
+        image.src =
+            imageData;
+
+    });
+
+}
+
+
+/* ==========================================
+   ضبط الألوان
+========================================== */
+
+function clampColor(value) {
+
+    return Math.max(
+        0,
+        Math.min(
+            255,
+            value
+        )
+    );
+
+}
+
+
+/* ==========================================
+   تحويل الصورة إلى PDF
+========================================== */
+
+if (createHandwritingPdf) {
+
+    createHandwritingPdf.addEventListener(
+        "click",
+        async () => {
+
+            const imageData =
+                handwritingEnhancedImage ||
+                handwritingOriginalImage;
+
+
+            if (!imageData) {
+
+                alert(
+                    "من فضلك اختر صورة أولاً."
+                );
+
+                return;
+
+            }
+
+
+            const originalText =
+                createHandwritingPdf.textContent;
+
+
+            createHandwritingPdf.disabled =
+                true;
+
+            createHandwritingPdf.textContent =
+                "⏳ جارٍ إنشاء PDF...";
+
+
+            try {
+
+                const {
+                    jsPDF
+                } = window.jspdf;
+
+
+                const image =
+                    await loadHandwritingImage(
+                        imageData
+                    );
+
+
+                const width =
+                    image.naturalWidth ||
+                    image.width;
+
+
+                const height =
+                    image.naturalHeight ||
+                    image.height;
+
+
+                const orientation =
+                    width >= height
+                        ? "landscape"
+                        : "portrait";
+
+
+                const pdf =
+                    new jsPDF({
+                        orientation,
+                        unit: "mm",
+                        format: "a4"
+                    });
+
+
+                const pageWidth =
+                    pdf.internal.pageSize.getWidth();
+
+                const pageHeight =
+                    pdf.internal.pageSize.getHeight();
+
+
+                const margin = 10;
+
+
+                const availableWidth =
+                    pageWidth -
+                    margin * 2;
+
+
+                const availableHeight =
+                    pageHeight -
+                    margin * 2;
+
+
+                const ratio =
+                    width / height;
+
+
+                let finalWidth =
+                    availableWidth;
+
+
+                let finalHeight =
+                    finalWidth / ratio;
+
+
+                if (
+                    finalHeight >
+                    availableHeight
+                ) {
+
+                    finalHeight =
+                        availableHeight;
+
+                    finalWidth =
+                        finalHeight * ratio;
+
+                }
+
+
+                const x =
+                    (pageWidth -
+                        finalWidth) / 2;
+
+
+                const y =
+                    (pageHeight -
+                        finalHeight) / 2;
+
+
+                pdf.addImage(
+                    imageData,
+                    "JPEG",
+                    x,
+                    y,
+                    finalWidth,
+                    finalHeight
+                );
+
+
+                pdf.save(
+                    "WebBag-Handwriting.pdf"
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "HANDWRITING PDF ERROR:",
+                    error
+                );
+
+
+                alert(
+                    "حدث خطأ أثناء إنشاء PDF."
+                );
+
+            } finally {
+
+                createHandwritingPdf.disabled =
+                    false;
+
+                createHandwritingPdf.textContent =
+                    originalText;
+
+            }
+
+        }
+    );
+
+}
+
+
+/* ==========================================
+   تحميل صورة الكتابة اليدوية
+========================================== */
+
+function loadHandwritingImage(imageData) {
+
+    return new Promise((resolve, reject) => {
+
+        const image =
+            new Image();
+
+
+        image.onload = () => {
+
+            resolve(image);
+
+        };
+
+
+        image.onerror = () => {
+
+            reject(
+                new Error(
+                    "تعذر تحميل الصورة."
+                )
+            );
+
+        };
+
+
+        image.src =
+            imageData;
+
+    });
+
+}
 
 /* ==========================================
    إنشاء PDF من الصور
