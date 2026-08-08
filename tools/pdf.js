@@ -979,102 +979,132 @@ let handwritingEnhancedImage = null;
 
 if (handwritingImageInput) {
 
-    handwritingImageInput.addEventListener(
-        "change",
-        () => {
+    handwritingImageInput.addEventListener("change", function () {
 
-            const file =
-                handwritingImageInput.files?.[0];
+        const file =
+            this.files && this.files.length > 0
+                ? this.files[0]
+                : null;
 
-            if (!file) {
 
-                handwritingOriginalImage = null;
-                handwritingEnhancedImage = null;
+        if (!file) {
 
-                if (handwritingPreview) {
+            handwritingOriginalImage = null;
 
-                    handwritingPreview.innerHTML =
-                        "لم يتم اختيار صورة";
+            handwritingEnhancedImage = null;
 
-                }
 
-                if (enhanceHandwriting) {
+            if (handwritingPreview) {
 
-                    enhanceHandwriting.disabled = true;
-
-                }
-
-                if (createHandwritingPdf) {
-
-                    createHandwritingPdf.disabled = true;
-
-                }
-
-                return;
+                handwritingPreview.innerHTML =
+                    "لم يتم اختيار صورة";
 
             }
 
 
-            if (!file.type.startsWith("image/")) {
+            if (enhanceHandwriting) {
 
-                alert(
-                    "من فضلك اختر ملف صورة."
-                );
-
-                return;
+                enhanceHandwriting.disabled =
+                    true;
 
             }
 
 
-            const reader =
-                new FileReader();
+            if (createHandwritingPdf) {
+
+                createHandwritingPdf.disabled =
+                    true;
+
+            }
 
 
-            reader.onload = event => {
-
-                handwritingOriginalImage =
-                    event.target.result;
-
-                handwritingEnhancedImage =
-                    null;
-
-
-                showHandwritingPreview(
-                    handwritingOriginalImage
-                );
-
-
-                if (enhanceHandwriting) {
-
-                    enhanceHandwriting.disabled =
-                        false;
-
-                }
-
-
-                if (createHandwritingPdf) {
-
-                    createHandwritingPdf.disabled =
-                        false;
-
-                }
-
-            };
-
-
-            reader.onerror = () => {
-
-                alert(
-                    "تعذر قراءة الصورة."
-                );
-
-            };
-
-
-            reader.readAsDataURL(file);
+            return;
 
         }
-    );
+
+
+        if (
+            !file.type ||
+            !file.type.startsWith("image/")
+        ) {
+
+            alert(
+                "من فضلك اختر ملف صورة صالح."
+            );
+
+
+            this.value = "";
+
+
+            return;
+
+        }
+
+
+        const reader =
+            new FileReader();
+
+
+        reader.onload = function (event) {
+
+            const imageData =
+                event.target.result;
+
+
+            if (!imageData) {
+
+                alert(
+                    "تعذر تحميل الصورة."
+                );
+
+                return;
+
+            }
+
+
+            handwritingOriginalImage =
+                imageData;
+
+
+            handwritingEnhancedImage =
+                null;
+
+
+            showHandwritingPreview(
+                handwritingOriginalImage
+            );
+
+
+            if (enhanceHandwriting) {
+
+                enhanceHandwriting.disabled =
+                    false;
+
+            }
+
+
+            if (createHandwritingPdf) {
+
+                createHandwritingPdf.disabled =
+                    false;
+
+            }
+
+        };
+
+
+        reader.onerror = function () {
+
+            alert(
+                "تعذر قراءة الصورة."
+            );
+
+        };
+
+
+        reader.readAsDataURL(file);
+
+    });
 
 }
 
