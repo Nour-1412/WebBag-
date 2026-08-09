@@ -3,28 +3,38 @@
 
 <head>
 
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
-<title>PDF AI | WebBag</title>
+    <title>PDF AI | WebBag</title>
 
-<link rel="preconnect"
-      href="https://fonts.googleapis.com">
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
 
-<link rel="preconnect"
-      href="https://fonts.gstatic.com"
-      crossorigin>
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
 
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap"
-      rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap"
+          rel="stylesheet">
 
-<link rel="stylesheet"
-      href="../style.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link rel="stylesheet"
+          href="../style.css">
+
+    <!-- jsPDF -->
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
+    </script>
+
+    <!-- html2canvas -->
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js">
+    </script>
+
 </head>
+
 
 <body>
 
@@ -36,437 +46,522 @@
 
 </div>
 
+
 <div class="noise"></div>
+
 
 <div class="page">
 
-<header class="navbar">
 
-    <div class="brand">
-        WebBag
-    </div>
+    <!-- ================= NAVBAR ================= -->
 
-    <nav class="menu">
+    <header class="navbar">
 
-        <a href="../index.html">
-            الرئيسية
-        </a>
-
-        <a href="../about.html">
-            من نحن
-        </a>
-
-        <a href="../features.html">
-            المميزات
-        </a>
-
-        <a href="../pricing.html">
-            الأسعار
-        </a>
-
-        <a href="../contact.html">
-            تواصل معنا
-        </a>
-
-        <a href="../faq.html">
-            الأسئلة الشائعة
-        </a>
-
-    </nav>
-
-    <button class="pro-btn">
-        WebBag Pro
-    </button>
-
-</header>
-
-<section class="hero">
-
-    <h1 class="hero-logo">
-        📄
-    </h1>
-
-    <h2 class="hero-title">
-        PDF AI
-    </h2>
-
-    <p class="hero-text">
-        ارفع ملف PDF ودعه يصبح أسهل في القراءة والفهم.
-    </p>
-
-</section>
-
-<!-- ================= PDF AI TOOL ================= -->
-
-<section class="pdf-tool-section">
-
-    <div class="pdf-tool-card">
-
-        <div class="pdf-upload-icon">
-            📤
+        <div class="brand">
+            WebBag
         </div>
 
-        <h2>
-            ارفع ملف PDF
+
+        <nav class="menu">
+
+            <a href="../index.html">
+                الرئيسية
+            </a>
+
+            <a href="../about.html">
+                من نحن
+            </a>
+
+            <a href="../features.html">
+                المميزات
+            </a>
+
+            <a href="../pricing.html">
+                الأسعار
+            </a>
+
+            <a href="../contact.html">
+                تواصل معنا
+            </a>
+
+            <a href="../faq.html">
+                الأسئلة الشائعة
+            </a>
+
+        </nav>
+
+
+        <button
+            class="pro-btn"
+            type="button">
+
+            WebBag Pro
+
+        </button>
+
+    </header>
+
+
+    <!-- ================= HERO ================= -->
+
+    <section class="hero">
+
+        <h1 class="hero-logo">
+            📄
+        </h1>
+
+
+        <h2 class="hero-title">
+            PDF AI
         </h2>
 
-        <p>
-            اختر ملف PDF من جهازك للبدء.
+
+        <p class="hero-text">
+            ارفع ملف PDF ودعه يصبح أسهل في القراءة والفهم.
         </p>
 
-        <label
-            for="pdfFile"
-            class="pdf-upload-btn">
+    </section>
 
-            📁 اختيار ملف PDF
 
-        </label>
+    <!-- ================= PDF UPLOAD ================= -->
 
-        <input
-            type="file"
-            id="pdfFile"
-            accept=".pdf,application/pdf"
-            hidden>
+    <section class="pdf-tool-section">
 
-        <p
-            id="pdfFileName"
-            class="pdf-file-name">
+        <div class="pdf-tool-card">
 
-            لم يتم اختيار ملف
-
-        </p>
-
-    </div>
-
-</section>
-      <!-- ================= CREATE PDF ================= -->
-
-<section class="pdf-create-section">
-
-    <h2 class="section-title">
-        📝 إنشاء PDF
-    </h2>
-
-    <div class="pdf-create-grid">
-
-        <!-- ================= TEXT TO PDF ================= -->
-
-        <div class="pdf-create-card">
-
-            <div class="pdf-create-icon">
-                📝
+            <div class="pdf-upload-icon">
+                📤
             </div>
 
-            <h3>
-                نص → PDF
-            </h3>
+
+            <h2>
+                ارفع ملف PDF
+            </h2>
+
 
             <p>
-                اكتب أو الصق النص الذي تريد تحويله إلى ملف PDF.
+                اختر ملف PDF من جهازك للبدء.
             </p>
 
-            <textarea
-                id="textToPdfInput"
-                class="text-to-pdf-input"
-                placeholder="اكتب النص هنا..."
-                dir="auto">
-            </textarea>
-
-            <button
-                id="createTextPdf"
-                class="pdf-create-btn">
-
-                📄 تحويل النص إلى PDF
-
-            </button>
-
-        </div>
-
-
-        <!-- ================= IMAGE TO PDF ================= -->
-
-        <div class="pdf-create-card">
-
-            <div class="pdf-create-icon">
-                🖼️
-            </div>
-
-            <h3>
-                صورة → PDF
-            </h3>
-
-            <p>
-                اختر صورة أو عدة صور وحولها إلى ملف PDF واحد.
-            </p>
 
             <label
-                for="imagesToPdfInput"
+                for="pdfFile"
                 class="pdf-upload-btn">
 
-                🖼️ اختيار الصور
+                📁 اختيار ملف PDF
 
             </label>
 
+
             <input
                 type="file"
-                id="imagesToPdfInput"
-                accept="image/*"
-                multiple
+                id="pdfFile"
+                accept=".pdf,application/pdf"
                 hidden>
 
-            <div
-                id="imagesPreview"
-                class="images-preview">
 
-                لم يتم اختيار صور
+            <p
+                id="pdfFileName"
+                class="pdf-file-name">
+
+                لم يتم اختيار ملف
+
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= CREATE PDF ================= -->
+
+    <section class="pdf-create-section">
+
+        <h2 class="section-title">
+            📝 إنشاء PDF
+        </h2>
+
+
+        <div class="pdf-create-grid">
+
+
+            <!-- TEXT TO PDF -->
+
+            <div class="pdf-create-card">
+
+                <div class="pdf-create-icon">
+                    📝
+                </div>
+
+
+                <h3>
+                    نص → PDF
+                </h3>
+
+
+                <p>
+                    اكتب أو الصق النص الذي تريد تحويله إلى ملف PDF.
+                </p>
+
+
+                <textarea
+                    id="textToPdfInput"
+                    class="text-to-pdf-input"
+                    placeholder="اكتب النص هنا..."
+                    dir="auto"></textarea>
+
+
+                <button
+                    id="createTextPdf"
+                    class="pdf-create-btn"
+                    type="button">
+
+                    📄 تحويل النص إلى PDF
+
+                </button>
 
             </div>
 
-            <button
-                id="createImagesPdf"
-                class="pdf-create-btn"
-                disabled>
 
-                📚 تحويل الصور إلى PDF
+            <!-- IMAGE TO PDF -->
 
-            </button>
+            <div class="pdf-create-card">
+
+                <div class="pdf-create-icon">
+                    🖼️
+                </div>
+
+
+                <h3>
+                    صورة → PDF
+                </h3>
+
+
+                <p>
+                    اختر صورة أو عدة صور وحولها إلى ملف PDF واحد.
+                </p>
+
+
+                <label
+                    for="imagesToPdfInput"
+                    class="pdf-upload-btn">
+
+                    🖼️ اختيار الصور
+
+                </label>
+
+
+                <input
+                    type="file"
+                    id="imagesToPdfInput"
+                    accept="image/*"
+                    multiple
+                    hidden>
+
+
+                <div
+                    id="imagesPreview"
+                    class="images-preview">
+
+                    لم يتم اختيار صور
+
+                </div>
+
+
+                <button
+                    id="createImagesPdf"
+                    class="pdf-create-btn"
+                    type="button"
+                    disabled>
+
+                    📚 تحويل الصور إلى PDF
+
+                </button>
+
+            </div>
 
         </div>
+
+    </section>
+
+
+    <!-- ================= HANDWRITING IMAGE → PDF ================= -->
+
+    <section class="handwriting-pdf-section">
+
+        <div class="pdf-tool-card">
+
+            <div class="pdf-upload-icon">
+                ✍️
+            </div>
+
+
+            <h2>
+                صورة بخط اليد → PDF
+            </h2>
+
+
+            <p>
+                ارفع صورة لورقتك وحسّن وضوحها قبل تحويلها إلى PDF.
+            </p>
+
+
+            <label
+                for="handwritingImageInput"
+                class="pdf-upload-btn">
+
+                📷 اختيار صورة
+
+            </label>
+
+
+            <input
+                type="file"
+                id="handwritingImageInput"
+                accept="image/*"
+                hidden>
+
+
+            <div
+                id="handwritingPreview"
+                class="handwriting-preview">
+
+                لم يتم اختيار صورة
+
+            </div>
+
+
+            <div class="handwriting-actions">
+
+                <button
+                    type="button"
+                    id="enhanceHandwriting"
+                    class="send-btn"
+                    disabled>
+
+                    ✨ تحسين الورقة
+
+                </button>
+
+
+                <button
+                    type="button"
+                    id="createHandwritingPdf"
+                    class="send-btn"
+                    disabled>
+
+                    📄 تحويل إلى PDF
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= PDF RESULTS ================= -->
+
+    <section class="pdf-results-section">
+
+
+        <!-- PDF TEXT -->
+
+        <div class="pdf-result-card">
+
+            <h2>
+                📋 محتوى الملف
+            </h2>
+
+
+            <div
+                id="pdfStatus"
+                class="pdf-status">
+
+                في انتظار اختيار ملف PDF...
+
+            </div>
+
+
+            <div
+                id="pdfText"
+                class="pdf-text">
+
+                <p class="pdf-placeholder">
+                    سيظهر محتوى الملف هنا بعد قراءته.
+                </p>
+
+            </div>
+
+
+            <div class="pdf-actions">
+
+                <button
+                    id="summarizePdf"
+                    class="pdf-action-btn"
+                    type="button"
+                    disabled>
+
+                    ✨ تلخيص الملف
+
+                </button>
+
+
+                <button
+                    id="copyPdfText"
+                    class="pdf-action-btn secondary"
+                    type="button"
+                    disabled>
+
+                    📋 نسخ النص
+
+                </button>
+
+
+                <button
+                    id="clearPdf"
+                    class="pdf-action-btn danger"
+                    type="button">
+
+                    🗑️ مسح الملف
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- PDF SUMMARY -->
+
+        <div
+            id="pdfSummaryCard"
+            class="pdf-result-card pdf-summary-card">
+
+            <h2>
+                ✨ ملخص الملف
+            </h2>
+
+
+            <div
+                id="pdfSummary"
+                class="pdf-text">
+
+                <p class="pdf-placeholder">
+                    سيظهر الملخص هنا بعد اختيار الملف.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= BACK ================= -->
+
+    <div class="tool-actions">
+
+        <a
+            href="../index.html#tools"
+            class="back-btn">
+
+            🛠️ العودة إلى الأدوات
+
+        </a>
 
     </div>
 
-</section>
-      <!-- ================= HANDWRITING IMAGE → PDF ================= -->
 
-<section class="handwriting-pdf-section">
+    <!-- ================= FOOTER ================= -->
 
-    <div class="pdf-tool-card">
+    <footer class="footer">
 
-        <div class="pdf-upload-icon">
-            ✍️
+        <div class="footer-logo">
+            💙 WebBag
         </div>
 
-        <h2>
-            صورة بخط اليد → PDF
-        </h2>
 
-        <p>
-            ارفع صورة لورقتك وحسّن وضوحها قبل تحويلها إلى PDF.
+        <p class="footer-text">
+            منصة عربية تجمع أفضل أدوات الذكاء الاصطناعي في مكان واحد.
         </p>
 
-        <label
-            for="handwritingImageInput"
-            class="pdf-upload-btn">
 
-            📷 اختيار صورة
+        <div class="footer-links">
 
-        </label>
+            <a href="../index.html">
+                الرئيسية
+            </a>
 
-        <input
-            type="file"
-            id="handwritingImageInput"
-            accept="image/*"
-            hidden>
+            <a href="../about.html">
+                من نحن
+            </a>
 
-        <div
-            id="handwritingPreview"
-            class="handwriting-preview">
+            <a href="../features.html">
+                المميزات
+            </a>
 
-            لم يتم اختيار صورة
+            <a href="../pricing.html">
+                الأسعار
+            </a>
 
-        </div>
+            <a href="../contact.html">
+                تواصل معنا
+            </a>
 
-        <div class="handwriting-actions">
-
-            <button
-                type="button"
-                id="enhanceHandwriting"
-                class="send-btn"
-                disabled>
-
-                ✨ تحسين الورقة
-
-            </button>
-
-            <button
-                type="button"
-                id="createHandwritingPdf"
-                class="send-btn"
-                disabled>
-
-                📄 تحويل إلى PDF
-
-            </button>
+            <a href="../faq.html">
+                الأسئلة الشائعة
+            </a>
 
         </div>
 
-    </div>
 
-</section>
-      <!-- ================= PDF RESULTS ================= -->
+        <div class="footer-social">
 
-<section class="pdf-results-section">
+            <a href="#">
+                🌍
+            </a>
 
-    <div class="pdf-result-card">
+            <a href="#">
+                💼
+            </a>
 
-        <h2>
-            📋 محتوى الملف
-        </h2>
+            <a href="#">
+                🐦
+            </a>
 
-        <div
-            id="pdfStatus"
-            class="pdf-status">
-
-            في انتظار اختيار ملف PDF...
-
-        </div>
-
-        <div
-            id="pdfText"
-            class="pdf-text">
-
-            <p class="pdf-placeholder">
-
-                سيظهر محتوى الملف هنا بعد قراءته.
-
-            </p>
+            <a href="#">
+                📘
+            </a>
 
         </div>
 
-        <div class="pdf-actions">
 
-            <button
-                id="summarizePdf"
-                class="pdf-action-btn"
-                type="button"
-                disabled>
-
-                ✨ تلخيص الملف
-
-            </button>
-
-            <button
-                id="copyPdfText"
-                class="pdf-action-btn secondary"
-                type="button"
-                disabled>
-
-                📋 نسخ النص
-
-            </button>
-
-            <button
-                id="clearPdf"
-                class="pdf-action-btn danger"
-                type="button">
-
-                🗑️ مسح الملف
-
-            </button>
-
+        <div class="footer-copy">
+            © 2026 WebBag — جميع الحقوق محفوظة.
         </div>
 
-    </div>
-
-
-    <div
-        id="pdfSummaryCard"
-        class="pdf-result-card pdf-summary-card">
-
-        <h2>
-            ✨ ملخص الملف
-        </h2>
-
-        <div
-            id="pdfSummary"
-            class="pdf-text">
-
-            <p class="pdf-placeholder">
-
-                سيظهر الملخص هنا بعد اختيار الملف.
-
-            </p>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<div class="tool-actions">
-
-    <a
-        href="../index.html#tools"
-        class="back-btn">
-
-        🛠️ العودة إلى الأدوات
-
-    </a>
-
-</div>
-      <!-- ================= FOOTER ================= -->
-
-<footer class="footer">
-
-    <div class="footer-logo">
-        💙 WebBag
-    </div>
-
-    <p class="footer-text">
-        منصة عربية تجمع أفضل أدوات الذكاء الاصطناعي في مكان واحد.
-    </p>
-
-    <div class="footer-links">
-
-        <a href="../index.html">
-            الرئيسية
-        </a>
-
-        <a href="../about.html">
-            من نحن
-        </a>
-
-        <a href="../features.html">
-            المميزات
-        </a>
-
-        <a href="../pricing.html">
-            الأسعار
-        </a>
-
-        <a href="../contact.html">
-            تواصل معنا
-        </a>
-
-        <a href="../faq.html">
-            الأسئلة الشائعة
-        </a>
-
-    </div>
-
-    <div class="footer-social">
-
-        <a href="#">🌍</a>
-        <a href="#">💼</a>
-        <a href="#">🐦</a>
-        <a href="#">📘</a>
-
-    </div>
-
-    <div class="footer-copy">
-        © 2026 WebBag — جميع الحقوق محفوظة.
-    </div>
-
-</footer>
+    </footer>
 
 </div>
 
-<script type="module" src="../app.js"></script>
 
-<script type="module" src="pdf.js"></script>
+<!-- ================= APP ================= -->
+
+<script
+    type="module"
+    src="../app.js">
+</script>
+
+
+<!-- ================= PDF TOOL ================= -->
+
+<script
+    src="pdf.js">
+</script>
+
 
 </body>
 
 </html>
-
