@@ -1,91 +1,48 @@
-/* ==========================================
+/* =========================================================
    WebBag PDF AI
-   Part 1 — File Selection & PDF Reader
-========================================== */
+   PDF TOOL — COMPLETE STABLE VERSION
+   ========================================================= */
 
-const pdfFileInput = document.getElementById("pdfFile");
-const pdfFileName = document.getElementById("pdfFileName");
-const pdfStatus = document.getElementById("pdfStatus");
-const pdfText = document.getElementById("pdfText");
+
+/* =========================================================
+   1. PDF READER ELEMENTS
+   ========================================================= */
+
+const pdfFileInput =
+    document.getElementById("pdfFile");
+
+const pdfFileName =
+    document.getElementById("pdfFileName");
+
+const pdfStatus =
+    document.getElementById("pdfStatus");
+
+const pdfText =
+    document.getElementById("pdfText");
+
 const pdfSummary =
     document.getElementById("pdfSummary");
-const summarizePdf = document.getElementById("summarizePdf");
-const copyPdfText = document.getElementById("copyPdfText");
-const clearPdf = document.getElementById("clearPdf");
+
+const summarizePdf =
+    document.getElementById("summarizePdf");
+
+const copyPdfText =
+    document.getElementById("copyPdfText");
+
+const clearPdf =
+    document.getElementById("clearPdf");
+
 
 let selectedPdfFile = null;
 let extractedPdfText = "";
 
 
-/* ==========================================
-   اختيار ملف PDF
-========================================== */
-
-if (pdfFileInput) {
-
-    pdfFileInput.addEventListener("change", async () => {
-
-        const file = pdfFileInput.files[0];
-
-        if (!file) {
-            return;
-        }
-
-        selectedPdfFile = file;
-
-        pdfFileName.textContent =
-            `📄 ${file.name}`;
-
-        pdfStatus.textContent =
-            "⏳ جارٍ تجهيز ملف PDF...";
-
-        pdfText.innerHTML = `
-            <p class="pdf-placeholder">
-                جارٍ قراءة الملف...
-            </p>
-        `;
-
-        extractedPdfText = "";
-
-        if (summarizePdf) {
-            summarizePdf.disabled = true;
-        }
-
-        if (copyPdfText) {
-            copyPdfText.disabled = true;
-        }
-
-        try {
-
-            await loadPdfReader();
-
-            await readPdfFile(file);
-
-        } catch (error) {
-
-            console.error(error);
-
-            pdfStatus.textContent =
-                "❌ حدث خطأ أثناء قراءة الملف.";
-
-            pdfText.innerHTML = `
-                <p class="pdf-placeholder">
-                    تعذر قراءة هذا الملف.
-                </p>
-            `;
-
-        }
-
-    });
-
-}
-
-
-/* ==========================================
-   تحميل PDF.js
-========================================== */
+/* =========================================================
+   2. PDF.JS LOADER
+   ========================================================= */
 
 let pdfReaderPromise = null;
+
 
 function loadPdfReader() {
 
@@ -93,80 +50,195 @@ function loadPdfReader() {
         return pdfReaderPromise;
     }
 
-    pdfReaderPromise = new Promise((resolve, reject) => {
+    pdfReaderPromise =
+        new Promise((resolve, reject) => {
 
-        if (window.pdfjsLib) {
-            resolve(window.pdfjsLib);
-            return;
-        }
+            if (window.pdfjsLib) {
 
-        const script =
-            document.createElement("script");
+                try {
 
-        script.src =
-            "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";
+                    window.pdfjsLib.GlobalWorkerOptions.workerSrc =
+                        "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
 
-        script.onload = () => {
+                } catch (error) {
+                    console.warn(error);
+                }
 
-            if (!window.pdfjsLib) {
-
-                reject(
-                    new Error("PDF.js loaded but is unavailable")
-                );
-
+                resolve(window.pdfjsLib);
                 return;
             }
 
-            window.pdfjsLib.GlobalWorkerOptions.workerSrc =
-                "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
 
-            resolve(window.pdfjsLib);
+            const script =
+                document.createElement("script");
 
-        };
 
-        script.onerror = () => {
+            script.src =
+                "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";
 
-            reject(
-                new Error("Unable to load PDF.js")
-            );
 
-        };
+            script.async = true;
 
-        document.head.appendChild(script);
 
-    });
+            script.onload = () => {
+
+                if (!window.pdfjsLib) {
+
+                    reject(
+                        new Error(
+                            "PDF.js loaded but unavailable."
+                        )
+                    );
+
+                    return;
+                }
+
+
+                window.pdfjsLib.GlobalWorkerOptions.workerSrc =
+                    "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+
+
+                resolve(window.pdfjsLib);
+
+            };
+
+
+            script.onerror = () => {
+
+                reject(
+                    new Error(
+                        "Unable to load PDF.js."
+                    )
+                );
+
+            };
+
+
+            document.head.appendChild(script);
+
+        });
+
 
     return pdfReaderPromise;
 }
 
 
-/* ==========================================
-   قراءة ملف PDF
-========================================== */
+/* =========================================================
+   3. PDF VALIDATION
+   ========================================================= */
+
+function isValidPdf(file) {
+
+    if (!file) {
+        return false;
+    }
+
+
+    return (
+        file.type === "application/pdf" ||
+        file.name.toLowerCase().endsWith(".pdf")
+    );
+}
+
+
+/* =========================================================
+   4. PDF ERROR DISPLAY
+   ========================================================= */
+
+function showPdfError(message) {
+
+    if (pdfStatus) {
+
+        pdfStatus.textContent =
+            `❌ ${message}`;
+
+    }
+
+
+    if (pdfText) {
+
+        pdfText.innerHTML = `
+            <p class="pdf-placeholder">
+                ${escapeHtml(message)}
+            </p>
+        `;
+
+    }
+
+}
+
+
+/* =========================================================
+   5. ESCAPE HTML
+   ========================================================= */
+
+function escapeHtml(value) {
+
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+
+/* =========================================================
+   6. READ PDF
+   ========================================================= */
 
 async function readPdfFile(file) {
 
-    if (!file.type.includes("pdf")) {
+    if (!isValidPdf(file)) {
 
-        pdfStatus.textContent =
-            "❌ الملف المختار ليس ملف PDF.";
+        showPdfError(
+            "يرجى اختيار ملف PDF صالح."
+        );
 
         return;
 
     }
 
+
+    if (pdfStatus) {
+
+        pdfStatus.textContent =
+            "⏳ جاري قراءة ملف PDF...";
+
+    }
+
+
+    if (pdfText) {
+
+        pdfText.innerHTML = `
+            <p class="pdf-placeholder">
+                ⏳ جاري قراءة صفحات الملف...
+            </p>
+        `;
+
+    }
+
+
+    const pdfjs =
+        await loadPdfReader();
+
+
     const arrayBuffer =
         await file.arrayBuffer();
 
+
     const loadingTask =
-        window.pdfjsLib.getDocument({
+        pdfjs.getDocument({
             data: arrayBuffer
         });
+
 
     const pdf =
         await loadingTask.promise;
 
+
     let fullText = "";
+
 
     for (
         let pageNumber = 1;
@@ -174,238 +246,431 @@ async function readPdfFile(file) {
         pageNumber++
     ) {
 
+        if (pdfStatus) {
+
+            pdfStatus.textContent =
+                `⏳ جاري قراءة الصفحة ${pageNumber} من ${pdf.numPages}...`;
+
+        }
+
+
         const page =
             await pdf.getPage(pageNumber);
+
 
         const content =
             await page.getTextContent();
 
+
         const pageText =
             content.items
-                .map(item => item.str)
-                .join(" ");
+                .map(item => item.str || "")
+                .join(" ")
+                .replace(/\s+/g, " ")
+                .trim();
+
 
         fullText +=
             `\n\n--- الصفحة ${pageNumber} ---\n\n`;
 
-        fullText += pageText;
+
+        fullText +=
+            pageText;
 
     }
+
 
     extractedPdfText =
         fullText.trim();
 
+
     if (!extractedPdfText) {
-
-        pdfStatus.textContent =
-            "⚠️ لم يتم العثور على نص قابل للاستخراج.";
-
-        pdfText.innerHTML = `
-            <p class="pdf-placeholder">
-                يبدو أن الملف عبارة عن صور ممسوحة ضوئيًا
-                أو لا يحتوي على نص قابل للقراءة مباشرة.
-            </p>
-        `;
-
-        return;
-
-    }
-
-    pdfStatus.textContent =
-        `✅ تم استخراج النص من ${pdf.numPages} صفحة.`;
-
-    pdfText.textContent =
-        extractedPdfText;
-
-    if (copyPdfText) {
-        copyPdfText.disabled = false;
-    }
-
-    if (summarizePdf) {
-        summarizePdf.disabled = false;
-    }
-
-                                  }
-/* ==========================================
-   نسخ النص
-========================================== */
-
-if (copyPdfText) {
-
-    copyPdfText.addEventListener("click", async () => {
-
-        if (!extractedPdfText) {
-            return;
-        }
-
-        try {
-
-            await navigator.clipboard.writeText(
-                extractedPdfText
-            );
-
-            const originalText =
-                copyPdfText.textContent;
-
-            copyPdfText.textContent =
-                "✅ تم نسخ النص";
-
-            setTimeout(() => {
-
-                copyPdfText.textContent =
-                    originalText;
-
-            }, 1800);
-
-        } catch (error) {
-
-            console.error(error);
-
-            pdfStatus.textContent =
-                "❌ تعذر نسخ النص.";
-
-        }
-
-    });
-
-}
-
-
-/* ==========================================
-   مسح الملف
-========================================== */
-
-if (clearPdf) {
-
-    clearPdf.addEventListener("click", () => {
-
-        selectedPdfFile = null;
-
-        extractedPdfText = "";
-
-        if (pdfFileInput) {
-            pdfFileInput.value = "";
-        }
-
-        if (pdfFileName) {
-
-            pdfFileName.textContent =
-                "لم يتم اختيار ملف";
-
-        }
 
         if (pdfStatus) {
 
             pdfStatus.textContent =
-                "في انتظار اختيار ملف PDF...";
+                "⚠️ لم يتم العثور على نص قابل للاستخراج.";
 
         }
+
 
         if (pdfText) {
 
             pdfText.innerHTML = `
                 <p class="pdf-placeholder">
-                    سيظهر محتوى الملف هنا بعد قراءته.
+                    يبدو أن الملف عبارة عن صور ممسوحة ضوئيًا
+                    أو أن النص غير قابل للاستخراج مباشرة.
                 </p>
             `;
 
         }
 
-        if (pdfSummary) {
-
-            pdfSummary.innerHTML = `
-                <p class="pdf-placeholder">
-                    سيظهر الملخص هنا بعد اختيار الملف.
-                </p>
-            `;
-
-        }
 
         if (summarizePdf) {
             summarizePdf.disabled = true;
         }
 
+
         if (copyPdfText) {
             copyPdfText.disabled = true;
         }
 
-    });
+
+        return;
+
+    }
+
+
+    if (pdfStatus) {
+
+        pdfStatus.textContent =
+            `✅ تم استخراج النص من ${pdf.numPages} صفحة.`;
+
+    }
+
+
+    if (pdfText) {
+
+        pdfText.textContent =
+            extractedPdfText;
+
+    }
+
+
+    if (copyPdfText) {
+        copyPdfText.disabled = false;
+    }
+
+
+    if (summarizePdf) {
+        summarizePdf.disabled = false;
+    }
 
 }
 
 
-/* ==========================================
-   التلخيص
-========================================== */
+/* =========================================================
+   7. PDF FILE SELECTION
+   ========================================================= */
+
+if (pdfFileInput) {
+
+    pdfFileInput.addEventListener(
+        "change",
+        async () => {
+
+            const file =
+                pdfFileInput.files &&
+                pdfFileInput.files[0];
+
+
+            if (!file) {
+                return;
+            }
+
+
+            if (!isValidPdf(file)) {
+
+                showPdfError(
+                    "يرجى اختيار ملف PDF صالح."
+                );
+
+
+                pdfFileInput.value = "";
+
+
+                return;
+
+            }
+
+
+            selectedPdfFile =
+                file;
+
+
+            if (pdfFileName) {
+
+                pdfFileName.textContent =
+                    `📄 ${file.name}`;
+
+            }
+
+
+            if (pdfStatus) {
+
+                pdfStatus.textContent =
+                    "⏳ جاري تجهيز ملف PDF...";
+
+            }
+
+
+            if (pdfText) {
+
+                pdfText.innerHTML = `
+                    <p class="pdf-placeholder">
+                        جاري قراءة الملف...
+                    </p>
+                `;
+
+            }
+
+
+            extractedPdfText =
+                "";
+
+
+            if (summarizePdf) {
+                summarizePdf.disabled = true;
+            }
+
+
+            if (copyPdfText) {
+                copyPdfText.disabled = true;
+            }
+
+
+            try {
+
+                await readPdfFile(file);
+
+            } catch (error) {
+
+                console.error(
+                    "PDF READ ERROR:",
+                    error
+                );
+
+
+                showPdfError(
+                    "حدث خطأ أثناء قراءة ملف PDF."
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   8. COPY PDF TEXT
+   ========================================================= */
+
+if (copyPdfText) {
+
+    copyPdfText.addEventListener(
+        "click",
+        async () => {
+
+            if (!extractedPdfText) {
+                return;
+            }
+
+
+            try {
+
+                await navigator.clipboard.writeText(
+                    extractedPdfText
+                );
+
+
+                const originalText =
+                    copyPdfText.textContent;
+
+
+                copyPdfText.textContent =
+                    "✅ تم نسخ النص";
+
+
+                setTimeout(() => {
+
+                    copyPdfText.textContent =
+                        originalText;
+
+                }, 1800);
+
+
+            } catch (error) {
+
+                console.error(
+                    "COPY PDF TEXT ERROR:",
+                    error
+                );
+
+
+                if (pdfStatus) {
+
+                    pdfStatus.textContent =
+                        "❌ تعذر نسخ النص.";
+
+                }
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   9. PDF SUMMARY
+   ========================================================= */
 
 if (summarizePdf) {
 
-    summarizePdf.addEventListener("click", () => {
+    summarizePdf.addEventListener(
+        "click",
+        () => {
 
-        if (!extractedPdfText) {
-            return;
+            if (!extractedPdfText) {
+                return;
+            }
+
+
+            if (!pdfSummary) {
+                return;
+            }
+
+
+            const words =
+                extractedPdfText
+                    .replace(
+                        /--- الصفحة \d+ ---/g,
+                        ""
+                    )
+                    .split(/\s+/)
+                    .filter(Boolean);
+
+
+            const totalWords =
+                words.length;
+
+
+            const preview =
+                words
+                    .slice(0, 180)
+                    .join(" ");
+
+
+            pdfSummary.innerHTML = `
+
+                <p>
+                    <strong>تمت قراءة الملف بنجاح.</strong>
+                </p>
+
+                <p>
+                    عدد الكلمات المستخرجة تقريبًا:
+                    <strong>${totalWords}</strong>
+                </p>
+
+                <hr>
+
+                <p>
+                    <strong>معاينة المحتوى:</strong>
+                </p>
+
+                <p>
+                    ${escapeHtml(preview)}
+                    ${totalWords > 180 ? "..." : ""}
+                </p>
+
+                <p class="pdf-summary-note">
+                    التلخيص الذكي الكامل يمكن ربطه لاحقًا
+                    بمحرك الذكاء الاصطناعي الخاص بـ WebBag.
+                </p>
+
+            `;
+
         }
+    );
 
-        if (!pdfSummary) {
-            return;
+}
+
+
+/* =========================================================
+   10. CLEAR PDF
+   ========================================================= */
+
+if (clearPdf) {
+
+    clearPdf.addEventListener(
+        "click",
+        () => {
+
+            resetPdfInterface();
+
         }
+    );
 
-        pdfSummary.innerHTML = `
-            <p>
-                تم استخراج النص من الملف بنجاح.
-            </p>
+}
 
-            <p>
-                التلخيص الذكي سيُضاف في المرحلة التالية
-                باستخدام محرك ذكاء اصطناعي مناسب.
-            </p>
-        `;
 
-    });
-
-      }
-/* ==========================================
-   حالة الأداة النهائية
-========================================== */
+/* =========================================================
+   11. RESET PDF INTERFACE
+   ========================================================= */
 
 function resetPdfInterface() {
 
-    selectedPdfFile = null;
-    extractedPdfText = "";
+    selectedPdfFile =
+        null;
+
+
+    extractedPdfText =
+        "";
+
 
     if (pdfFileInput) {
-        pdfFileInput.value = "";
+
+        pdfFileInput.value =
+            "";
+
     }
+
 
     if (pdfFileName) {
+
         pdfFileName.textContent =
             "لم يتم اختيار ملف";
+
     }
+
 
     if (pdfStatus) {
+
         pdfStatus.textContent =
             "في انتظار اختيار ملف PDF...";
+
     }
 
+
     if (pdfText) {
+
         pdfText.innerHTML = `
             <p class="pdf-placeholder">
                 سيظهر محتوى الملف هنا بعد قراءته.
             </p>
         `;
+
     }
 
+
     if (pdfSummary) {
+
         pdfSummary.innerHTML = `
             <p class="pdf-placeholder">
                 سيظهر الملخص هنا بعد اختيار الملف.
             </p>
         `;
+
     }
+
 
     if (summarizePdf) {
         summarizePdf.disabled = true;
     }
+
 
     if (copyPdfText) {
         copyPdfText.disabled = true;
@@ -414,90 +679,9 @@ function resetPdfInterface() {
 }
 
 
-/* ==========================================
-   التحقق من الملف
-========================================== */
-
-function isValidPdf(file) {
-
-    if (!file) {
-        return false;
-    }
-
-    return (
-        file.type === "application/pdf" ||
-        file.name.toLowerCase().endsWith(".pdf")
-    );
-
-}
-
-
-/* ==========================================
-   حماية واجهة النص
-========================================== */
-
-function showPdfError(message) {
-
-    if (pdfStatus) {
-        pdfStatus.textContent =
-            `❌ ${message}`;
-    }
-
-    if (pdfText) {
-        pdfText.innerHTML = `
-            <p class="pdf-placeholder">
-                ${message}
-            </p>
-        `;
-    }
-
-}
-
-
-/* ==========================================
-   إعادة التحقق عند اختيار ملف
-========================================== */
-
-if (pdfFileInput) {
-
-    pdfFileInput.addEventListener("change", () => {
-
-        const file =
-            pdfFileInput.files[0];
-
-        if (!file) {
-            return;
-        }
-
-        if (!isValidPdf(file)) {
-
-            showPdfError(
-                "يرجى اختيار ملف PDF صالح."
-            );
-
-            resetPdfInterface();
-
-            return;
-        }
-
-    });
-
-}
-
-
-/* ==========================================
-   جاهزية الأداة
-========================================== */
-
-if (pdfStatus) {
-
-    pdfStatus.textContent =
-        "✅ أداة PDF AI جاهزة.";
-
-      }
-/* ==========================================
-   TEXT → PDF — ARABIC SAFE
-========================================== */
+/* =========================================================
+   12. TEXT → PDF
+   ========================================================= */
 
 const textToPdfInput =
     document.getElementById("textToPdfInput");
@@ -506,209 +690,214 @@ const createTextPdf =
     document.getElementById("createTextPdf");
 
 
-if (createTextPdf && textToPdfInput) {
+if (
+    createTextPdf &&
+    textToPdfInput
+) {
 
-    createTextPdf.addEventListener("click", async () => {
+    createTextPdf.addEventListener(
+        "click",
+        async () => {
 
-        const text =
-            textToPdfInput.value.trim();
-
-        if (!text) {
-
-            alert("من فضلك اكتب النص أولاً.");
-
-            return;
-
-        }
-
-        const originalText =
-            createTextPdf.textContent;
-
-        createTextPdf.disabled = true;
-
-        createTextPdf.textContent =
-            "⏳ جارٍ إنشاء PDF...";
-
-        let container = null;
-
-        try {
-
-            const {
-                jsPDF
-            } = window.jspdf;
+            const text =
+                textToPdfInput.value.trim();
 
 
-            /* =========================
-               إنشاء منطقة النص
-            ========================= */
+            if (!text) {
 
-            container =
-                document.createElement("div");
+                alert(
+                    "من فضلك اكتب النص أولاً."
+                );
 
-            container.style.position =
-                "fixed";
-
-            container.style.left =
-                "-10000px";
-
-            container.style.top =
-                "0";
-
-            container.style.width =
-                "794px";
-
-            container.style.boxSizing =
-                "border-box";
-
-            container.style.padding =
-                "55px";
-
-            container.style.background =
-                "#ffffff";
-
-            container.style.color =
-                "#222222";
-
-            container.style.fontFamily =
-                "Cairo, Arial, sans-serif";
-
-            container.style.fontSize =
-                "22px";
-
-            container.style.fontWeight =
-                "400";
-
-            container.style.lineHeight =
-                "2";
-
-            container.style.direction =
-                "rtl";
-
-            container.style.textAlign =
-                "right";
-
-            container.style.whiteSpace =
-                "pre-wrap";
-
-            container.style.wordBreak =
-                "normal";
-
-            container.style.overflowWrap =
-                "break-word";
-
-            container.textContent =
-                text;
-
-
-            document.body.appendChild(
-                container
-            );
-
-
-            /*
-              ننتظر تحميل الخط قبل التصوير
-            */
-
-            if (document.fonts) {
-
-                await document.fonts.ready;
+                return;
 
             }
 
 
-            /* =========================
-               تحويل النص إلى صورة
-            ========================= */
+            const originalText =
+                createTextPdf.textContent;
 
-            const canvas =
-                await html2canvas(
-                    container,
-                    {
-                        scale: 2,
 
-                        useCORS: true,
+            createTextPdf.disabled =
+                true;
 
-                        backgroundColor:
-                            "#ffffff",
 
-                        logging: false
-                    }
+            createTextPdf.textContent =
+                "⏳ جارٍ إنشاء PDF...";
+
+
+            let container =
+                null;
+
+
+            try {
+
+                if (!window.jspdf) {
+
+                    throw new Error(
+                        "jsPDF غير محمل."
+                    );
+
+                }
+
+
+                if (!window.html2canvas) {
+
+                    throw new Error(
+                        "html2canvas غير محمل."
+                    );
+
+                }
+
+
+                const {
+                    jsPDF
+                } =
+                    window.jspdf;
+
+
+                container =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                container.style.position =
+                    "fixed";
+
+
+                container.style.left =
+                    "-10000px";
+
+
+                container.style.top =
+                    "0";
+
+
+                container.style.width =
+                    "794px";
+
+
+                container.style.boxSizing =
+                    "border-box";
+
+
+                container.style.padding =
+                    "55px";
+
+
+                container.style.background =
+                    "#ffffff";
+
+
+                container.style.color =
+                    "#222222";
+
+
+                container.style.fontFamily =
+                    "Cairo, Arial, sans-serif";
+
+
+                container.style.fontSize =
+                    "22px";
+
+
+                container.style.lineHeight =
+                    "2";
+
+
+                container.style.direction =
+                    "rtl";
+
+
+                container.style.textAlign =
+                    "right";
+
+
+                container.style.whiteSpace =
+                    "pre-wrap";
+
+
+                container.style.wordBreak =
+                    "normal";
+
+
+                container.style.overflowWrap =
+                    "break-word";
+
+
+                container.textContent =
+                    text;
+
+
+                document.body.appendChild(
+                    container
                 );
 
 
-            const imageData =
-                canvas.toDataURL(
-                    "image/png"
-                );
+                if (document.fonts) {
+
+                    await document.fonts.ready;
+
+                }
 
 
-            /* =========================
-               إنشاء PDF
-            ========================= */
-
-            const pdf =
-                new jsPDF({
-                    orientation: "p",
-
-                    unit: "mm",
-
-                    format: "a4"
-                });
+                await wait(100);
 
 
-            const pageWidth =
-                pdf.internal.pageSize.getWidth();
-
-            const pageHeight =
-                pdf.internal.pageSize.getHeight();
-
-
-            const margin = 10;
-
-            const usableWidth =
-                pageWidth - margin * 2;
-
-            const usableHeight =
-                pageHeight - margin * 2;
+                const canvas =
+                    await html2canvas(
+                        container,
+                        {
+                            scale: 2,
+                            useCORS: true,
+                            backgroundColor:
+                                "#ffffff",
+                            logging: false
+                        }
+                    );
 
 
-            const imageRatio =
-                canvas.width /
-                canvas.height;
+                const imageData =
+                    canvas.toDataURL(
+                        "image/png"
+                    );
 
 
-            let imageWidth =
-                usableWidth;
+                const pdf =
+                    new jsPDF({
+                        orientation: "p",
+                        unit: "mm",
+                        format: "a4"
+                    });
 
-            let imageHeight =
-                imageWidth /
-                imageRatio;
+
+                const pageWidth =
+                    pdf.internal.pageSize.getWidth();
 
 
-            /*
-              تقسيم النص على صفحات
-              إذا كان أطول من صفحة A4
-            */
+                const pageHeight =
+                    pdf.internal.pageSize.getHeight();
 
-            if (
-                imageHeight <=
-                usableHeight
-            ) {
 
-                const y =
-                    (pageHeight -
-                        imageHeight) / 2;
+                const margin =
+                    10;
 
-                pdf.addImage(
-                    imageData,
-                    "PNG",
-                    margin,
-                    y,
-                    imageWidth,
-                    imageHeight
-                );
 
-            } else {
+                const usableWidth =
+                    pageWidth -
+                    margin * 2;
+
+
+                const usableHeight =
+                    pageHeight -
+                    margin * 2;
+
+
+                const imageRatio =
+                    canvas.width /
+                    canvas.height;
+
 
                 const pageCanvasHeight =
                     Math.floor(
@@ -718,9 +907,12 @@ if (createTextPdf && textToPdfInput) {
                     );
 
 
-                let sourceY = 0;
+                let sourceY =
+                    0;
 
-                let pageNumber = 0;
+
+                let pageNumber =
+                    0;
 
 
                 while (
@@ -745,6 +937,7 @@ if (createTextPdf && textToPdfInput) {
                     pageCanvas.width =
                         canvas.width;
 
+
                     pageCanvas.height =
                         currentHeight;
 
@@ -755,18 +948,23 @@ if (createTextPdf && textToPdfInput) {
                         );
 
 
+                    if (!context) {
+
+                        throw new Error(
+                            "تعذر إنشاء Canvas للصفحة."
+                        );
+
+                    }
+
+
                     context.drawImage(
                         canvas,
-
                         0,
                         sourceY,
-
                         canvas.width,
                         currentHeight,
-
                         0,
                         0,
-
                         canvas.width,
                         currentHeight
                     );
@@ -795,7 +993,7 @@ if (createTextPdf && textToPdfInput) {
                         "PNG",
                         margin,
                         margin,
-                        imageWidth,
+                        usableWidth,
                         currentImageHeight
                     );
 
@@ -803,259 +1001,199 @@ if (createTextPdf && textToPdfInput) {
                     sourceY +=
                         currentHeight;
 
+
                     pageNumber++;
 
                 }
 
-            }
 
-
-            /* =========================
-               تحميل الملف
-            ========================= */
-
-            pdf.save(
-                "WebBag-Text.pdf"
-            );
-
-
-        } catch (error) {
-
-            console.error(
-                "TEXT PDF ERROR:",
-                error
-            );
-
-            alert(
-                "حدث خطأ أثناء إنشاء ملف PDF."
-            );
-
-        } finally {
-
-            if (container) {
-
-                container.remove();
-
-            }
-
-            createTextPdf.disabled =
-                false;
-
-            createTextPdf.textContent =
-                originalText;
-
-        }
-
-    });
-
-}
-
-/* ==========================================
-   IMAGES → PDF — FIXED
-========================================== */
-
-const imagesToPdfInput =
-    document.getElementById("imagesToPdfInput");
-
-const imagesPreview =
-    document.getElementById("imagesPreview");
-
-const createImagesPdf =
-    document.getElementById("createImagesPdf");
-
-
-let selectedImages = [];
-
-
-/* ==========================================
-   اختيار الصور + المعاينة
-========================================== */
-
-if (imagesToPdfInput) {
-
-    imagesToPdfInput.addEventListener("change", () => {
-
-        selectedImages =
-            Array.from(imagesToPdfInput.files || [])
-                .filter(file =>
-                    file.type.startsWith("image/")
+                pdf.save(
+                    "WebBag-Text.pdf"
                 );
 
 
-        if (!selectedImages.length) {
+            } catch (error) {
+
+                console.error(
+                    "TEXT PDF ERROR:",
+                    error
+                );
+
+
+                alert(
+                    "حدث خطأ أثناء إنشاء ملف PDF."
+                );
+
+
+            } finally {
+
+                if (container) {
+
+                    container.remove();
+
+                }
+
+
+                createTextPdf.disabled =
+                    false;
+
+
+                createTextPdf.textContent =
+                    originalText;
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   13. IMAGES → PDF
+   ========================================================= */
+
+const imagesToPdfInput =
+    document.getElementById(
+        "imagesToPdfInput"
+    );
+
+
+const imagesPreview =
+    document.getElementById(
+        "imagesPreview"
+    );
+
+
+const createImagesPdf =
+    document.getElementById(
+        "createImagesPdf"
+    );
+
+
+let selectedImages =
+    [];
+
+
+if (imagesToPdfInput) {
+
+    imagesToPdfInput.addEventListener(
+        "change",
+        () => {
+
+            selectedImages =
+                Array.from(
+                    imagesToPdfInput.files || []
+                ).filter(
+                    file =>
+                        file.type &&
+                        file.type.startsWith(
+                            "image/"
+                        )
+                );
+
+
+            if (!selectedImages.length) {
+
+                if (imagesPreview) {
+
+                    imagesPreview.textContent =
+                        "لم يتم اختيار صور";
+
+                }
+
+
+                if (createImagesPdf) {
+
+                    createImagesPdf.disabled =
+                        true;
+
+                }
+
+
+                return;
+
+            }
+
 
             if (imagesPreview) {
 
-                imagesPreview.textContent =
-                    "لم يتم اختيار صور";
+                imagesPreview.innerHTML =
+                    "";
+
+
+                selectedImages.forEach(
+                    file => {
+
+                        const reader =
+                            new FileReader();
+
+
+                        const image =
+                            document.createElement(
+                                "img"
+                            );
+
+
+                        image.className =
+                            "image-preview-item";
+
+
+                        image.alt =
+                            file.name;
+
+
+                        reader.onload =
+                            event => {
+
+                                image.src =
+                                    event.target.result;
+
+                            };
+
+
+                        reader.readAsDataURL(
+                            file
+                        );
+
+
+                        imagesPreview.appendChild(
+                            image
+                        );
+
+                    }
+                );
 
             }
+
 
             if (createImagesPdf) {
 
                 createImagesPdf.disabled =
-                    true;
+                    false;
 
             }
 
-            return;
-
         }
-
-
-        if (imagesPreview) {
-
-            imagesPreview.innerHTML = "";
-
-            selectedImages.forEach(file => {
-
-                const reader =
-                    new FileReader();
-
-
-                const image =
-                    document.createElement("img");
-
-
-                image.className =
-                    "image-preview-item";
-
-
-                image.alt =
-                    file.name;
-
-
-                reader.onload = event => {
-
-                    image.src =
-                        event.target.result;
-
-                };
-
-
-                reader.readAsDataURL(file);
-
-
-                imagesPreview.appendChild(image);
-
-            });
-
-        }
-
-
-        if (createImagesPdf) {
-
-            createImagesPdf.disabled =
-                false;
-
-        }
-
-    });
+    );
 
 }
-/* ==========================================
-   HANDWRITING IMAGE → PDF
-========================================== */
-
-const handwritingImageInput =
-    document.getElementById("handwritingImageInput");
-
-const handwritingPreview =
-    document.getElementById("handwritingPreview");
-
-const enhanceHandwriting =
-    document.getElementById("enhanceHandwriting");
-
-const createHandwritingPdf =
-    document.getElementById("createHandwritingPdf");
 
 
-let handwritingOriginalImage = null;
-let handwritingEnhancedImage = null;
+/* =========================================================
+   14. CREATE IMAGES PDF
+   ========================================================= */
 
+if (createImagesPdf) {
 
-/* ==========================================
-   اختيار الصورة
-========================================== */
+    createImagesPdf.addEventListener(
+        "click",
+        async () => {
 
-if (handwritingImageInput) {
-
-    handwritingImageInput.addEventListener("change", function () {
-
-        const file =
-            this.files && this.files.length > 0
-                ? this.files[0]
-                : null;
-
-
-        if (!file) {
-
-            handwritingOriginalImage = null;
-
-            handwritingEnhancedImage = null;
-
-
-            if (handwritingPreview) {
-
-                handwritingPreview.innerHTML =
-                    "لم يتم اختيار صورة";
-
-            }
-
-
-            if (enhanceHandwriting) {
-
-                enhanceHandwriting.disabled =
-                    true;
-
-            }
-
-
-            if (createHandwritingPdf) {
-
-                createHandwritingPdf.disabled =
-                    true;
-
-            }
-
-
-            return;
-
-        }
-
-
-        if (
-            !file.type ||
-            !file.type.startsWith("image/")
-        ) {
-
-            alert(
-                "من فضلك اختر ملف صورة صالح."
-            );
-
-
-            this.value = "";
-
-
-            return;
-
-        }
-
-
-        const reader =
-            new FileReader();
-
-
-        reader.onload = function (event) {
-
-            const imageData =
-                event.target.result;
-
-
-            if (!imageData) {
+            if (!selectedImages.length) {
 
                 alert(
-                    "تعذر تحميل الصورة."
+                    "من فضلك اختر صورة واحدة على الأقل."
                 );
 
                 return;
@@ -1063,69 +1201,430 @@ if (handwritingImageInput) {
             }
 
 
-            handwritingOriginalImage =
-                imageData;
+            const originalText =
+                createImagesPdf.textContent;
+
+
+            createImagesPdf.disabled =
+                true;
+
+
+            createImagesPdf.textContent =
+                "⏳ جارٍ إنشاء PDF...";
+
+
+            try {
+
+                if (!window.jspdf) {
+
+                    throw new Error(
+                        "jsPDF غير محمل."
+                    );
+
+                }
+
+
+                const {
+                    jsPDF
+                } =
+                    window.jspdf;
+
+
+                let pdf =
+                    null;
+
+
+                for (
+                    let i = 0;
+                    i < selectedImages.length;
+                    i++
+                ) {
+
+                    const file =
+                        selectedImages[i];
+
+
+                    createImagesPdf.textContent =
+                        `⏳ تجهيز الصورة ${i + 1} من ${selectedImages.length}...`;
+
+
+                    const imageData =
+                        await convertImageToJpeg(
+                            file
+                        );
+
+
+                    const image =
+                        await loadImage(
+                            imageData
+                        );
+
+
+                    const width =
+                        image.naturalWidth ||
+                        image.width;
+
+
+                    const height =
+                        image.naturalHeight ||
+                        image.height;
+
+
+                    if (!width || !height) {
+
+                        throw new Error(
+                            "تعذر قراءة أبعاد الصورة."
+                        );
+
+                    }
+
+
+                    const ratio =
+                        width / height;
+
+
+                    const orientation =
+                        width >= height
+                            ? "landscape"
+                            : "portrait";
+
+
+                    if (!pdf) {
+
+                        pdf =
+                            new jsPDF({
+                                orientation,
+                                unit: "mm",
+                                format: "a4"
+                            });
+
+                    } else {
+
+                        pdf.addPage(
+                            "a4",
+                            orientation
+                        );
+
+                    }
+
+
+                    const pageWidth =
+                        pdf.internal.pageSize.getWidth();
+
+
+                    const pageHeight =
+                        pdf.internal.pageSize.getHeight();
+
+
+                    const margin =
+                        10;
+
+
+                    const availableWidth =
+                        pageWidth -
+                        margin * 2;
+
+
+                    const availableHeight =
+                        pageHeight -
+                        margin * 2;
+
+
+                    let finalWidth =
+                        availableWidth;
+
+
+                    let finalHeight =
+                        finalWidth /
+                        ratio;
+
+
+                    if (
+                        finalHeight >
+                        availableHeight
+                    ) {
+
+                        finalHeight =
+                            availableHeight;
+
+
+                        finalWidth =
+                            finalHeight *
+                            ratio;
+
+                    }
+
+
+                    const x =
+                        (
+                            pageWidth -
+                            finalWidth
+                        ) / 2;
+
+
+                    const y =
+                        (
+                            pageHeight -
+                            finalHeight
+                        ) / 2;
+
+
+                    pdf.addImage(
+                        imageData,
+                        "JPEG",
+                        x,
+                        y,
+                        finalWidth,
+                        finalHeight
+                    );
+
+                }
+
+
+                if (pdf) {
+
+                    pdf.save(
+                        "WebBag-Images.pdf"
+                    );
+
+                }
+
+
+            } catch (error) {
+
+                console.error(
+                    "IMAGES PDF ERROR:",
+                    error
+                );
+
+
+                alert(
+                    "حدث خطأ أثناء تحويل الصور إلى PDF."
+                );
+
+
+            } finally {
+
+                createImagesPdf.disabled =
+                    selectedImages.length === 0;
+
+
+                createImagesPdf.textContent =
+                    originalText;
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   15. HANDWRITING IMAGE → PDF
+   ========================================================= */
+
+const handwritingImageInput =
+    document.getElementById(
+        "handwritingImageInput"
+    );
+
+
+const handwritingPreview =
+    document.getElementById(
+        "handwritingPreview"
+    );
+
+
+const enhanceHandwriting =
+    document.getElementById(
+        "enhanceHandwriting"
+    );
+
+
+const createHandwritingPdf =
+    document.getElementById(
+        "createHandwritingPdf"
+    );
+
+
+let handwritingOriginalImage =
+    null;
+
+
+let handwritingEnhancedImage =
+    null;
+
+
+/* =========================================================
+   16. HANDWRITING IMAGE SELECTION
+   ========================================================= */
+
+if (handwritingImageInput) {
+
+    handwritingImageInput.addEventListener(
+        "change",
+        () => {
+
+            const file =
+                handwritingImageInput.files &&
+                handwritingImageInput.files[0];
 
 
             handwritingEnhancedImage =
                 null;
 
 
-            showHandwritingPreview(
-                handwritingOriginalImage
-            );
+            if (!file) {
+
+                handwritingOriginalImage =
+                    null;
 
 
-            if (enhanceHandwriting) {
+                if (handwritingPreview) {
 
-                enhanceHandwriting.disabled =
-                    false;
+                    handwritingPreview.textContent =
+                        "لم يتم اختيار صورة";
+
+                }
+
+
+                if (enhanceHandwriting) {
+
+                    enhanceHandwriting.disabled =
+                        true;
+
+                }
+
+
+                if (createHandwritingPdf) {
+
+                    createHandwritingPdf.disabled =
+                        true;
+
+                }
+
+
+                return;
 
             }
 
 
-            if (createHandwritingPdf) {
+            if (
+                !file.type ||
+                !file.type.startsWith(
+                    "image/"
+                )
+            ) {
 
-                createHandwritingPdf.disabled =
-                    false;
+                alert(
+                    "من فضلك اختر ملف صورة صالح."
+                );
+
+
+                handwritingImageInput.value =
+                    "";
+
+
+                return;
 
             }
 
-        };
+
+            const reader =
+                new FileReader();
 
 
-        reader.onerror = function () {
+            reader.onload =
+                event => {
 
-            alert(
-                "تعذر قراءة الصورة."
+                    const imageData =
+                        event.target.result;
+
+
+                    if (!imageData) {
+
+                        alert(
+                            "تعذر تحميل الصورة."
+                        );
+
+                        return;
+
+                    }
+
+
+                    handwritingOriginalImage =
+                        imageData;
+
+
+                    handwritingEnhancedImage =
+                        null;
+
+
+                    showHandwritingPreview(
+                        handwritingOriginalImage
+                    );
+
+
+                    if (enhanceHandwriting) {
+
+                        enhanceHandwriting.disabled =
+                            false;
+
+                    }
+
+
+                    if (createHandwritingPdf) {
+
+                        createHandwritingPdf.disabled =
+                            false;
+
+                    }
+
+                };
+
+
+            reader.onerror =
+                () => {
+
+                    alert(
+                        "تعذر قراءة الصورة."
+                    );
+
+                };
+
+
+            reader.readAsDataURL(
+                file
             );
 
-        };
-
-
-        reader.readAsDataURL(file);
-
-    });
+        }
+    );
 
 }
 
 
-/* ==========================================
-   عرض المعاينة
-========================================== */
+/* =========================================================
+   17. HANDWRITING PREVIEW
+   ========================================================= */
 
-function showHandwritingPreview(imageData) {
+function showHandwritingPreview(
+    imageData
+) {
 
     if (!handwritingPreview) {
         return;
     }
 
 
-    handwritingPreview.innerHTML = "";
+    handwritingPreview.innerHTML =
+        "";
 
 
     const image =
-        document.createElement("img");
+        document.createElement(
+            "img"
+        );
 
 
     image.src =
@@ -1139,17 +1638,25 @@ function showHandwritingPreview(imageData) {
     image.style.maxWidth =
         "100%";
 
+
     image.style.maxHeight =
         "500px";
+
 
     image.style.display =
         "block";
 
+
     image.style.margin =
         "auto";
 
+
     image.style.borderRadius =
         "18px";
+
+
+    image.style.objectFit =
+        "contain";
 
 
     handwritingPreview.appendChild(
@@ -1159,9 +1666,9 @@ function showHandwritingPreview(imageData) {
 }
 
 
-/* ==========================================
-   تحسين الورقة
-========================================== */
+/* =========================================================
+   18. HANDWRITING ENHANCEMENT
+   ========================================================= */
 
 if (enhanceHandwriting) {
 
@@ -1171,26 +1678,45 @@ if (enhanceHandwriting) {
 
             if (!handwritingOriginalImage) {
 
-                alert("من فضلك اختر صورة أولاً.");
+                alert(
+                    "من فضلك اختر صورة أولاً."
+                );
 
                 return;
 
             }
 
+
             const originalText =
                 enhanceHandwriting.textContent;
 
-            enhanceHandwriting.disabled = true;
+
+            enhanceHandwriting.disabled =
+                true;
+
+
+            if (createHandwritingPdf) {
+
+                createHandwritingPdf.disabled =
+                    true;
+
+            }
+
 
             enhanceHandwriting.textContent =
-                "⏳ جارٍ تحسين الصورة...";
+                "⏳ جاري تحسين الورقة...";
+
 
             try {
+
+                await wait(50);
+
 
                 const result =
                     await enhanceHandwritingImage(
                         handwritingOriginalImage
                     );
+
 
                 if (!result) {
 
@@ -1200,12 +1726,29 @@ if (enhanceHandwriting) {
 
                 }
 
+
                 handwritingEnhancedImage =
                     result;
+
 
                 showHandwritingPreview(
                     handwritingEnhancedImage
                 );
+
+
+                enhanceHandwriting.textContent =
+                    "✅ تم تحسين الورقة";
+
+
+                if (createHandwritingPdf) {
+
+                    createHandwritingPdf.disabled =
+                        false;
+
+                }
+
+
+                await wait(1500);
 
             } catch (error) {
 
@@ -1214,14 +1757,18 @@ if (enhanceHandwriting) {
                     error
                 );
 
-                alert(
-                    "تعذر تحسين الصورة. سيتم استخدام الصورة الأصلية."
-                );
 
-                handwritingEnhancedImage = null;
+                handwritingEnhancedImage =
+                    null;
+
 
                 showHandwritingPreview(
                     handwritingOriginalImage
+                );
+
+
+                alert(
+                    "تعذر تحسين الصورة. سيتم الاحتفاظ بالصورة الأصلية."
                 );
 
             } finally {
@@ -1229,8 +1776,17 @@ if (enhanceHandwriting) {
                 enhanceHandwriting.disabled =
                     false;
 
+
                 enhanceHandwriting.textContent =
                     originalText;
+
+
+                if (createHandwritingPdf) {
+
+                    createHandwritingPdf.disabled =
+                        !handwritingOriginalImage;
+
+                }
 
             }
 
@@ -1239,230 +1795,236 @@ if (enhanceHandwriting) {
 
 }
 
- /* ==========================================
-   تحسين صورة خط اليد — LOCAL
-========================================== */
 
-function enhanceHandwritingImage(imageData) {
+/* =========================================================
+   19. LOCAL HANDWRITING ENHANCEMENT
+   ========================================================= */
 
-    return new Promise((resolve, reject) => {
+function enhanceHandwritingImage(
+    imageData
+) {
 
-        if (!imageData) {
-            reject(
-                new Error("لا توجد صورة للتحسين.")
-            );
-            return;
-        }
+    return new Promise(
+        (resolve, reject) => {
 
-
-        const image = new Image();
-
-
-        image.onload = function () {
-
-            try {
-
-                const width =
-                    image.naturalWidth ||
-                    image.width;
-
-                const height =
-                    image.naturalHeight ||
-                    image.height;
-
-
-                if (!width || !height) {
-
-                    throw new Error(
-                        "تعذر معرفة أبعاد الصورة."
-                    );
-
-                }
-
-
-                const canvas =
-                    document.createElement("canvas");
-
-
-                canvas.width =
-                    width;
-
-                canvas.height =
-                    height;
-
-
-                const context =
-                    canvas.getContext("2d");
-
-
-                if (!context) {
-
-                    throw new Error(
-                        "تعذر إنشاء Canvas."
-                    );
-
-                }
-
-
-                /*
-                 * رسم الصورة الأصلية
-                 */
-
-                context.drawImage(
-                    image,
-                    0,
-                    0,
-                    width,
-                    height
-                );
-
-
-                /*
-                 * استخراج بيانات الصورة
-                 */
-
-                const pixels =
-                    context.getImageData(
-                        0,
-                        0,
-                        width,
-                        height
-                    );
-
-
-                const data =
-                    pixels.data;
-
-
-                /*
-                 * تحسين بسيط:
-                 * - زيادة التباين
-                 * - الحفاظ على الألوان
-                 * - لا يوجد API
-                 * - لا يوجد AI
-                 */
-
-                const contrast =
-                    1.25;
-
-                const factor =
-                    (259 * (contrast + 255)) /
-                    (255 * (259 - contrast));
-
-
-                for (
-                    let i = 0;
-                    i < data.length;
-                    i += 4
-                ) {
-
-                    data[i] =
-                        Math.max(
-                            0,
-                            Math.min(
-                                255,
-                                factor *
-                                (data[i] - 128) +
-                                128
-                            )
-                        );
-
-
-                    data[i + 1] =
-                        Math.max(
-                            0,
-                            Math.min(
-                                255,
-                                factor *
-                                (data[i + 1] - 128) +
-                                128
-                            )
-                        );
-
-
-                    data[i + 2] =
-                        Math.max(
-                            0,
-                            Math.min(
-                                255,
-                                factor *
-                                (data[i + 2] - 128) +
-                                128
-                            )
-                        );
-
-                }
-
-
-                /*
-                 * إعادة البيانات إلى Canvas
-                 */
-
-                context.putImageData(
-                    pixels,
-                    0,
-                    0
-                );
-
-
-                /*
-                 * إنشاء الصورة المحسنة
-                 */
-
-                const result =
-                    canvas.toDataURL(
-                        "image/jpeg",
-                        0.95
-                    );
-
-
-                if (!result) {
-
-                    throw new Error(
-                        "تعذر إنشاء الصورة المحسنة."
-                    );
-
-                }
-
-
-                resolve(result);
-
-
-            } catch (error) {
-
-                reject(error);
-
-            }
-
-        };
-
-
-        image.onerror =
-            function () {
+            if (!imageData) {
 
                 reject(
                     new Error(
-                        "تعذر تحميل الصورة للتحسين."
+                        "لا توجد صورة للتحسين."
                     )
                 );
 
-            };
+                return;
+
+            }
 
 
-        image.src =
-            imageData;
-
-    });
-
-                               }           
+            const image =
+                new Image();
 
 
+            image.onload =
+                () => {
+
+                    try {
+
+                        const width =
+                            image.naturalWidth ||
+                            image.width;
 
 
+                        const height =
+                            image.naturalHeight ||
+                            image.height;
 
-/* ==========================================
-   ضبط الألوان
-========================================== */
+
+                        if (!width || !height) {
+
+                            throw new Error(
+                                "تعذر معرفة أبعاد الصورة."
+                            );
+
+                        }
+
+
+                        const canvas =
+                            document.createElement(
+                                "canvas"
+                            );
+
+
+                        canvas.width =
+                            width;
+
+
+                        canvas.height =
+                            height;
+
+
+                        const context =
+                            canvas.getContext(
+                                "2d"
+                            );
+
+
+                        if (!context) {
+
+                            throw new Error(
+                                "تعذر إنشاء Canvas."
+                            );
+
+                        }
+
+
+                        context.drawImage(
+                            image,
+                            0,
+                            0,
+                            width,
+                            height
+                        );
+
+
+                        const imagePixels =
+                            context.getImageData(
+                                0,
+                                0,
+                                width,
+                                height
+                            );
+
+
+                        const data =
+                            imagePixels.data;
+
+
+                        /*
+                         * تحسين الورقة:
+                         * زيادة بسيطة للتباين
+                         * مع المحافظة على الصورة
+                         * وعدم استخدام API خارجي.
+                         */
+
+                        const contrast =
+                            1.22;
+
+
+                        const factor =
+                            (
+                                259 *
+                                (contrast + 255)
+                            ) /
+                            (
+                                255 *
+                                (259 - contrast)
+                            );
+
+
+                        for (
+                            let i = 0;
+                            i < data.length;
+                            i += 4
+                        ) {
+
+                            data[i] =
+                                clampColor(
+                                    factor *
+                                    (
+                                        data[i] -
+                                        128
+                                    ) +
+                                    128
+                                );
+
+
+                            data[i + 1] =
+                                clampColor(
+                                    factor *
+                                    (
+                                        data[i + 1] -
+                                        128
+                                    ) +
+                                    128
+                                );
+
+
+                            data[i + 2] =
+                                clampColor(
+                                    factor *
+                                    (
+                                        data[i + 2] -
+                                        128
+                                    ) +
+                                    128
+                                );
+
+                        }
+
+
+                        context.putImageData(
+                            imagePixels,
+                            0,
+                            0
+                        );
+
+
+                        const result =
+                            canvas.toDataURL(
+                                "image/jpeg",
+                                0.95
+                            );
+
+
+                        if (!result) {
+
+                            throw new Error(
+                                "تعذر إنشاء الصورة المحسنة."
+                            );
+
+                        }
+
+
+                        resolve(
+                            result
+                        );
+
+
+                    } catch (error) {
+
+                        reject(
+                            error
+                        );
+
+                    }
+
+                };
+
+
+            image.onerror =
+                () => {
+
+                    reject(
+                        new Error(
+                            "تعذر تحميل الصورة للتحسين."
+                        )
+                    );
+
+                };
+
+
+            image.src =
+                imageData;
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   20. COLOR CLAMP
+   ========================================================= */
 
 function clampColor(value) {
 
@@ -1477,9 +2039,9 @@ function clampColor(value) {
 }
 
 
-/* ==========================================
-   تحويل الصورة إلى PDF
-========================================== */
+/* =========================================================
+   21. HANDWRITING IMAGE → PDF
+   ========================================================= */
 
 if (createHandwritingPdf) {
 
@@ -1510,15 +2072,26 @@ if (createHandwritingPdf) {
             createHandwritingPdf.disabled =
                 true;
 
+
             createHandwritingPdf.textContent =
-                "⏳ جارٍ إنشاء PDF...";
+                "⏳ جاري إنشاء PDF...";
 
 
             try {
 
+                if (!window.jspdf) {
+
+                    throw new Error(
+                        "jsPDF غير محمل."
+                    );
+
+                }
+
+
                 const {
                     jsPDF
-                } = window.jspdf;
+                } =
+                    window.jspdf;
 
 
                 const image =
@@ -1535,6 +2108,15 @@ if (createHandwritingPdf) {
                 const height =
                     image.naturalHeight ||
                     image.height;
+
+
+                if (!width || !height) {
+
+                    throw new Error(
+                        "تعذر معرفة أبعاد الصورة."
+                    );
+
+                }
 
 
                 const orientation =
@@ -1554,11 +2136,13 @@ if (createHandwritingPdf) {
                 const pageWidth =
                     pdf.internal.pageSize.getWidth();
 
+
                 const pageHeight =
                     pdf.internal.pageSize.getHeight();
 
 
-                const margin = 10;
+                const margin =
+                    10;
 
 
                 const availableWidth =
@@ -1580,7 +2164,8 @@ if (createHandwritingPdf) {
 
 
                 let finalHeight =
-                    finalWidth / ratio;
+                    finalWidth /
+                    ratio;
 
 
                 if (
@@ -1591,20 +2176,26 @@ if (createHandwritingPdf) {
                     finalHeight =
                         availableHeight;
 
+
                     finalWidth =
-                        finalHeight * ratio;
+                        finalHeight *
+                        ratio;
 
                 }
 
 
                 const x =
-                    (pageWidth -
-                        finalWidth) / 2;
+                    (
+                        pageWidth -
+                        finalWidth
+                    ) / 2;
 
 
                 const y =
-                    (pageHeight -
-                        finalHeight) / 2;
+                    (
+                        pageHeight -
+                        finalHeight
+                    ) / 2;
 
 
                 pdf.addImage(
@@ -1637,7 +2228,8 @@ if (createHandwritingPdf) {
             } finally {
 
                 createHandwritingPdf.disabled =
-                    false;
+                    !handwritingOriginalImage;
+
 
                 createHandwritingPdf.textContent =
                     originalText;
@@ -1650,444 +2242,228 @@ if (createHandwritingPdf) {
 }
 
 
-/* ==========================================
-   تحميل صورة الكتابة اليدوية
-========================================== */
-
-function loadHandwritingImage(imageData) {
-
-    return new Promise((resolve, reject) => {
-
-        const image =
-            new Image();
-
-
-        image.onload = () => {
-
-            resolve(image);
-
-        };
-
-
-        image.onerror = () => {
-
-            reject(
-                new Error(
-                    "تعذر تحميل الصورة."
-                )
-            );
-
-        };
-
-
-        image.src =
-            imageData;
-
-    });
-
-}
-
-/* ==========================================
-   إنشاء PDF من الصور
-========================================== */
-
-if (createImagesPdf) {
-
-    createImagesPdf.addEventListener("click", async () => {
-
-        if (!selectedImages.length) {
-
-            alert("من فضلك اختر صورة أولاً.");
-
-            return;
-
-        }
-
-
-        const originalText =
-            createImagesPdf.textContent;
-
-
-        createImagesPdf.disabled =
-            true;
-
-        createImagesPdf.textContent =
-            "⏳ جارٍ إنشاء PDF...";
-
-
-        try {
-
-            const { jsPDF } =
-                window.jspdf;
-
-
-            let pdf = null;
-
-
-            for (
-                let i = 0;
-                i < selectedImages.length;
-                i++
-            ) {
-
-                const file =
-                    selectedImages[i];
-
-
-                /*
-                 * نحول كل صورة إلى JPEG عبر Canvas.
-                 * هذا يتجنب مشاكل PNG / WEBP / بعض
-                 * صيغ الصور مع jsPDF.
-                 */
-
-                const imageData =
-                    await convertImageToJpeg(file);
-
-
-                const image =
-                    await loadImage(imageData);
-
-
-                const imageWidth =
-                    image.naturalWidth ||
-                    image.width;
-
-
-                const imageHeight =
-                    image.naturalHeight ||
-                    image.height;
-
-
-                if (
-                    !imageWidth ||
-                    !imageHeight
-                ) {
-
-                    throw new Error(
-                        "تعذر قراءة أبعاد الصورة."
-                    );
-
-                }
-
-
-                const ratio =
-                    imageWidth /
-                    imageHeight;
-
-
-                /*
-                 * نحدد اتجاه الصفحة حسب
-                 * اتجاه الصورة.
-                 */
-
-                const orientation =
-                    imageWidth >= imageHeight
-                        ? "landscape"
-                        : "portrait";
-
-
-                if (!pdf) {
-
-                    pdf =
-                        new jsPDF({
-                            orientation,
-                            unit: "mm",
-                            format: "a4"
-                        });
-
-                } else {
-
-                    pdf.addPage(
-                        "a4",
-                        orientation
-                    );
-
-                }
-
-
-                const pageWidth =
-                    pdf.internal.pageSize.getWidth();
-
-                const pageHeight =
-                    pdf.internal.pageSize.getHeight();
-
-
-                const margin = 10;
-
-
-                const availableWidth =
-                    pageWidth -
-                    margin * 2;
-
-
-                const availableHeight =
-                    pageHeight -
-                    margin * 2;
-
-
-                let finalWidth =
-                    availableWidth;
-
-
-                let finalHeight =
-                    finalWidth / ratio;
-
-
-                /*
-                 * إذا كانت الصورة أطول من الصفحة،
-                 * نصغرها مع الحفاظ على النسبة.
-                 */
-
-                if (
-                    finalHeight >
-                    availableHeight
-                ) {
-
-                    finalHeight =
-                        availableHeight;
-
-                    finalWidth =
-                        finalHeight * ratio;
-
-                }
-
-
-                /*
-                 * توسيط الصورة في الصفحة.
-                 */
-
-                const x =
-                    (pageWidth -
-                        finalWidth) / 2;
-
-
-                const y =
-                    (pageHeight -
-                        finalHeight) / 2;
-
-
-                pdf.addImage(
-                    imageData,
-                    "JPEG",
-                    x,
-                    y,
-                    finalWidth,
-                    finalHeight
-                );
-
-            }
-
-
-            if (pdf) {
-
-                pdf.save(
-                    "WebBag-Images.pdf"
-                );
-
-            }
-
-
-        } catch (error) {
-
-            console.error(
-                "IMAGES PDF ERROR:",
-                error
-            );
-
-
-            alert(
-                "حدث خطأ أثناء تحويل الصور إلى PDF."
-            );
-
-        } finally {
-
-            createImagesPdf.disabled =
-                selectedImages.length === 0;
-
-
-            createImagesPdf.textContent =
-                originalText;
-
-        }
-
-    });
-
-}
-
-
-/* ==========================================
-   تحويل الصورة إلى JPEG
-========================================== */
-
-function convertImageToJpeg(file) {
-
-    return new Promise((resolve, reject) => {
-
-        const reader =
-            new FileReader();
-
-
-        reader.onload = event => {
+/* =========================================================
+   22. LOAD HANDWRITING IMAGE
+   ========================================================= */
+
+function loadHandwritingImage(
+    imageData
+) {
+
+    return new Promise(
+        (resolve, reject) => {
 
             const image =
                 new Image();
 
 
-            image.onload = () => {
-
-                const canvas =
-                    document.createElement("canvas");
+            image.onload =
+                () => resolve(image);
 
 
-                canvas.width =
-                    image.naturalWidth;
-
-
-                canvas.height =
-                    image.naturalHeight;
-
-
-                const context =
-                    canvas.getContext("2d");
-
-
-                if (!context) {
-
+            image.onerror =
+                () =>
                     reject(
                         new Error(
-                            "تعذر إنشاء Canvas."
+                            "تعذر تحميل الصورة."
                         )
                     );
 
-                    return;
 
-                }
+            image.src =
+                imageData;
 
+        }
+    );
 
-                /*
-                 * خلفية بيضاء حتى الصور التي
-                 * تحتوي على شفافية لا تظهر سوداء.
-                 */
-
-                context.fillStyle =
-                    "#ffffff";
+}
 
 
-                context.fillRect(
-                    0,
-                    0,
-                    canvas.width,
-                    canvas.height
-                );
+/* =========================================================
+   23. GENERIC IMAGE LOADER
+   ========================================================= */
+
+function loadImage(
+    dataUrl
+) {
+
+    return new Promise(
+        (resolve, reject) => {
+
+            const image =
+                new Image();
 
 
-                context.drawImage(
-                    image,
-                    0,
-                    0
-                );
+            image.onload =
+                () => resolve(image);
 
 
-                resolve(
-                    canvas.toDataURL(
-                        "image/jpeg",
-                        0.95
-                    )
-                );
-
-            };
-
-
-            image.onerror = () => {
-
-                reject(
-                    new Error(
-                        "تعذر تحميل الصورة."
-                    )
-                );
-
-            };
+            image.onerror =
+                () =>
+                    reject(
+                        new Error(
+                            "تعذر تحميل بيانات الصورة."
+                        )
+                    );
 
 
             image.src =
-                event.target.result;
+                dataUrl;
 
-        };
-
-
-        reader.onerror = () => {
-
-            reject(
-                new Error(
-                    "تعذر قراءة ملف الصورة."
-                )
-            );
-
-        };
-
-
-        reader.readAsDataURL(file);
-
-    });
+        }
+    );
 
 }
 
 
-/* ==========================================
-   تحميل الصورة
-========================================== */
+/* =========================================================
+   24. IMAGE → JPEG
+   ========================================================= */
 
-function loadImage(dataUrl) {
-
-    return new Promise((resolve, reject) => {
-
-        const image =
-            new Image();
-
-
-        image.onload = () => {
-
-            resolve(image);
-
-        };
-
-
-        image.onerror = () => {
-
-            reject(
-                new Error(
-                    "تعذر تحميل بيانات الصورة."
-                )
-            );
-
-        };
-
-
-        image.src =
-            dataUrl;
-
-    });
-
-}
-
-
-/* ==========================================
-   IMAGE HELPERS
-========================================== */
-
-function readImageFile(file){
+function convertImageToJpeg(
+    file
+) {
 
     return new Promise(
-        (resolve,reject) => {
+        (resolve, reject) => {
 
             const reader =
                 new FileReader();
 
 
             reader.onload =
-                () => resolve(
-                    reader.result
-                );
+                event => {
+
+                    const image =
+                        new Image();
+
+
+                    image.onload =
+                        () => {
+
+                            try {
+
+                                const canvas =
+                                    document.createElement(
+                                        "canvas"
+                                    );
+
+
+                                canvas.width =
+                                    image.naturalWidth;
+
+
+                                canvas.height =
+                                    image.naturalHeight;
+
+
+                                const context =
+                                    canvas.getContext(
+                                        "2d"
+                                    );
+
+
+                                if (!context) {
+
+                                    throw new Error(
+                                        "تعذر إنشاء Canvas."
+                                    );
+
+                                }
+
+
+                                context.fillStyle =
+                                    "#ffffff";
+
+
+                                context.fillRect(
+                                    0,
+                                    0,
+                                    canvas.width,
+                                    canvas.height
+                                );
+
+
+                                context.drawImage(
+                                    image,
+                                    0,
+                                    0
+                                );
+
+
+                                resolve(
+                                    canvas.toDataURL(
+                                        "image/jpeg",
+                                        0.95
+                                    )
+                                );
+
+
+                            } catch (error) {
+
+                                reject(
+                                    error
+                                );
+
+                            }
+
+                        };
+
+
+                    image.onerror =
+                        () =>
+                            reject(
+                                new Error(
+                                    "تعذر تحميل الصورة."
+                                )
+                            );
+
+
+                    image.src =
+                        event.target.result;
+
+                };
+
+
+            reader.onerror =
+                () =>
+                    reject(
+                        new Error(
+                            "تعذر قراءة ملف الصورة."
+                        )
+                    );
+
+
+            reader.readAsDataURL(
+                file
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   25. IMAGE HELPERS
+   ========================================================= */
+
+function readImageFile(
+    file
+) {
+
+    return new Promise(
+        (resolve, reject) => {
+
+            const reader =
+                new FileReader();
+
+
+            reader.onload =
+                () =>
+                    resolve(
+                        reader.result
+                    );
 
 
             reader.onerror =
@@ -2104,17 +2480,22 @@ function readImageFile(file){
 }
 
 
-function loadPdfImage(dataUrl){
+function loadPdfImage(
+    dataUrl
+) {
 
     return new Promise(
-        (resolve,reject) => {
+        (resolve, reject) => {
 
             const image =
                 new Image();
 
 
             image.onload =
-                () => resolve(image);
+                () =>
+                    resolve(
+                        image
+                    );
 
 
             image.onerror =
@@ -2130,31 +2511,105 @@ function loadPdfImage(dataUrl){
 }
 
 
-function getImageFormat(file){
+function getImageFormat(
+    file
+) {
+
+    if (!file || !file.type) {
+        return "JPEG";
+    }
+
 
     const type =
         file.type.toLowerCase();
 
 
-    if (
-        type.includes("png")
-    ){
-
+    if (type.includes("png")) {
         return "PNG";
-
     }
 
 
-    if (
-        type.includes("webp")
-    ){
-
+    if (type.includes("webp")) {
         return "WEBP";
-
     }
 
 
     return "JPEG";
 
-                       }
+}
 
+
+/* =========================================================
+   26. WAIT HELPER
+   ========================================================= */
+
+function wait(
+    milliseconds
+) {
+
+    return new Promise(
+        resolve =>
+            setTimeout(
+                resolve,
+                milliseconds
+            )
+    );
+
+}
+
+
+/* =========================================================
+   27. INITIAL PDF STATE
+   ========================================================= */
+
+if (pdfStatus) {
+
+    pdfStatus.textContent =
+        "✅ أداة PDF AI جاهزة.";
+
+}
+
+
+if (summarizePdf) {
+    summarizePdf.disabled =
+        !extractedPdfText;
+}
+
+
+if (copyPdfText) {
+    copyPdfText.disabled =
+        !extractedPdfText;
+}
+
+
+if (createImagesPdf) {
+
+    createImagesPdf.disabled =
+        selectedImages.length === 0;
+
+}
+
+
+if (enhanceHandwriting) {
+
+    enhanceHandwriting.disabled =
+        !handwritingOriginalImage;
+
+}
+
+
+if (createHandwritingPdf) {
+
+    createHandwritingPdf.disabled =
+        !handwritingOriginalImage;
+
+}
+
+
+/* =========================================================
+   PDF TOOL READY
+   ========================================================= */
+
+console.log(
+    "✅ WebBag PDF AI loaded successfully."
+);
