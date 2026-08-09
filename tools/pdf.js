@@ -2619,9 +2619,13 @@ if (createHandwritingPdf) {
                 );
 
 
-                pdf.save(
-                    "WebBag-Handwriting.pdf"
-                );
+                const timestamp =
+    new Date().toISOString()
+        .replace(/[:.]/g, "-");
+
+pdf.save(
+    `WebBag-Handwriting-${timestamp}.pdf`
+);
 
 
             } catch (error) {
