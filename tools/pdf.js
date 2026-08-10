@@ -2,6 +2,7 @@
    WebBag PDF AI
    pdf.js
    Complete PDF Tool
+   Arabic OCR + Handwriting → Digital PDF
    ========================================== */
 
 "use strict";
@@ -20,6 +21,13 @@ let handwritingOriginalImage = null;
 let handwritingEnhancedImage = null;
 
 let handwritingImageObject = null;
+
+let handwritingOcrText = "";
+
+let handwritingOcrReady = false;
+let handwritingOcrRunning = false;
+
+let tesseractPromise = null;
 
 
 /* ==========================================
@@ -163,6 +171,83 @@ function configurePdfReader() {
             .workerSrc =
             "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
     }
+}
+
+
+/* ==========================================
+   TESSERACT.JS LOADER
+========================================== */
+
+function loadTesseract() {
+
+    if (tesseractPromise) {
+        return tesseractPromise;
+    }
+
+    tesseractPromise = new Promise(
+        (resolve, reject) => {
+
+            if (
+                window.Tesseract &&
+                typeof window.Tesseract.createWorker ===
+                    "function"
+            ) {
+
+                resolve(
+                    window.Tesseract
+                );
+
+                return;
+            }
+
+            const script =
+                document.createElement(
+                    "script"
+                );
+
+            script.src =
+                "https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js";
+
+            script.async = true;
+
+            script.onload = () => {
+
+                if (
+                    !window.Tesseract ||
+                    typeof window.Tesseract.createWorker !==
+                        "function"
+                ) {
+
+                    reject(
+                        new Error(
+                            "Tesseract.js loaded but unavailable."
+                        )
+                    );
+
+                    return;
+                }
+
+                resolve(
+                    window.Tesseract
+                );
+            };
+
+            script.onerror = () => {
+
+                reject(
+                    new Error(
+                        "Unable to load Tesseract.js."
+                    )
+                );
+            };
+
+            document.head.appendChild(
+                script
+            );
+        }
+    );
+
+    return tesseractPromise;
 }
 
 
@@ -792,7 +877,6 @@ if (summarizePdf) {
                     summarizePdf,
                     originalText
                 );
-
             }
         }
     );
@@ -1025,131 +1109,11 @@ if (
                             "a4"
                     });
 
-                const pageWidth =
-                    pdf.internal.pageSize.getWidth();
-
-                const pageHeight =
-                    pdf.internal.pageSize.getHeight();
-
-                const margin =
-                    10;
-
-                const usableWidth =
-                    pageWidth -
-                    margin * 2;
-
-                const usableHeight =
-                    pageHeight -
-                    margin * 2;
-
-                const imageRatio =
-                    canvas.width /
-                    canvas.height;
-
-                const pageCanvasHeight =
-                    Math.floor(
-                        canvas.width *
-                        usableHeight /
-                        usableWidth
-                    );
-
-                let sourceY =
-                    0;
-
-                let pageNumber =
-                    0;
-
-                while (
-                    sourceY <
-                    canvas.height
-                ) {
-
-                    const currentHeight =
-                        Math.min(
-                            pageCanvasHeight,
-                            canvas.height -
-                                sourceY
-                        );
-
-                    const pageCanvas =
-                        document.createElement(
-                            "canvas"
-                        );
-
-                    pageCanvas.width =
-                        canvas.width;
-
-                    pageCanvas.height =
-                        currentHeight;
-
-                    const context =
-                        pageCanvas.getContext(
-                            "2d"
-                        );
-
-                    if (!context) {
-
-                        throw new Error(
-                            "Unable to create canvas context."
-                        );
-                    }
-
-                    context.fillStyle =
-                        "#ffffff";
-
-                    context.fillRect(
-                        0,
-                        0,
-                        pageCanvas.width,
-                        pageCanvas.height
-                    );
-
-                    context.drawImage(
-                        canvas,
-                        0,
-                        sourceY,
-                        canvas.width,
-                        currentHeight,
-                        0,
-                        0,
-                        canvas.width,
-                        currentHeight
-                    );
-
-                    if (pageNumber > 0) {
-
-                        pdf.addPage();
-                    }
-
-                    const pageImage =
-                        pageCanvas.toDataURL(
-                            "image/png"
-                        );
-
-                    const currentImageHeight =
-                        usableWidth /
-                        imageRatio;
-
-                    const visibleHeight =
-                        Math.min(
-                            currentImageHeight,
-                            usableHeight
-                        );
-
-                    pdf.addImage(
-                        pageImage,
-                        "PNG",
-                        margin,
-                        margin,
-                        usableWidth,
-                        visibleHeight
-                    );
-
-                    sourceY +=
-                        currentHeight;
-
-                    pageNumber++;
-                }
+                await addCanvasToPdf(
+                    pdf,
+                    canvas,
+                    10
+                );
 
                 pdf.save(
                     createUniqueFileName(
@@ -1171,9 +1135,7 @@ if (
             } finally {
 
                 if (container) {
-
                     container.remove();
-
                 }
 
                 restoreButton(
@@ -1450,7 +1412,9 @@ if (createImagesPdf) {
                         x,
                         y,
                         finalWidth,
-                        finalHeight
+                        finalHeight,
+                        undefined,
+                        "FAST"
                     );
                 }
 
@@ -1648,6 +1612,12 @@ if (handwritingImageInput) {
             handwritingImageObject =
                 null;
 
+            handwritingOcrText =
+                "";
+
+            handwritingOcrReady =
+                false;
+
             if (!file) {
 
                 resetHandwritingInterface();
@@ -1684,6 +1654,8 @@ if (handwritingImageInput) {
                     showHandwritingPreview(
                         handwritingOriginalImage
                     );
+
+                    ensureHandwritingOcrInterface();
 
                     if (enhanceHandwriting) {
 
@@ -1730,6 +1702,11 @@ function showHandwritingPreview(
         return;
     }
 
+    const existingOcr =
+        handwritingPreview.querySelector(
+            ".webbag-ocr-area"
+        );
+
     handwritingPreview.innerHTML =
         "";
 
@@ -1773,126 +1750,880 @@ function showHandwritingPreview(
     handwritingPreview.appendChild(
         image
     );
-}
 
+    if (existingOcr) {
 
-/* ==========================================
-   RESET HANDWRITING
-========================================== */
-
-function resetHandwritingInterface() {
-
-    handwritingOriginalImage =
-        null;
-
-    handwritingEnhancedImage =
-        null;
-
-    handwritingImageObject =
-        null;
-
-    if (handwritingImageInput) {
-
-        handwritingImageInput.value =
-            "";
-    }
-
-    if (handwritingPreview) {
-
-        handwritingPreview.innerHTML = `
-            لم يتم اختيار صورة
-        `;
-    }
-
-    if (enhanceHandwriting) {
-
-        enhanceHandwriting.disabled =
-            true;
-    }
-
-    if (createHandwritingPdf) {
-
-        createHandwritingPdf.disabled =
-            true;
+        handwritingPreview.appendChild(
+            existingOcr
+        );
     }
 }
 
 
 /* ==========================================
-   IMAGE LOADER
+   HANDWRITING OCR UI
+   Created automatically.
 ========================================== */
 
-function loadImage(
-    dataUrl
-) {
+let handwritingOcrArea = null;
+let handwritingOcrTextarea = null;
+let handwritingOcrStatus = null;
+let handwritingOcrButton = null;
+let handwritingOcrPdfButton = null;
+let handwritingRestoreButton = null;
 
-    return new Promise(
-        (resolve, reject) => {
 
-            const image =
-                new Image();
+function ensureHandwritingOcrInterface() {
 
-            image.onload =
-                () => resolve(
-                    image
+    if (!handwritingPreview) {
+        return;
+    }
+
+    if (handwritingOcrArea) {
+        return;
+    }
+
+    handwritingOcrArea =
+        document.createElement(
+            "div"
+        );
+
+    handwritingOcrArea.className =
+        "webbag-ocr-area";
+
+    handwritingOcrArea.style.marginTop =
+        "20px";
+
+    handwritingOcrArea.style.padding =
+        "18px";
+
+    handwritingOcrArea.style.borderRadius =
+        "18px";
+
+    handwritingOcrArea.style.background =
+        "rgba(255,255,255,0.08)";
+
+    handwritingOcrArea.style.border =
+        "1px solid rgba(255,255,255,0.15)";
+
+    handwritingOcrArea.dir =
+        "rtl";
+
+
+    const title =
+        document.createElement(
+            "h3"
+        );
+
+    title.textContent =
+        "📝 النص الرقمي المستخرج";
+
+    title.style.margin =
+        "0 0 10px";
+
+
+    handwritingOcrStatus =
+        document.createElement(
+            "div"
+        );
+
+    handwritingOcrStatus.textContent =
+        "لم يتم تشغيل OCR بعد.";
+
+    handwritingOcrStatus.style.marginBottom =
+        "10px";
+
+
+    handwritingOcrTextarea =
+        document.createElement(
+            "textarea"
+        );
+
+    handwritingOcrTextarea.dir =
+        "rtl";
+
+    handwritingOcrTextarea.lang =
+        "ar";
+
+    handwritingOcrTextarea.placeholder =
+        "سيظهر هنا النص المستخرج من الخط اليدوي، ويمكنك تصحيحه قبل إنشاء PDF...";
+
+    handwritingOcrTextarea.style.width =
+        "100%";
+
+    handwritingOcrTextarea.style.minHeight =
+        "220px";
+
+    handwritingOcrTextarea.style.boxSizing =
+        "border-box";
+
+    handwritingOcrTextarea.style.padding =
+        "14px";
+
+    handwritingOcrTextarea.style.borderRadius =
+        "14px";
+
+    handwritingOcrTextarea.style.border =
+        "1px solid rgba(255,255,255,0.2)";
+
+    handwritingOcrTextarea.style.background =
+        "rgba(0,0,0,0.15)";
+
+    handwritingOcrTextarea.style.color =
+        "inherit";
+
+    handwritingOcrTextarea.style.fontFamily =
+        "Cairo, Arial, sans-serif";
+
+    handwritingOcrTextarea.style.fontSize =
+        "18px";
+
+    handwritingOcrTextarea.style.lineHeight =
+        "1.9";
+
+    handwritingOcrTextarea.style.resize =
+        "vertical";
+
+
+    handwritingOcrButton =
+        document.createElement(
+            "button"
+        );
+
+    handwritingOcrButton.type =
+        "button";
+
+    handwritingOcrButton.className =
+        "send-btn";
+
+    handwritingOcrButton.textContent =
+        "🔎 استخراج النص العربي";
+
+
+    handwritingRestoreButton =
+        document.createElement(
+            "button"
+        );
+
+    handwritingRestoreButton.type =
+        "button";
+
+    handwritingRestoreButton.className =
+        "send-btn";
+
+    handwritingRestoreButton.textContent =
+        "↩️ استخدام الصورة الأصلية";
+
+
+    handwritingOcrPdfButton =
+        document.createElement(
+            "button"
+        );
+
+    handwritingOcrPdfButton.type =
+        "button";
+
+    handwritingOcrPdfButton.className =
+        "send-btn";
+
+    handwritingOcrPdfButton.textContent =
+        "📄 إنشاء PDF من النص الرقمي";
+
+    handwritingOcrPdfButton.disabled =
+        true;
+
+
+    const actions =
+        document.createElement(
+            "div"
+        );
+
+    actions.style.display =
+        "flex";
+
+    actions.style.flexWrap =
+        "wrap";
+
+    actions.style.gap =
+        "10px";
+
+    actions.style.marginTop =
+        "12px";
+
+
+    actions.appendChild(
+        handwritingOcrButton
+    );
+
+    actions.appendChild(
+        handwritingRestoreButton
+    );
+
+    actions.appendChild(
+        handwritingOcrPdfButton
+    );
+
+
+    handwritingOcrArea.appendChild(
+        title
+    );
+
+    handwritingOcrArea.appendChild(
+        handwritingOcrStatus
+    );
+
+    handwritingOcrArea.appendChild(
+        handwritingOcrTextarea
+    );
+
+    handwritingOcrArea.appendChild(
+        actions
+    );
+
+    handwritingPreview.appendChild(
+        handwritingOcrArea
+    );
+
+
+    handwritingOcrButton.addEventListener(
+        "click",
+        runHandwritingOCR
+    );
+
+
+    handwritingOcrPdfButton.addEventListener(
+        "click",
+        createHandwritingTextPdf
+    );
+
+
+    handwritingRestoreButton.addEventListener(
+        "click",
+        () => {
+
+            restoreOriginalHandwriting();
+
+            if (
+                handwritingOcrStatus
+            ) {
+
+                handwritingOcrStatus.textContent =
+                    "↩️ تم إرجاع الصورة الأصلية.";
+            }
+        }
+    );
+
+
+    handwritingOcrTextarea.addEventListener(
+        "input",
+        () => {
+
+            handwritingOcrText =
+                handwritingOcrTextarea.value;
+
+            handwritingOcrReady =
+                Boolean(
+                    handwritingOcrText.trim()
                 );
 
-            image.onerror =
-                () => reject(
-                    new Error(
-                        "تعذر تحميل الصورة."
-                    )
-                );
+            if (
+                handwritingOcrPdfButton
+            ) {
 
-            image.src =
-                dataUrl;
+                handwritingOcrPdfButton.disabled =
+                    !handwritingOcrReady;
+            }
         }
     );
 }
 
 
 /* ==========================================
-   READ IMAGE FILE
+   HANDWRITING OCR IMAGE PREPROCESSOR
 ========================================== */
 
-function readImageFile(
-    file
+async function prepareImageForOCR(
+    imageData
 ) {
 
-    return new Promise(
-        (resolve, reject) => {
+    const image =
+        await loadImage(
+            imageData
+        );
 
-            if (!isValidImage(file)) {
+    const width =
+        image.naturalWidth ||
+        image.width;
 
-                reject(
-                    new Error(
-                        "Invalid image file."
-                    )
+    const height =
+        image.naturalHeight ||
+        image.height;
+
+    if (
+        !width ||
+        !height
+    ) {
+
+        throw new Error(
+            "Invalid OCR image dimensions."
+        );
+    }
+
+    /*
+     * OCR يستفيد غالبًا من صورة أكبر.
+     * نرفع الدقة إلى حد معقول دون
+     * استهلاك ذاكرة مبالغ فيها.
+     */
+
+    const maxDimension =
+        2600;
+
+    const scale =
+        Math.min(
+            1.7,
+            maxDimension /
+                Math.max(
+                    width,
+                    height
+                )
+        );
+
+    const targetWidth =
+        Math.max(
+            1,
+            Math.round(
+                width *
+                scale
+            )
+        );
+
+    const targetHeight =
+        Math.max(
+            1,
+            Math.round(
+                height *
+                scale
+            )
+        );
+
+    const canvas =
+        document.createElement(
+            "canvas"
+        );
+
+    canvas.width =
+        targetWidth;
+
+    canvas.height =
+        targetHeight;
+
+    const context =
+        canvas.getContext(
+            "2d",
+            {
+                willReadFrequently:
+                    true
+            }
+        );
+
+    if (!context) {
+
+        throw new Error(
+            "Unable to create OCR canvas."
+        );
+    }
+
+    context.fillStyle =
+        "#ffffff";
+
+    context.fillRect(
+        0,
+        0,
+        targetWidth,
+        targetHeight
+    );
+
+    context.drawImage(
+        image,
+        0,
+        0,
+        targetWidth,
+        targetHeight
+    );
+
+    /*
+     * معالجة إضافية خفيفة للـOCR.
+     * لا نستخدم threshold قاسي جدًا حتى
+     * لا تختفي أجزاء الخط العربي.
+     */
+
+    const pixels =
+        context.getImageData(
+            0,
+            0,
+            targetWidth,
+            targetHeight
+        );
+
+    const data =
+        pixels.data;
+
+    for (
+        let i = 0;
+        i < data.length;
+        i += 4
+    ) {
+
+        let r =
+            data[i];
+
+        let g =
+            data[i + 1];
+
+        let b =
+            data[i + 2];
+
+        const gray =
+            (
+                0.299 * r +
+                0.587 * g +
+                0.114 * b
+            );
+
+        /*
+         * تقليل الاصفرار والخلفية
+         */
+
+        const minChannel =
+            Math.min(
+                r,
+                g,
+                b
+            );
+
+        const maxChannel =
+            Math.max(
+                r,
+                g,
+                b
+            );
+
+        const saturation =
+            maxChannel -
+            minChannel;
+
+        let value =
+            gray;
+
+        if (
+            gray > 165 &&
+            saturation < 75
+        ) {
+
+            value =
+                255;
+        }
+
+        /*
+         * رفع التباين بشكل خفيف.
+         */
+
+        value =
+            (
+                value -
+                128
+            ) *
+            1.12 +
+            128;
+
+        value =
+            clampColor(
+                value
+            );
+
+        data[i] =
+            value;
+
+        data[i + 1] =
+            value;
+
+        data[i + 2] =
+            value;
+    }
+
+    context.putImageData(
+        pixels,
+        0,
+        0
+    );
+
+    return canvas.toDataURL(
+        "image/png"
+    );
+}
+
+
+/* ==========================================
+   OCR TEXT CLEANING
+========================================== */
+
+function cleanArabicOcrText(
+    text
+) {
+
+    if (!text) {
+        return "";
+    }
+
+    let result =
+        String(text)
+            .replace(
+                /\r/g,
+                ""
+            )
+            .replace(
+                /[ \t]+/g,
+                " "
+            )
+            .replace(
+                /\n{3,}/g,
+                "\n\n"
+            )
+            .trim();
+
+    /*
+     * إزالة مسافات غير مرغوبة قبل علامات الترقيم.
+     */
+
+    result =
+        result.replace(
+            /\s+([،؛:!?؟])/g,
+            "$1"
+        );
+
+    /*
+     * توحيد بعض أشكال الأرقام العربية.
+     */
+
+    result =
+        result.replace(
+            /٠/g,
+            "0"
+        )
+        .replace(
+            /١/g,
+            "1"
+        )
+        .replace(
+            /٢/g,
+            "2"
+        )
+        .replace(
+            /٣/g,
+            "3"
+        )
+        .replace(
+            /٤/g,
+            "4"
+        )
+        .replace(
+            /٥/g,
+            "5"
+        )
+        .replace(
+            /٦/g,
+            "6"
+        )
+        .replace(
+            /٧/g,
+            "7"
+        )
+        .replace(
+            /٨/g,
+            "8"
+        )
+        .replace(
+            /٩/g,
+            "9"
+        );
+
+    return result;
+}
+
+
+/* ==========================================
+   RUN ARABIC OCR
+========================================== */
+
+async function runHandwritingOCR() {
+
+    if (handwritingOcrRunning) {
+        return;
+    }
+
+    const sourceImage =
+        handwritingEnhancedImage ||
+        handwritingOriginalImage;
+
+    if (!sourceImage) {
+
+        alert(
+            "من فضلك اختر صورة أولاً."
+        );
+
+        return;
+    }
+
+    ensureHandwritingOcrInterface();
+
+    if (!handwritingOcrButton) {
+        return;
+    }
+
+    handwritingOcrRunning =
+        true;
+
+    const originalText =
+        setButtonLoading(
+            handwritingOcrButton,
+            "⏳ جارٍ التعرف على الخط..."
+        );
+
+    if (handwritingOcrStatus) {
+
+        handwritingOcrStatus.textContent =
+            "⏳ جارٍ تحميل محرك OCR العربي...";
+    }
+
+    if (handwritingOcrPdfButton) {
+
+        handwritingOcrPdfButton.disabled =
+            true;
+    }
+
+    try {
+
+        const Tesseract =
+            await loadTesseract();
+
+        if (handwritingOcrStatus) {
+
+            handwritingOcrStatus.textContent =
+                "⏳ جارٍ تجهيز الصورة للقراءة...";
+        }
+
+        const ocrImage =
+            await prepareImageForOCR(
+                sourceImage
+            );
+
+        if (handwritingOcrStatus) {
+
+            handwritingOcrStatus.textContent =
+                "⏳ جارٍ قراءة النص العربي...";
+        }
+
+        /*
+         * worker باللغة العربية.
+         *
+         * langPath يحتوي ملفات اللغات
+         * الرسمية لـTesseract.
+         */
+
+        const worker =
+            await Tesseract.createWorker(
+                "ara",
+                1,
+                {
+                    langPath:
+                        "https://tessdata.projectnaptha.com/4.0.0",
+                    logger:
+                        message => {
+
+                            if (
+                                !handwritingOcrStatus ||
+                                !message
+                            ) {
+                                return;
+                            }
+
+                            if (
+                                message.status
+                            ) {
+
+                                const progress =
+                                    typeof message.progress ===
+                                        "number"
+                                        ? Math.round(
+                                            message.progress *
+                                            100
+                                        )
+                                        : null;
+
+                                if (
+                                    progress !== null
+                                ) {
+
+                                    handwritingOcrStatus.textContent =
+                                        `⏳ ${message.status} — ${progress}%`;
+
+                                } else {
+
+                                    handwritingOcrStatus.textContent =
+                                        `⏳ ${message.status}`;
+                                }
+                            }
+                        }
+                }
+            );
+
+        try {
+
+            /*
+             * PSM 6 مناسب نسبيًا لصفحة نصية.
+             */
+
+            await worker.setParameters({
+                tessedit_pageseg_mode:
+                    "6",
+                preserve_interword_spaces:
+                    "1"
+            });
+
+            const result =
+                await worker.recognize(
+                    ocrImage
                 );
+
+            let text =
+                "";
+
+            if (
+                result &&
+                result.data
+            ) {
+
+                text =
+                    result.data.text ||
+                    "";
+            }
+
+            text =
+                cleanArabicOcrText(
+                    text
+                );
+
+            handwritingOcrText =
+                text;
+
+            handwritingOcrReady =
+                Boolean(
+                    text.trim()
+                );
+
+            if (handwritingOcrTextarea) {
+
+                handwritingOcrTextarea.value =
+                    text;
+            }
+
+            if (!text) {
+
+                if (handwritingOcrStatus) {
+
+                    handwritingOcrStatus.textContent =
+                        "⚠️ لم يتمكن OCR من استخراج نص واضح. جرّب صورة أوضح أو اضغط تحسين الورقة أولًا.";
+                }
+
+                handwritingOcrReady =
+                    false;
 
                 return;
             }
 
-            const reader =
-                new FileReader();
+            if (handwritingOcrStatus) {
 
-            reader.onload =
-                () => resolve(
-                    reader.result
-                );
+                handwritingOcrStatus.textContent =
+                    "✅ تم استخراج النص العربي. يمكنك مراجعته وتعديله قبل إنشاء PDF.";
+            }
 
-            reader.onerror =
-                () => reject(
-                    new Error(
-                        "Unable to read image."
-                    )
-                );
+            if (handwritingOcrPdfButton) {
 
-            reader.readAsDataURL(
-                file
-            );
+                handwritingOcrPdfButton.disabled =
+                    false;
+            }
+
+        } finally {
+
+            await worker.terminate();
         }
-    );
+
+    } catch (error) {
+
+        console.error(
+            "ARABIC OCR ERROR:",
+            error
+        );
+
+        handwritingOcrReady =
+            false;
+
+        if (handwritingOcrPdfButton) {
+
+            handwritingOcrPdfButton.disabled =
+                true;
+        }
+
+        if (handwritingOcrStatus) {
+
+            handwritingOcrStatus.textContent =
+                "❌ تعذر تشغيل OCR العربي. تحقق من اتصال الإنترنت ثم حاول مرة أخرى.";
+        }
+
+    } finally {
+
+        handwritingOcrRunning =
+            false;
+
+        restoreButton(
+            handwritingOcrButton,
+            originalText
+        );
+    }
+}
+
+
+/* ==========================================
+   HANDWRITING PREVIEW + OCR
+========================================== */
+
+function updateHandwritingOcrAfterEnhancement() {
+
+    ensureHandwritingOcrInterface();
+
+    handwritingOcrText =
+        "";
+
+    handwritingOcrReady =
+        false;
+
+    if (handwritingOcrTextarea) {
+
+        handwritingOcrTextarea.value =
+            "";
+    }
+
+    if (handwritingOcrPdfButton) {
+
+        handwritingOcrPdfButton.disabled =
+            true;
+    }
+
+    if (handwritingOcrStatus) {
+
+        handwritingOcrStatus.textContent =
+            "الصورة جاهزة. اضغط «استخراج النص العربي».";
+    }
 }
 
 
@@ -2192,7 +2923,7 @@ function enhanceHandwritingImage(
                         128;
 
                     /*
-                     * تقليل التشويش البسيط
+                     * Denoise
                      */
 
                     if (
@@ -2246,7 +2977,7 @@ function enhanceHandwritingImage(
                     }
 
                     /*
-                     * تحسين وضوح الكتابة
+                     * Sharpen / writing clarity
                      */
 
                     if (
@@ -2379,16 +3110,21 @@ if (enhanceHandwriting) {
                     handwritingEnhancedImage
                 );
 
-                /*
-                 * مهم:
-                 * النسخة المحسنة أصبحت هي النسخة
-                 * المستخدمة عند إنشاء PDF.
-                 */
+                ensureHandwritingOcrInterface();
+
+                updateHandwritingOcrAfterEnhancement();
 
                 enhanceHandwriting.dataset.enhanced =
                     "true";
 
                 if (createHandwritingPdf) {
+
+                    /*
+                     * الزر القديم لا ينشئ PDF من الصورة
+                     * بعد الآن؛ بل يصبح زرًا مساعدًا.
+                     * إنشاء PDF الحقيقي يتم من النص الرقمي
+                     * بعد OCR.
+                     */
 
                     createHandwritingPdf.disabled =
                         false;
@@ -2408,6 +3144,14 @@ if (enhanceHandwriting) {
                     handwritingOriginalImage
                 );
 
+                ensureHandwritingOcrInterface();
+
+                if (handwritingOcrStatus) {
+
+                    handwritingOcrStatus.textContent =
+                        "⚠️ تعذر التحسين، ويمكنك استخدام الصورة الأصلية واستخراج النص منها.";
+                }
+
                 alert(
                     "تعذر تحسين الصورة. سيتم استخدام الصورة الأصلية."
                 );
@@ -2426,6 +3170,8 @@ if (enhanceHandwriting) {
 
 /* ==========================================
    CREATE HANDWRITING PDF
+   IMPORTANT:
+   This now creates a DIGITAL PDF from OCR text.
 ========================================== */
 
 if (createHandwritingPdf) {
@@ -2434,24 +3180,47 @@ if (createHandwritingPdf) {
         "click",
         async () => {
 
-            const imageData =
-                handwritingEnhancedImage ||
-                handwritingOriginalImage;
+            /*
+             * إذا كان هناك نص OCR جاهز:
+             * نستخدمه.
+             *
+             * إذا لم يوجد، نشغّل OCR أولًا.
+             */
 
-            if (!imageData) {
+            ensureHandwritingOcrInterface();
+
+            if (
+                !handwritingOcrText.trim()
+            ) {
+
+                await runHandwritingOCR();
+            }
+
+            const text =
+                handwritingOcrTextarea
+                    ? handwritingOcrTextarea.value.trim()
+                    : handwritingOcrText.trim();
+
+            if (!text) {
 
                 alert(
-                    "من فضلك اختر صورة أولاً."
+                    "لم يتم استخراج نص من الصورة. اضغط «استخراج النص العربي» أو استخدم صورة أوضح."
                 );
 
                 return;
             }
 
+            handwritingOcrText =
+                text;
+
             const originalText =
                 setButtonLoading(
                     createHandwritingPdf,
-                    "⏳ جارٍ إنشاء PDF..."
+                    "⏳ جاري إنشاء PDF رقمي..."
                 );
+
+            let container =
+                null;
 
             try {
 
@@ -2462,134 +3231,756 @@ if (createHandwritingPdf) {
                     );
                 }
 
+                if (!window.html2canvas) {
+
+                    throw new Error(
+                        "html2canvas is not loaded."
+                    );
+                }
+
                 const {
                     jsPDF
                 } =
                     window.jspdf;
 
-                const image =
-                    await loadImage(
-                        imageData
+                /*
+                 * إنشاء صفحة HTML مؤقتة بالنص
+                 * العربي.
+                 *
+                 * النتيجة ليست الصورة الأصلية.
+                 * بل كتابة رقمية باستخدام Cairo.
+                 */
+
+                container =
+                    document.createElement(
+                        "div"
                     );
 
-                const width =
-                    image.naturalWidth ||
-                    image.width;
+                container.style.position =
+                    "fixed";
 
-                const height =
-                    image.naturalHeight ||
-                    image.height;
+                container.style.left =
+                    "-10000px";
 
-                if (
-                    !width ||
-                    !height
-                ) {
+                container.style.top =
+                    "0";
 
-                    throw new Error(
-                        "تعذر قراءة أبعاد الورقة."
+                container.style.width =
+                    "794px";
+
+                container.style.boxSizing =
+                    "border-box";
+
+                container.style.padding =
+                    "65px";
+
+                container.style.background =
+                    "#ffffff";
+
+                container.style.color =
+                    "#111111";
+
+                container.style.fontFamily =
+                    "Cairo, Arial, sans-serif";
+
+                container.style.fontSize =
+                    "21px";
+
+                container.style.fontWeight =
+                    "500";
+
+                container.style.lineHeight =
+                    "2.1";
+
+                container.style.direction =
+                    "rtl";
+
+                container.style.textAlign =
+                    "right";
+
+                container.style.whiteSpace =
+                    "pre-wrap";
+
+                container.style.wordBreak =
+                    "normal";
+
+                container.style.overflowWrap =
+                    "break-word";
+
+                /*
+                 * عنوان المستند.
+                 */
+
+                const title =
+                    document.createElement(
+                        "div"
                     );
+
+                title.textContent =
+                    "تحضير الدرس";
+
+                title.style.fontFamily =
+                    "Cairo, Arial, sans-serif";
+
+                title.style.fontSize =
+                    "28px";
+
+                title.style.fontWeight =
+                    "800";
+
+                title.style.textAlign =
+                    "center";
+
+                title.style.marginBottom =
+                    "30px";
+
+                title.style.color =
+                    "#111111";
+
+
+                /*
+                 * النص المستخرج.
+                 */
+
+                const textElement =
+                    document.createElement(
+                        "div"
+                    );
+
+                textElement.textContent =
+                    text;
+
+                textElement.style.fontFamily =
+                    "Cairo, Arial, sans-serif";
+
+                textElement.style.fontSize =
+                    "21px";
+
+                textElement.style.fontWeight =
+                    "500";
+
+                textElement.style.lineHeight =
+                    "2.1";
+
+                textElement.style.direction =
+                    "rtl";
+
+                textElement.style.textAlign =
+                    "right";
+
+                textElement.style.whiteSpace =
+                    "pre-wrap";
+
+                textElement.style.wordBreak =
+                    "normal";
+
+                textElement.style.overflowWrap =
+                    "break-word";
+
+
+                container.appendChild(
+                    title
+                );
+
+                container.appendChild(
+                    textElement
+                );
+
+                document.body.appendChild(
+                    container
+                );
+
+                if (document.fonts) {
+
+                    await document.fonts.ready;
                 }
 
-                const orientation =
-                    width >= height
-                        ? "landscape"
-                        : "portrait";
+                /*
+                 * تحويل النص الرقمي إلى صفحات PDF.
+                 *
+                 * html2canvas هنا يجعل النص
+                 * مطبوعًا بصريًا داخل الـPDF
+                 * بدل وضع صورة الورقة الأصلية.
+                 */
+
+                const canvas =
+                    await html2canvas(
+                        container,
+                        {
+                            scale: 2,
+                            useCORS: true,
+                            backgroundColor:
+                                "#ffffff",
+                            logging: false
+                        }
+                    );
+
+                if (!canvas.width) {
+
+                    throw new Error(
+                        "تعذر إنشاء صفحات PDF."
+                    );
+                }
 
                 const pdf =
                     new jsPDF({
-                        orientation,
-                        unit: "mm",
-                        format: "a4"
+                        orientation:
+                            "portrait",
+                        unit:
+                            "mm",
+                        format:
+                            "a4"
                     });
 
-                const pageWidth =
-                    pdf.internal.pageSize.getWidth();
-
-                const pageHeight =
-                    pdf.internal.pageSize.getHeight();
-
-                const margin =
-                    10;
-
-                const availableWidth =
-                    pageWidth -
-                    margin * 2;
-
-                const availableHeight =
-                    pageHeight -
-                    margin * 2;
-
-                const ratio =
-                    width /
-                    height;
-
-                let finalWidth =
-                    availableWidth;
-
-                let finalHeight =
-                    finalWidth /
-                    ratio;
-
-                if (
-                    finalHeight >
-                    availableHeight
-                ) {
-
-                    finalHeight =
-                        availableHeight;
-
-                    finalWidth =
-                        finalHeight *
-                        ratio;
-                }
-
-                const x =
-                    (
-                        pageWidth -
-                        finalWidth
-                    ) / 2;
-
-                const y =
-                    (
-                        pageHeight -
-                        finalHeight
-                    ) / 2;
-
-                pdf.addImage(
-                    imageData,
-                    "JPEG",
-                    x,
-                    y,
-                    finalWidth,
-                    finalHeight,
-                    undefined,
-                    "FAST"
+                await addCanvasToPdf(
+                    pdf,
+                    canvas,
+                    10
                 );
+
+                /*
+                 * اسم فريد لمنع مشكلة
+                 * إعادة تنزيل نفس الملف.
+                 */
 
                 pdf.save(
                     createUniqueFileName(
-                        "WebBag-Handwriting"
+                        "WebBag-Handwriting-Digital"
                     )
                 );
+
+                if (handwritingOcrStatus) {
+
+                    handwritingOcrStatus.textContent =
+                        "✅ تم إنشاء PDF رقمي من النص العربي المستخرج.";
+                }
 
             } catch (error) {
 
                 console.error(
-                    "HANDWRITING PDF ERROR:",
+                    "DIGITAL HANDWRITING PDF ERROR:",
                     error
                 );
 
                 alert(
-                    "حدث خطأ أثناء إنشاء PDF."
+                    "حدث خطأ أثناء إنشاء PDF الرقمي."
                 );
 
             } finally {
+
+                if (container) {
+                    container.remove();
+                }
 
                 restoreButton(
                     createHandwritingPdf,
                     originalText
                 );
             }
+        }
+    );
+}
+
+
+/* ==========================================
+   CREATE HANDWRITING TEXT PDF DIRECTLY
+========================================== */
+
+async function createHandwritingTextPdf() {
+
+    if (!handwritingOcrTextarea) {
+        return;
+    }
+
+    const text =
+        handwritingOcrTextarea.value.trim();
+
+    if (!text) {
+
+        alert(
+            "لا يوجد نص لإنشاء PDF."
+        );
+
+        return;
+    }
+
+    handwritingOcrText =
+        text;
+
+    const originalText =
+        handwritingOcrPdfButton
+            ? setButtonLoading(
+                handwritingOcrPdfButton,
+                "⏳ جاري إنشاء PDF..."
+            )
+            : null;
+
+    let container =
+        null;
+
+    try {
+
+        if (!window.jspdf) {
+
+            throw new Error(
+                "jsPDF is not loaded."
+            );
+        }
+
+        if (!window.html2canvas) {
+
+            throw new Error(
+                "html2canvas is not loaded."
+            );
+        }
+
+        const {
+            jsPDF
+        } =
+            window.jspdf;
+
+        container =
+            document.createElement(
+                "div"
+            );
+
+        container.style.position =
+            "fixed";
+
+        container.style.left =
+            "-10000px";
+
+        container.style.top =
+            "0";
+
+        container.style.width =
+            "794px";
+
+        container.style.padding =
+            "65px";
+
+        container.style.boxSizing =
+            "border-box";
+
+        container.style.background =
+            "#ffffff";
+
+        container.style.color =
+            "#111111";
+
+        container.style.fontFamily =
+            "Cairo, Arial, sans-serif";
+
+        container.style.fontSize =
+            "21px";
+
+        container.style.fontWeight =
+            "500";
+
+        container.style.lineHeight =
+            "2.1";
+
+        container.style.direction =
+            "rtl";
+
+        container.style.textAlign =
+            "right";
+
+        container.style.whiteSpace =
+            "pre-wrap";
+
+        container.style.overflowWrap =
+            "break-word";
+
+        const title =
+            document.createElement(
+                "div"
+            );
+
+        title.textContent =
+            "تحضير الدرس";
+
+        title.style.fontFamily =
+            "Cairo, Arial, sans-serif";
+
+        title.style.fontSize =
+            "28px";
+
+        title.style.fontWeight =
+            "800";
+
+        title.style.textAlign =
+            "center";
+
+        title.style.marginBottom =
+            "30px";
+
+        const body =
+            document.createElement(
+                "div"
+            );
+
+        body.textContent =
+            text;
+
+        body.style.fontFamily =
+            "Cairo, Arial, sans-serif";
+
+        body.style.fontSize =
+            "21px";
+
+        body.style.fontWeight =
+            "500";
+
+        body.style.lineHeight =
+            "2.1";
+
+        body.style.direction =
+            "rtl";
+
+        body.style.textAlign =
+            "right";
+
+        body.style.whiteSpace =
+            "pre-wrap";
+
+        container.appendChild(
+            title
+        );
+
+        container.appendChild(
+            body
+        );
+
+        document.body.appendChild(
+            container
+        );
+
+        if (document.fonts) {
+            await document.fonts.ready;
+        }
+
+        const canvas =
+            await html2canvas(
+                container,
+                {
+                    scale: 2,
+                    useCORS: true,
+                    backgroundColor:
+                        "#ffffff",
+                    logging: false
+                }
+            );
+
+        const pdf =
+            new jsPDF({
+                orientation:
+                    "portrait",
+                unit:
+                    "mm",
+                format:
+                    "a4"
+            });
+
+        await addCanvasToPdf(
+            pdf,
+            canvas,
+            10
+        );
+
+        pdf.save(
+            createUniqueFileName(
+                "WebBag-Handwriting-Digital"
+            )
+        );
+
+        if (handwritingOcrStatus) {
+
+            handwritingOcrStatus.textContent =
+                "✅ تم إنشاء PDF رقمي من النص المصحح.";
+        }
+
+    } catch (error) {
+
+        console.error(
+            "HANDWRITING TEXT PDF ERROR:",
+            error
+        );
+
+        alert(
+            "تعذر إنشاء PDF من النص الرقمي."
+        );
+
+    } finally {
+
+        if (container) {
+            container.remove();
+        }
+
+        if (handwritingOcrPdfButton) {
+
+            restoreButton(
+                handwritingOcrPdfButton,
+                originalText
+            );
+        }
+    }
+}
+
+
+/* ==========================================
+   ADD LARGE CANVAS TO A4 PDF
+========================================== */
+
+async function addCanvasToPdf(
+    pdf,
+    canvas,
+    margin = 10
+) {
+
+    if (!pdf || !canvas) {
+
+        throw new Error(
+            "Invalid PDF or canvas."
+        );
+    }
+
+    const pageWidth =
+        pdf.internal.pageSize.getWidth();
+
+    const pageHeight =
+        pdf.internal.pageSize.getHeight();
+
+    const usableWidth =
+        pageWidth -
+        margin * 2;
+
+    const usableHeight =
+        pageHeight -
+        margin * 2;
+
+    const canvasRatio =
+        canvas.width /
+        canvas.height;
+
+    const pageCanvasHeight =
+        Math.floor(
+            canvas.width *
+            usableHeight /
+            usableWidth
+        );
+
+    let sourceY =
+        0;
+
+    let pageNumber =
+        0;
+
+    while (
+        sourceY <
+        canvas.height
+    ) {
+
+        const currentHeight =
+            Math.min(
+                pageCanvasHeight,
+                canvas.height -
+                    sourceY
+            );
+
+        const pageCanvas =
+            document.createElement(
+                "canvas"
+            );
+
+        pageCanvas.width =
+            canvas.width;
+
+        pageCanvas.height =
+            currentHeight;
+
+        const context =
+            pageCanvas.getContext(
+                "2d"
+            );
+
+        if (!context) {
+
+            throw new Error(
+                "Unable to create page canvas."
+            );
+        }
+
+        context.fillStyle =
+            "#ffffff";
+
+        context.fillRect(
+            0,
+            0,
+            pageCanvas.width,
+            pageCanvas.height
+        );
+
+        context.drawImage(
+            canvas,
+            0,
+            sourceY,
+            canvas.width,
+            currentHeight,
+            0,
+            0,
+            canvas.width,
+            currentHeight
+        );
+
+        if (pageNumber > 0) {
+
+            pdf.addPage();
+        }
+
+        const pageImage =
+            pageCanvas.toDataURL(
+                "image/jpeg",
+                0.95
+            );
+
+        const imageWidth =
+            usableWidth;
+
+        const imageHeight =
+            Math.min(
+                usableHeight,
+                imageWidth /
+                    canvasRatio *
+                    (
+                        currentHeight /
+                        (
+                            canvas.width /
+                            canvasRatio
+                        )
+                    )
+            );
+
+        /*
+         * أبسط وأدق حساب للنسبة
+         * لكل صفحة مقصوصة من الـcanvas.
+         */
+
+        const actualImageHeight =
+            imageWidth *
+            currentHeight /
+            canvas.width;
+
+        const finalHeight =
+            Math.min(
+                usableHeight,
+                actualImageHeight
+            );
+
+        const x =
+            (
+                pageWidth -
+                imageWidth
+            ) / 2;
+
+        const y =
+            (
+                pageHeight -
+                finalHeight
+            ) / 2;
+
+        pdf.addImage(
+            pageImage,
+            "JPEG",
+            x,
+            y,
+            imageWidth,
+            finalHeight,
+            undefined,
+            "FAST"
+        );
+
+        sourceY +=
+            currentHeight;
+
+        pageNumber++;
+    }
+}
+
+
+/* ==========================================
+   IMAGE LOADER
+========================================== */
+
+function loadImage(
+    dataUrl
+) {
+
+    return new Promise(
+        (resolve, reject) => {
+
+            const image =
+                new Image();
+
+            image.onload =
+                () => resolve(
+                    image
+                );
+
+            image.onerror =
+                () => reject(
+                    new Error(
+                        "تعذر تحميل الصورة."
+                    )
+                );
+
+            image.src =
+                dataUrl;
+        }
+    );
+}
+
+
+/* ==========================================
+   READ IMAGE FILE
+========================================== */
+
+function readImageFile(
+    file
+) {
+
+    return new Promise(
+        (resolve, reject) => {
+
+            if (!isValidImage(file)) {
+
+                reject(
+                    new Error(
+                        "Invalid image file."
+                    )
+                );
+
+                return;
+            }
+
+            const reader =
+                new FileReader();
+
+            reader.onload =
+                () => resolve(
+                    reader.result
+                );
+
+            reader.onerror =
+                () => reject(
+                    new Error(
+                        "Unable to read image."
+                    )
+                );
+
+            reader.readAsDataURL(
+                file
+            );
         }
     );
 }
@@ -2690,6 +4081,10 @@ async function reapplyHandwritingEnhancement() {
             result
         );
 
+        ensureHandwritingOcrInterface();
+
+        updateHandwritingOcrAfterEnhancement();
+
     } catch (error) {
 
         console.error(
@@ -2717,6 +4112,32 @@ function restoreOriginalHandwriting() {
         handwritingOriginalImage
     );
 
+    ensureHandwritingOcrInterface();
+
+    handwritingOcrText =
+        "";
+
+    handwritingOcrReady =
+        false;
+
+    if (handwritingOcrTextarea) {
+
+        handwritingOcrTextarea.value =
+            "";
+    }
+
+    if (handwritingOcrPdfButton) {
+
+        handwritingOcrPdfButton.disabled =
+            true;
+    }
+
+    if (handwritingOcrStatus) {
+
+        handwritingOcrStatus.textContent =
+            "↩️ تم إرجاع الصورة الأصلية. يمكنك استخراج النص مرة أخرى.";
+    }
+
     if (enhanceHandwriting) {
 
         enhanceHandwriting.dataset.enhanced =
@@ -2726,8 +4147,76 @@ function restoreOriginalHandwriting() {
 
 
 /* ==========================================
+   RESET HANDWRITING
+========================================== */
+
+function resetHandwritingInterface() {
+
+    handwritingOriginalImage =
+        null;
+
+    handwritingEnhancedImage =
+        null;
+
+    handwritingImageObject =
+        null;
+
+    handwritingOcrText =
+        "";
+
+    handwritingOcrReady =
+        false;
+
+    handwritingOcrRunning =
+        false;
+
+    handwritingOcrArea =
+        null;
+
+    handwritingOcrTextarea =
+        null;
+
+    handwritingOcrStatus =
+        null;
+
+    handwritingOcrButton =
+        null;
+
+    handwritingOcrPdfButton =
+        null;
+
+    handwritingRestoreButton =
+        null;
+
+    if (handwritingImageInput) {
+
+        handwritingImageInput.value =
+            "";
+    }
+
+    if (handwritingPreview) {
+
+        handwritingPreview.innerHTML = `
+            لم يتم اختيار صورة
+        `;
+    }
+
+    if (enhanceHandwriting) {
+
+        enhanceHandwriting.disabled =
+            true;
+    }
+
+    if (createHandwritingPdf) {
+
+        createHandwritingPdf.disabled =
+            true;
+    }
+}
+
+
+/* ==========================================
    OPTIONAL HANDWRITING RESET BUTTON
-   Supports future HTML without breaking
 ========================================== */
 
 const resetHandwriting =
@@ -2748,7 +4237,6 @@ if (resetHandwriting) {
 
 /* ==========================================
    OPTIONAL MANUAL CONTROLS
-   Automatically connect if added to HTML
 ========================================== */
 
 const handwritingBrightness =
@@ -3066,10 +4554,17 @@ window.WebBagPDF = {
 
     createLocalPdfSummary,
 
+    runHandwritingOCR,
+
+    createHandwritingTextPdf,
+
+    prepareImageForOCR,
+
+    cleanArabicOcrText,
+
     isValidPdf,
 
     isValidImage
-
 };
 
 
