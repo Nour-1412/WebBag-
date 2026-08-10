@@ -8,7 +8,14 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
 
-    <title>PDF AI | WebBag</title>
+    <title>
+        PDF AI | WebBag
+    </title>
+
+
+    <!-- =========================
+         GOOGLE FONT
+    ========================== -->
 
     <link rel="preconnect"
           href="https://fonts.googleapis.com">
@@ -20,15 +27,28 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap"
           rel="stylesheet">
 
+
+    <!-- =========================
+         MAIN CSS
+    ========================== -->
+
     <link rel="stylesheet"
           href="../style.css">
 
-    <!-- jsPDF -->
+
+    <!-- =========================
+         jsPDF
+    ========================== -->
+
     <script
         src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
     </script>
 
-    <!-- html2canvas -->
+
+    <!-- =========================
+         html2canvas
+    ========================== -->
+
     <script
         src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js">
     </script>
@@ -38,10 +58,13 @@
 
 <body>
 
+
 <div class="aurora">
 
     <div class="blob blob1"></div>
+
     <div class="blob blob2"></div>
+
     <div class="blob blob3"></div>
 
 </div>
@@ -53,7 +76,9 @@
 <div class="page">
 
 
-    <!-- ================= NAVBAR ================= -->
+    <!-- =========================
+         NAVBAR
+    ========================== -->
 
     <header class="navbar">
 
@@ -102,7 +127,10 @@
     </header>
 
 
-    <!-- ================= HERO ================= -->
+
+    <!-- =========================
+         HERO
+    ========================== -->
 
     <section class="hero">
 
@@ -123,7 +151,10 @@
     </section>
 
 
-    <!-- ================= PDF UPLOAD ================= -->
+
+    <!-- =========================
+         PDF UPLOAD
+    ========================== -->
 
     <section class="pdf-tool-section">
 
@@ -173,7 +204,10 @@
     </section>
 
 
-    <!-- ================= CREATE PDF ================= -->
+
+    <!-- =========================
+         CREATE PDF
+    ========================== -->
 
     <section class="pdf-create-section">
 
@@ -185,7 +219,9 @@
         <div class="pdf-create-grid">
 
 
-            <!-- TEXT TO PDF -->
+            <!-- =========================
+                 TEXT → PDF
+            ========================== -->
 
             <div class="pdf-create-card">
 
@@ -208,7 +244,8 @@
                     id="textToPdfInput"
                     class="text-to-pdf-input"
                     placeholder="اكتب النص هنا..."
-                    dir="auto"></textarea>
+                    dir="auto">
+                </textarea>
 
 
                 <button
@@ -223,7 +260,10 @@
             </div>
 
 
-            <!-- IMAGE TO PDF -->
+
+            <!-- =========================
+                 IMAGES → PDF
+            ========================== -->
 
             <div class="pdf-create-card">
 
@@ -285,7 +325,10 @@
     </section>
 
 
-    <!-- ================= HANDWRITING IMAGE → PDF ================= -->
+
+    <!-- =========================
+         HANDWRITING → PDF
+    ========================== -->
 
     <section class="handwriting-pdf-section">
 
@@ -331,7 +374,9 @@
             </div>
 
 
-            <div class="handwriting-actions">
+            <div
+                class="handwriting-actions">
+
 
                 <button
                     type="button"
@@ -361,12 +406,17 @@
     </section>
 
 
-    <!-- ================= PDF RESULTS ================= -->
+
+    <!-- =========================
+         PDF RESULTS
+    ========================== -->
 
     <section class="pdf-results-section">
 
 
-        <!-- PDF TEXT -->
+        <!-- =========================
+             EXTRACTED TEXT
+        ========================== -->
 
         <div class="pdf-result-card">
 
@@ -389,13 +439,17 @@
                 class="pdf-text">
 
                 <p class="pdf-placeholder">
+
                     سيظهر محتوى الملف هنا بعد قراءته.
+
                 </p>
 
             </div>
 
 
-            <div class="pdf-actions">
+            <div
+                class="pdf-actions">
+
 
                 <button
                     id="summarizePdf"
@@ -433,11 +487,15 @@
         </div>
 
 
-        <!-- PDF SUMMARY -->
+
+        <!-- =========================
+             SUMMARY
+        ========================== -->
 
         <div
             id="pdfSummaryCard"
             class="pdf-result-card pdf-summary-card">
+
 
             <h2>
                 ✨ ملخص الملف
@@ -449,7 +507,9 @@
                 class="pdf-text">
 
                 <p class="pdf-placeholder">
+
                     سيظهر الملخص هنا بعد اختيار الملف.
+
                 </p>
 
             </div>
@@ -459,7 +519,10 @@
     </section>
 
 
-    <!-- ================= BACK ================= -->
+
+    <!-- =========================
+         BACK BUTTON
+    ========================== -->
 
     <div class="tool-actions">
 
@@ -474,9 +537,13 @@
     </div>
 
 
-    <!-- ================= FOOTER ================= -->
+
+    <!-- =========================
+         FOOTER
+    ========================== -->
 
     <footer class="footer">
+
 
         <div class="footer-logo">
             💙 WebBag
@@ -490,25 +557,31 @@
 
         <div class="footer-links">
 
+
             <a href="../index.html">
                 الرئيسية
             </a>
+
 
             <a href="../about.html">
                 من نحن
             </a>
 
+
             <a href="../features.html">
                 المميزات
             </a>
+
 
             <a href="../pricing.html">
                 الأسعار
             </a>
 
+
             <a href="../contact.html">
                 تواصل معنا
             </a>
+
 
             <a href="../faq.html">
                 الأسئلة الشائعة
@@ -539,15 +612,21 @@
 
 
         <div class="footer-copy">
+
             © 2026 WebBag — جميع الحقوق محفوظة.
+
         </div>
 
     </footer>
 
+
 </div>
 
 
-<!-- ================= APP ================= -->
+
+<!-- =========================
+     MAIN APP
+========================== -->
 
 <script
     type="module"
@@ -555,7 +634,10 @@
 </script>
 
 
-<!-- ================= PDF TOOL ================= -->
+
+<!-- =========================
+     PDF TOOL
+========================== -->
 
 <script
     src="pdf.js">
